@@ -6,8 +6,8 @@
   "packageManager": "pnpm@11.21.0",
   "scripts": {
     "dev": "tsx scripts/update-link-metadata.ts && astro dev",
-    "build": "pnpm run typecheck && tsx scripts/update-link-metadata.ts && astro build",
-    "typecheck": "pnpm run typecheck:ts && astro check",
+    "build": "npm run typecheck && tsx scripts/update-link-metadata.ts && astro build",
+    "typecheck": "npm run typecheck:ts && astro check",
     "typecheck:ts": "tsc --noEmit",
     "preview": "astro preview",
     "astro": "astro",
