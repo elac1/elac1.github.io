@@ -1,6 +1,8 @@
 ---
-title: 'Draft Example'
-pubDate: '2025-07-09'
+title: '草稿示例'
+pubDate: '2026-09-08'
 ---
 
-Start the filename with `_` to mark it as a draft and hide it from the list.
+文件名以 `_` 开头的文章是草稿，不会出现在博客列表中，也不会被发布。
+
+写好之后，把文件名开头的 `_` 去掉，它就会变成正式文章。

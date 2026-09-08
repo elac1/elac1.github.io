@@ -2,15 +2,8 @@
 title: 'About'
 ---
 
-<!--
-This content will be displayed at the top of the index page.
-You can leave this empty if you don’t want to show any content.
--->
+你好，我是 elac，一名 ROS（机器人操作系统）学习者。
 
-A static blog theme based on [Astro](https://astro.build), _designed for clarity and focus_.
+这里记录我在机器人学习路上的笔记与思考：ROS 2 的节点、话题与服务，建图、导航与运动控制，还有动手调试时踩过的各种坑。
 
-With a deliberately minimal design, this layout ensures your content takes center stage. It's built for flexibility, offering customization options that honor its clean and elegant aesthetic.
-
-Effortlessly share your thoughts in a calm & dustless space.
-
-Check posts for details and view source on [GitHub](https://github.com/the3ash/astro-chiri).
+文章大多是学习过程中的记录，难免有疏漏，欢迎交流指正。
