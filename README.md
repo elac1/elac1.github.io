@@ -16,7 +16,7 @@ Check the [demo](https://chiri.the3ash.com/) for more details.
 - [x] KaTeX
 - [x] Sitemap
 - [x] OpenGraph
-- [x] RSS
+- [x] RSS 
 
 ## Getting Started
 
@@ -34,7 +34,7 @@ Check the [demo](https://chiri.the3ash.com/) for more details.
    pnpm dev
    ```
 
-3. Edit `src/config.ts` and `src/content/about/about.md` to your liking.
+3.编辑`src/config.ts` and `src/content/about/about.md` to your liking.
 
 4. Use `pnpm new <title>` to create new posts, or add your posts to `src/content/posts`.
 
