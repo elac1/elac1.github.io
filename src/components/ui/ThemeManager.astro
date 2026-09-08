@@ -66,7 +66,8 @@
 
       getEffectiveTheme() {
         const stored = this.getStoredTheme()
-        return stored || this.getSystemTheme()
+        // Default to light theme; only an explicit user choice overrides it.
+        return stored || 'light'
       },
 
       isUsingSystemTheme() {
@@ -106,12 +107,10 @@
         // Set initial theme (maintain current theme when refreshing page)
         this.applyTheme(this.getEffectiveTheme())
 
-        systemThemeQuery.addEventListener('change', (e) => {
-          const newSystemTheme = e.matches ? 'dark' : 'light'
-
-          // Current product behavior: system theme changes always become the stored theme.
-          this.setStoredTheme(newSystemTheme)
-          this.applyTheme(newSystemTheme)
+        systemThemeQuery.addEventListener('change', () => {
+          // Keep the site on its chosen theme (light by default); system
+          // theme changes no longer override it.
+          this.applyTheme(this.getEffectiveTheme())
         })
 
         this.initialized = true
