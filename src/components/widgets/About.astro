@@ -18,6 +18,11 @@ const { Content } = hasContent && aboutEntry ? await render(aboutEntry) : { Cont
 
 <style>
   .about:not(:empty) {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 0.875rem;
+    padding: 1.35rem 1.5rem;
+    box-shadow: var(--card-shadow);
   }
 </style>

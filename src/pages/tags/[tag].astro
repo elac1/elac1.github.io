@@ -13,7 +13,7 @@ export async function getStaticPaths() {
     }
   }
   return [...tagSet].map((tag) => ({
-    params: { tag: encodeURIComponent(tag) },
+    params: { tag },
     props: { tag }
   }))
 }
