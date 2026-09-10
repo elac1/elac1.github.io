@@ -100,9 +100,11 @@ import { themeConfig } from '@/config'
     cssLink.href = '/pagefind/pagefind-ui.css'
     document.head.appendChild(cssLink)
 
-    // @ts-ignore - pagefind-ui.js 由 Pagefind 在构建时生成于 dist/pagefind/
-    const pagefindMod = await import('/pagefind/pagefind-ui.js')
-    const PagefindUI = (pagefindMod as { PagefindUI: any }).PagefindUI
+    // pagefind-ui.js 由 Pagefind 在 astro build 之后生成到 dist/pagefind/，
+    // 用变量 + @vite-ignore 让 Rollup 跳过构建期解析，改为浏览器运行时加载
+    const pagefindPath = '/pagefind/pagefind-ui.js'
+    const pagefindMod = (await import(/* @vite-ignore */ pagefindPath)) as { PagefindUI: any }
+    const PagefindUI = pagefindMod.PagefindUI
     new PagefindUI({
       element: '#search',
       showSubResults: true,

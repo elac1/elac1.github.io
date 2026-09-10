@@ -44,7 +44,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
         <BackButton />
         {shouldRenderToc && <TableOfContents toc={toc} />}
         <div class="title">
-          <h1>{title}</h1>
+          <h1 data-pagefind-meta="title">{title}</h1>
           <div class="date">
             <FormattedDate date={pubDate} context="post" />
             {
@@ -57,7 +57,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
             }
           </div>
         </div>
-        <article class="content">
+        <article class="content" data-pagefind-body>
           <slot />
         </article>
       </div>
