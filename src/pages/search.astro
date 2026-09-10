@@ -1,0 +1,114 @@
+---
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import { themeConfig } from '@/config'
+---
+
+<IndexLayout title={`搜索 - ${themeConfig.site.title}`} description="搜索本站文章">
+  <main>
+    <h1 class="page-title">搜索</h1>
+    <p class="page-hint">输入关键词搜索全站文章</p>
+    <div id="search"></div>
+    <p class="search-note">
+      搜索基于构建产物生成，仅在构建后访问生效。本地预览运行 <code>npm run build && npm run preview</code> 后访问 /search 可用。
+    </p>
+  </main>
+</IndexLayout>
+
+<style is:global>
+  .page-title {
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 0.5rem;
+  }
+  .page-hint {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    margin: 0 0 1.5rem;
+  }
+  .search-note {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    margin-top: 2rem;
+  }
+  .search-note code {
+    background: var(--code-bg);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+  }
+
+  /* Pagefind UI 主题适配 */
+  :root {
+    --pagefind-ui-primary: var(--text-primary);
+    --pagefind-ui-text: var(--text-primary);
+    --pagefind-ui-background: var(--bg);
+    --pagefind-ui-border: var(--border);
+    --pagefind-ui-tag: var(--code-bg);
+    --pagefind-ui-border-radius: 0.5rem;
+    --pagefind-ui-font-family: var(--sans);
+    --pagefind-ui-font-size: var(--font-size-m);
+  }
+
+  .pagefind-ui__search-input {
+    padding: 0.75rem 1rem !important;
+    border: 1px solid var(--border) !important;
+    background: var(--bg) !important;
+    color: var(--text-primary) !important;
+    border-radius: 0.5rem !important;
+    width: 100% !important;
+  }
+  .pagefind-ui__search-input:focus {
+    outline: none !important;
+    border-color: var(--text-secondary) !important;
+  }
+  .pagefind-ui__result {
+    padding: 1rem 0 !important;
+    border-top: 1px solid var(--border) !important;
+  }
+  .pagefind-ui__result-title {
+    font-weight: var(--font-weight-bold) !important;
+    color: var(--text-primary) !important;
+  }
+  .pagefind-ui__result-title a {
+    color: var(--text-primary) !important;
+    text-decoration: none !important;
+  }
+  .pagefind-ui__result-title a:hover {
+    text-decoration: underline !important;
+  }
+  .pagefind-ui__result-excerpt {
+    color: var(--text-secondary) !important;
+    font-size: var(--font-size-s) !important;
+  }
+</style>
+
+<script>
+  // 仅在构建产物存在 pagefind 资源时加载，避免 dev 模式报错
+  async function initSearch() {
+    try {
+      const res = await fetch('/pagefind/pagefind-ui.css')
+      if (!res.ok) {
+        document.getElementById('search')!.innerHTML =
+          '<p style="color: var(--text-secondary); font-size: var(--font-size-s);">搜索索引尚未生成。运行 <code>npm run build && npm run preview</code> 后访问此页面。</p>'
+        return
+      }
+    } catch {
+      return
+    }
+
+    const cssLink = document.createElement('link')
+    cssLink.rel = 'stylesheet'
+    cssLink.href = '/pagefind/pagefind-ui.css'
+    document.head.appendChild(cssLink)
+
+    // @ts-ignore - pagefind-ui.js 由 Pagefind 在构建时生成于 dist/pagefind/
+    const pagefindMod = await import('/pagefind/pagefind-ui.js')
+    const PagefindUI = (pagefindMod as { PagefindUI: any }).PagefindUI
+    new PagefindUI({
+      element: '#search',
+      showSubResults: true,
+      showImages: false
+    })
+  }
+
+  initSearch()
+</script>

@@ -24,6 +24,9 @@ pnpm-debug.log*
 # IDE settings
 .idea/
 
+# Trae local docs
+.trae/
+
 # Netlify build output
 .netlify/
 

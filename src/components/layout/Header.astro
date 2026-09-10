@@ -1,14 +1,46 @@
 ---
 import { themeConfig } from '@/config'
 import ThemeToggle from '@/components/ui/ThemeToggle.astro'
+
+const navItems = [
+  { href: '/archive', label: '归档' },
+  { href: '/tags', label: '标签' },
+  { href: '/about', label: '关于' },
+  { href: '/links', label: '友链' },
+  { href: '/search', label: '搜索' }
+]
 ---
 
 <header>
   <nav>
     <a href="/">{themeConfig.site.title}</a>
-    {themeConfig.general.themeToggle && <ThemeToggle />}
+    <div class="nav-right">
+      <ul class="nav-links">
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+      {themeConfig.general.themeToggle && <ThemeToggle />}
+      <details class="nav-mobile">
+        <summary aria-label="菜单"></summary>
+        <ul>
+          {
+            navItems.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+    </div>
   </nav>
 </header>
+
 <style>
   header {
     margin: 0;
@@ -18,11 +50,102 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
     justify-content: space-between;
     align-items: center;
   }
-  header a {
+  header > nav > a {
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
     text-decoration: none;
     min-width: 3rem;
     display: inline-block;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.25rem;
+  }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-s);
+    transition: color 0.15s ease-out;
+  }
+  .nav-links a:hover {
+    color: var(--text-primary);
+  }
+  .nav-mobile {
+    display: none;
+    position: relative;
+  }
+  .nav-mobile > summary {
+    list-style: none;
+    cursor: pointer;
+    width: 1.25rem;
+    height: 1.25rem;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-mobile > summary::-webkit-details-marker {
+    display: none;
+  }
+  .nav-mobile > summary::before {
+    content: '';
+    width: 1.1rem;
+    height: 1.5px;
+    background: var(--text-primary);
+    box-shadow: 0 -5px 0 var(--text-primary), 0 5px 0 var(--text-primary);
+  }
+  .nav-mobile[open] > summary::before {
+    box-shadow: 0 0 0 var(--text-primary), 0 0 0 var(--text-primary);
+    background: transparent;
+    border: 1.5px solid var(--text-primary);
+    border-radius: 50%;
+    width: 0.7rem;
+    height: 0.7rem;
+  }
+  .nav-mobile ul {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin: 0.5rem 0 0;
+    padding: 0.5rem 0;
+    list-style: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    min-width: 7rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 100;
+  }
+  .nav-mobile li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-s);
+  }
+  .nav-mobile li a:hover {
+    color: var(--text-primary);
+    background: var(--code-bg);
+  }
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+    .nav-mobile {
+      display: block;
+    }
+  }
+  @media (min-width: 769px) {
+    .nav-mobile {
+      display: none;
+    }
   }
 </style>

@@ -17,7 +17,16 @@ const { posts } = Astro.props as PostListProps
                 <FormattedDate date={post.data.pubDate} context="list" />
               </p>
             )}
-            <p class="title">{post.data.title}</p>
+            <p class="title">
+              {post.data.title}
+              {post.data.tags && post.data.tags.length > 0 && (
+                <span class="post-tags">
+                  {post.data.tags.map((t) => (
+                    <a href={`/tags/${encodeURIComponent(t)}/`} class="post-tag">#{t}</a>
+                  ))}
+                </span>
+              )}
+            </p>
             {themeConfig.date.dateOnRight && (
               <div class={themeConfig.general.postListDottedDivider ? 'dotted-divider' : 'divider'} />
             )}
@@ -139,5 +148,27 @@ const { posts } = Astro.props as PostListProps
 
   .placeholder {
     height: 3rem;
+  }
+
+  .post-tags {
+    margin-left: 0.75rem;
+    display: inline;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .post-tag {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    margin-right: 0.4rem;
+    transition: color 0.15s ease-out;
+  }
+  .post-tag:hover {
+    color: var(--text-secondary);
+  }
+  @media (max-width: 768px) {
+    .post-tags {
+      display: none;
+    }
   }
 </style>

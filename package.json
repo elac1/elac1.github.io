@@ -6,7 +6,7 @@
   "packageManager": "pnpm@11.21.0",
   "scripts": {
     "dev": "tsx scripts/update-link-metadata.ts && astro dev",
-    "build": "npm run typecheck && tsx scripts/update-link-metadata.ts && astro build",
+    "build": "npm run typecheck && tsx scripts/update-link-metadata.ts && astro build && pagefind --site dist",
     "typecheck": "npm run typecheck:ts && astro check",
     "typecheck:ts": "tsc --noEmit",
     "preview": "astro preview",
@@ -16,6 +16,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "new": "tsx scripts/new-post.ts",
+    "publish": "tsx scripts/publish.ts",
+    "drafts": "tsx scripts/drafts.ts",
     "update-link-metadata": "tsx scripts/update-link-metadata.ts",
     "update-theme": "tsx scripts/update-theme.ts"
   },

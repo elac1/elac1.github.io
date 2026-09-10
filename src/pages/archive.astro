@@ -1,0 +1,101 @@
+---
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import FormattedDate from '@/components/widgets/FormattedDate.astro'
+import { getSortedFilteredPosts } from '@/utils/draft'
+import { themeConfig } from '@/config'
+
+const posts = await getSortedFilteredPosts()
+
+// 按年份分组
+const postsByYear = new Map<number, typeof posts>()
+for (const post of posts) {
+  const year = post.data.pubDate.getFullYear()
+  if (!postsByYear.has(year)) postsByYear.set(year, [])
+  postsByYear.get(year)!.push(post)
+}
+const years = [...postsByYear.keys()].sort((a, b) => b - a)
+---
+
+<IndexLayout title={`归档 - ${themeConfig.site.title}`} description="所有文章按时间归档">
+  <main>
+    <h1 class="page-title">归档</h1>
+    <p class="page-count">共 {posts.length} 篇文章</p>
+    {
+      years.map((year) => (
+        <section class="archive-year">
+          <h2 class="year-title">{year}</h2>
+          <ul class="archive-list">
+            {postsByYear.get(year)!.map((post) => (
+              <li>
+                <a href={`/${post.id}/`} class="archive-item">
+                  <span class="archive-date">
+                    <FormattedDate date={post.data.pubDate} context="list" />
+                  </span>
+                  <span class="archive-title">{post.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </main>
+</IndexLayout>
+
+<style>
+  .page-title {
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 0.25rem;
+  }
+  .page-count {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    margin: 0 0 2rem;
+  }
+  .archive-year {
+    margin-bottom: 2.5rem;
+  }
+  .year-title {
+    font-size: var(--font-size-m);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .archive-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .archive-item {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: opacity 0.15s ease-out;
+  }
+  .archive-item:hover {
+    opacity: 0.6;
+  }
+  .archive-date {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .archive-title {
+    flex: 1;
+  }
+  @media (max-width: 600px) {
+    .archive-item {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

@@ -1,0 +1,110 @@
+---
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import FormattedDate from '@/components/widgets/FormattedDate.astro'
+import { getSortedFilteredPosts } from '@/utils/draft'
+import { themeConfig } from '@/config'
+
+export async function getStaticPaths() {
+  const posts = await getSortedFilteredPosts()
+  const tagSet = new Set<string>()
+  for (const post of posts) {
+    for (const tag of post.data.tags || []) {
+      tagSet.add(tag)
+    }
+  }
+  return [...tagSet].map((tag) => ({
+    params: { tag: encodeURIComponent(tag) },
+    props: { tag }
+  }))
+}
+
+const { tag } = Astro.props
+const allPosts = await getSortedFilteredPosts()
+const filteredPosts = allPosts.filter((p) => (p.data.tags || []).includes(tag))
+---
+
+<IndexLayout title={`#${tag} - ${themeConfig.site.title}`} description={`标签 ${tag} 下的文章`}>
+  <main>
+    <div class="tag-header">
+      <h1 class="page-title">#{tag}</h1>
+      <a href="/tags/" class="back-link">← 所有标签</a>
+    </div>
+    <p class="page-count">共 {filteredPosts.length} 篇文章</p>
+    <ul class="tag-list">
+      {
+        filteredPosts.map((post) => (
+          <li>
+            <a href={`/${post.id}/`} class="tag-item">
+              <span class="tag-date">
+                <FormattedDate date={post.data.pubDate} context="list" />
+              </span>
+              <span class="tag-title">{post.data.title}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</IndexLayout>
+
+<style>
+  .tag-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.25rem;
+  }
+  .page-title {
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+  }
+  .back-link {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    text-decoration: none;
+  }
+  .back-link:hover {
+    color: var(--text-primary);
+  }
+  .page-count {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    margin: 0 0 2rem;
+  }
+  .tag-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .tag-item {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: opacity 0.15s ease-out;
+  }
+  .tag-item:hover {
+    opacity: 0.6;
+  }
+  .tag-date {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .tag-title {
+    flex: 1;
+  }
+  @media (max-width: 600px) {
+    .tag-item {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

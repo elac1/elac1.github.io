@@ -1,0 +1,113 @@
+---
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import { friendLinks } from '@/data/links'
+import { themeConfig } from '@/config'
+---
+
+<IndexLayout title={`友链 - ${themeConfig.site.title}`} description="友情链接">
+  <main>
+    <h1 class="page-title">友链</h1>
+    <p class="page-desc">这里收集我常逛的博客和站点。想交换友链可在 about.md 留的联系方式找我。</p>
+
+    {
+      friendLinks.length === 0 ? (
+        <p class="empty">还没有友链。在 src/data/links.ts 的 friendLinks 数组里添加即可。</p>
+      ) : (
+        <ul class="links-list">
+          {friendLinks.map((link) => (
+            <li>
+              <a href={link.url} target="_blank" rel="noopener noreferrer" class="link-card">
+                {link.avatar ? (
+                  <img src={link.avatar} alt={link.name} class="link-avatar" loading="lazy" />
+                ) : (
+                  <div class="link-avatar placeholder">{link.name.charAt(0)}</div>
+                )}
+                <div class="link-meta">
+                  <span class="link-name">{link.name}</span>
+                  {link.desc && <span class="link-desc">{link.desc}</span>}
+                  <span class="link-url">{new URL(link.url).host}</span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</IndexLayout>
+
+<style>
+  .page-title {
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 0.5rem;
+  }
+  .page-desc {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    margin: 0 0 2rem;
+  }
+  .empty {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+  }
+  .links-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: 1rem;
+  }
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.15s ease-out;
+  }
+  .link-card:hover {
+    border-color: var(--text-secondary);
+    background: var(--code-bg);
+  }
+  .link-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  .link-avatar.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--code-bg);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-m);
+  }
+  .link-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .link-name {
+    font-weight: var(--font-weight-bold);
+  }
+  .link-desc {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .link-url {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+  }
+</style>

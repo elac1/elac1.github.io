@@ -1,14 +1,9 @@
-# git 知识库
-
-`git 是一个分布式版本控制的软件`
-
-
-
-[TOC]
-
+---
+title: 'Git 知识库'
+pubDate: '2026-09-09'
 ---
 
-
+`git 是一个分布式版本控制的软件`
 
 ## git 是什么?
 
@@ -26,11 +21,7 @@
 
 ---
 
-
-
 ## git 本地命令
-
-
 
 ### 1. git init
 
@@ -47,8 +38,6 @@ git init
 
 `如果重复执行 git init 是不能回到文件夹的初始状态的,只会提示已经是 git仓库`
 
-
-
 ### 2. git status
 
 > 作用：查看**工作区、暂存区**当前状态。看哪些文件修改、新增、删除，哪些已经加入暂存区。
@@ -57,8 +46,6 @@ git init
 # 查看仓库状态
 git status
 ```
-
-
 
 ### 3. git add
 
@@ -75,8 +62,6 @@ git add 文件1 文件2
 git add .
 ```
 
-
-
 ### 4. git commit
 
 > 作用：把**暂存区里面已经add的改动，永久保存到本地版本库**，生成一条新的版本记录。
@@ -86,8 +71,6 @@ git add .
 # 最常用：-m 后面写本次提交说明
 git commit -m "填写本次修改描述"
 ```
-
-
 
 ### 5. git reset
 
@@ -99,8 +82,6 @@ git commit -m "填写本次修改描述"
 # 格式: git reset [模式] 版本hash
 git reset --hard 版本hash
 ```
-
-
 
 ### 6. git diff
 
@@ -121,8 +102,6 @@ git diff --cached
 `git diff`：**看细节**，展示文件里面具体改了哪几行代码
 ```
 
-
-
 ### 7. git reflog
 
 > 作用 :　记录本地仓库**所有HEAD指针移动记录**。commit、reset、切换分支都会留下日志。
@@ -133,8 +112,6 @@ git diff --cached
 # 查看本地全部操作记录
 git reflog
 ```
-
-
 
 ### 8. git branch
 
@@ -153,8 +130,6 @@ git branch -d dev
 # 强制删除分支（分支没有合并完成时用大写 -D）
 git branch -D dev
 ```
-
-
 
 ### 9. git checkout
 
@@ -179,22 +154,14 @@ git checkout -b feature
 git merge dev
 ```
 
-
-
-### -示图
-
-![git](C:\Users\bgq\Desktop\git.png)
+> 示意图：（原本地图片 `git.png` 已移除，如需配图请放到 `public/` 目录后引用）
 
 ---
-
-
 
 ## git 远程仓库
 
 > 概念：远程仓库存放在网络上 (GitHub/Gitee)，实现代码备份、多人协作。
 > 完整链路：本地仓库 ↔ 远程仓库。
-
-
 
 ### 1. git clone
 
@@ -203,8 +170,6 @@ git merge dev
 ```
 git clone 远程地址
 ```
-
-
 
 ### 2. git remote
 
@@ -220,8 +185,6 @@ git remote add origin 仓库地址
 # 修改已经存在的远程地址
 git remote set-url origin 新仓库地址
 ```
-
-
 
 ### 3. git push
 
@@ -243,8 +206,6 @@ git push origin master
 - ⚠️没有设置 `-u`，直接`git push`会报错。
 
 - ⚠️403 报错：没有该仓库写入权限。
-
-
 
 ### 4. git pull
 
@@ -271,11 +232,7 @@ git pull origin main
 
 > 💡开发习惯：push 之前先 pull，同步远程最新代码，减少冲突。
 
-
-
 ---
-
-
 
 ## 实际场景
 
@@ -283,16 +240,12 @@ git pull origin main
 
 > ✅实际开发非常常用，分两种场景：开源项目、公司团队内部。
 
-
-
 #### 1. 开源项目
 
 - 你没有仓库写权限，不能直接push主仓库。
 - Fork → 自己仓库修改 → 提交PR，维护者审核代码再合并。
 
 > 所有给开源仓库贡献代码，几乎都走PR。
-
-
 
 #### 2. 企业内部开发
 
@@ -306,8 +259,6 @@ git pull origin main
 5. 修改完毕审核通过，再合并到main/main主分支。
 
 > 公司内部：**不fork，在同一个仓库建分支，PR做代码评审**，这是日常高频工作。
-
-
 
 #### 3.PR核心价值，不只是合并代码
 
@@ -325,15 +276,11 @@ git pull origin main
 
 - 原因:  没有这个仓库的写入权限.
 
-  
-
 #### 2.Automatic merge failed; fix conflicts and then commit the result.
 
 `(冲突)`
 
 - 原因: 本地和远程修改了**同一个文件的同一处行**，git 不知道保留哪一份代码
-
-  
 
 #### ３.fatal: not a valid object name: 'master'
 
@@ -346,8 +293,6 @@ git pull origin main
   - git init完成，仓库里**一条commit都没有**，master指针都不存在。
 
   - 此时可以创建分支记录，但是没有任何版本快照，不能切换分支。
-
-    
 
 #### 4. error: failed to push some refs
 
@@ -362,8 +307,6 @@ git pull origin main
   # 处理可能出现的冲突
   git push
   ```
-
-  
 
 #### 5. fatal: remote origin already exists
 
@@ -385,8 +328,6 @@ git pull origin main
   git remote add origin 新地址
   ```
 
-  
-
 #### 6. fatal: refusing to merge unrelated histories
 
 `(分支独立,无关)`
@@ -400,5 +341,3 @@ git pull origin main
   ```
   git merge main --allow-unrelated-histories
   ```
-
-
