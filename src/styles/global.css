@@ -28,10 +28,9 @@
   --text-tertiary: rgba(0, 0, 0, 0.24);
   --border: rgba(0, 0, 0, 0.1);
   --selection: rgba(0, 0, 0, 0.08);
-  --bg-dot: rgba(0, 0, 0, 0.07);
-  --bg-line: rgba(0, 0, 0, 0.05);
   --code-bg: rgba(0, 0, 0, 0.04);
   --mark: #f3ffc4;
+  --shackle-line: rgba(0, 0, 0, 0.1);
 
   /* Syntax Theme  */
   --astro-code-foreground: rgba(0, 0, 0, 0.85);
@@ -80,9 +79,8 @@ html.dark {
   --text-tertiary: rgba(255, 255, 255, 0.24);
   --border: rgba(255, 255, 255, 0.1);
   --selection: rgba(255, 255, 255, 0.08);
-  --bg-dot: rgba(255, 255, 255, 0.06);
-  --bg-line: rgba(255, 255, 255, 0.04);
   --code-bg: rgba(255, 255, 255, 0.04);
+  --shackle-line: rgba(255, 255, 255, 0.08);
   --mark: #545b37;
 
   /* Syntax Theme  */
@@ -101,12 +99,11 @@ html.dark {
 
 html {
   background-color: var(--page-bg);
-  background-image:
-    radial-gradient(circle at 1px 1px, var(--bg-dot) 1px, transparent 0),
-    repeating-linear-gradient(45deg, var(--bg-line), var(--bg-line) 1px, transparent 1px, transparent 14px),
-    repeating-linear-gradient(-45deg, var(--bg-line), var(--bg-line) 1px, transparent 1px, transparent 14px);
-  background-size: 22px 22px, auto, auto;
-  background-position: 0 0, 0 0, 0 0;
+  background-image: url('/shackle-bg.svg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
   overscroll-behavior-y: contain;
