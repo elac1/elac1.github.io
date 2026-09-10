@@ -5,6 +5,7 @@ description: '话题和服务是 ROS 里两种最基本的通信方式，新手�
 tags:
   - ROS2
   - 学习笔记
+category: 学习笔记
 ---
 
 ## 广播电台 vs 打电话

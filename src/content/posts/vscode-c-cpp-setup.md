@@ -5,6 +5,7 @@ description: '从零开始在 Windows 上搭好 C/C++ 开发环境：MinGW 安�
 tags:
   - C语言
   - 工具
+category: 学习笔记
 ---
 
 ## 安装 MinGW

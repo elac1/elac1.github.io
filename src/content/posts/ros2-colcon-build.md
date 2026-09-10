@@ -5,6 +5,7 @@ description: 'ROS 2 的构建系统 colcon 看着简单，实际用起来有一�
 tags:
   - ROS2
   - 工具
+category: 学习笔记
 ---
 
 ## colcon 是什么

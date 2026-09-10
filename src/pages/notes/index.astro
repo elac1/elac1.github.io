@@ -1,0 +1,46 @@
+---
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import PostList from '@/components/widgets/PostList.astro'
+import { themeConfig } from '@/config'
+import { getSortedFilteredPosts } from '@/utils/draft'
+
+const allPosts = await getSortedFilteredPosts()
+const notes = allPosts.filter((p) => p.data.category === '学习笔记')
+---
+
+<IndexLayout title={`学习笔记 - ${themeConfig.site.title}`} description="学习笔记专栏：记录学习路上的点滴、踩过的坑和总结">
+  <main>
+    <header class="notes-header">
+      <h1 class="page-title">学习笔记</h1>
+      <p class="page-desc">学习路上的点滴记录——工具用法、概念理解、踩坑总结</p>
+    </header>
+    {notes.length > 0 ? (
+      <PostList posts={notes} />
+    ) : (
+      <p class="empty-hint">学习笔记栏目暂无内容。</p>
+    )}
+  </main>
+</IndexLayout>
+
+<style>
+  .notes-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-title {
+    font-size: var(--font-size-l);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 0.4rem;
+  }
+  .page-desc {
+    color: var(--text-secondary);
+    font-size: var(--font-size-s);
+    margin: 0;
+  }
+  .empty-hint {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem 0;
+  }
+</style>

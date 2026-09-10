@@ -5,12 +5,26 @@ import PostList from '@/components/widgets/PostList.astro'
 import { themeConfig } from '@/config'
 import { getSortedFilteredPosts } from '@/utils/draft'
 
-const posts = await getSortedFilteredPosts()
+const allPosts = await getSortedFilteredPosts()
+// 首页只展示"垂直领域研究"
+const posts = allPosts.filter((p) => p.data.category === '垂直领域研究')
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
   <About />
   <main>
-    <PostList posts={posts} />
+    {posts.length > 0 ? (
+      <PostList posts={posts} />
+    ) : (
+      <p class="empty-hint">垂直领域研究栏目暂无内容，敬请期待。</p>
+    )}
   </main>
 </IndexLayout>
+
+<style>
+  .empty-hint {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem 0;
+  }
+</style>
