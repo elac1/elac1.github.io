@@ -5,19 +5,19 @@ import { themeConfig } from '@/config'
 import { getSortedFilteredPosts } from '@/utils/draft'
 
 const allPosts = await getSortedFilteredPosts()
-const notes = allPosts.filter((p) => p.data.category === '学习笔记')
+const posts = allPosts.filter((p) => p.data.category === '垂直领域研究')
 ---
 
-<IndexLayout title={`学习笔记 - ${themeConfig.site.title}`} description="学习笔记专栏：记录学习路上的点滴、踩过的坑和总结">
+<IndexLayout title={`窄门 - ${themeConfig.site.title}`} description="窄门专栏：聚焦机器人、ROS 2 等方向的实战研究">
   <main>
     <header class="section-header">
-      <h1 class="page-title">学习笔记</h1>
-      <p class="page-desc">这个栏目放的是我的学习笔记——工具怎么装怎么用、概念怎么理解、遇到坑怎么绕过去。内容比较碎，但都是实际操作过的，你遇到类似问题可以直接抄。</p>
+      <h1 class="page-title">窄门</h1>
+      <p class="page-desc">这个栏目放的是我在机器人、ROS 2 等方向上的实战研究——从建图导航到部署调参，记录从零搭建到跑通的完整过程，包括参数选择、踩坑总结和效果分析。如果你也在搞机器人，希望这些经验能帮你少走弯路。叫"窄门"是因为深入一个领域的路很窄，得一步步走。</p>
     </header>
-    {notes.length > 0 ? (
-      <PostList posts={notes} />
+    {posts.length > 0 ? (
+      <PostList posts={posts} />
     ) : (
-      <p class="empty-hint">学习笔记栏目暂无内容。</p>
+      <p class="empty-hint">垂直领域研究栏目暂无内容。</p>
     )}
   </main>
 </IndexLayout>
@@ -37,6 +37,7 @@ const notes = allPosts.filter((p) => p.data.category === '学习笔记')
     color: var(--text-secondary);
     font-size: var(--font-size-s);
     margin: 0;
+    line-height: 1.7;
   }
   .empty-hint {
     text-align: center;

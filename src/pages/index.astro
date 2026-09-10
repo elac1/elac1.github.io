@@ -6,8 +6,8 @@ import { themeConfig } from '@/config'
 import { getSortedFilteredPosts } from '@/utils/draft'
 
 const allPosts = await getSortedFilteredPosts()
-// 首页只展示"垂直领域研究"
-const posts = allPosts.filter((p) => p.data.category === '垂直领域研究')
+// 首页只展示标记为 featured 的重要文章
+const posts = allPosts.filter((p) => p.data.featured)
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>

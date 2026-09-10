@@ -103,9 +103,9 @@ html {
   background-color: var(--page-bg);
   background-image:
     radial-gradient(circle at 1px 1px, var(--bg-dot) 1px, transparent 0),
-    linear-gradient(90deg, var(--bg-line) 1px, transparent 1px),
-    linear-gradient(var(--bg-line) 1px, transparent 1px);
-  background-size: 22px 22px, 100% 200px, 200px 100%;
+    repeating-linear-gradient(45deg, var(--bg-line), var(--bg-line) 1px, transparent 1px, transparent 14px),
+    repeating-linear-gradient(-45deg, var(--bg-line), var(--bg-line) 1px, transparent 1px, transparent 14px);
+  background-size: 22px 22px, auto, auto;
   background-position: 0 0, 0 0, 0 0;
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
