@@ -30,7 +30,6 @@
   --selection: rgba(0, 0, 0, 0.08);
   --code-bg: rgba(0, 0, 0, 0.04);
   --mark: #f3ffc4;
-  --shackle-line: rgba(0, 0, 0, 0.1);
 
   /* Syntax Theme  */
   --astro-code-foreground: rgba(0, 0, 0, 0.85);
@@ -80,7 +79,6 @@ html.dark {
   --border: rgba(255, 255, 255, 0.1);
   --selection: rgba(255, 255, 255, 0.08);
   --code-bg: rgba(255, 255, 255, 0.04);
-  --shackle-line: rgba(255, 255, 255, 0.08);
   --mark: #545b37;
 
   /* Syntax Theme  */
@@ -99,11 +97,6 @@ html.dark {
 
 html {
   background-color: var(--page-bg);
-  background-image: url('/shackle-bg.svg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
   overscroll-behavior-y: contain;
