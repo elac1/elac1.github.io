@@ -9,8 +9,10 @@ const { Content } = hasContent && aboutEntry ? await render(aboutEntry) : { Cont
 ---
 
 <IndexLayout title={`关于 - ${themeConfig.site.title}`} description={themeConfig.site.description}>
-  <main>
-    <h1 class="page-title">关于</h1>
+  <div class="about-page">
+    <header class="page-header">
+      <h1 class="page-title">关于</h1>
+    </header>
     <div class="about-content prose">
       {hasContent && Content ? <Content /> : <p>关于内容尚未填写，可在 src/content/about/about.md 编辑。</p>}
     </div>
@@ -26,21 +28,42 @@ const { Content } = hasContent && aboutEntry ? await render(aboutEntry) : { Cont
         <dd>{themeConfig.site.description}</dd>
       </dl>
     </section>
-  </main>
+  </div>
 </IndexLayout>
 
+<style is:global>
+  body:has(.about-page) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+    background: #f6f6f4;
+  }
+  html.dark body:has(.about-page) {
+    background: #1a1a1a;
+  }
+</style>
+
 <style>
+  .about-page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0.5rem 0 3rem;
+  }
+  .page-header {
+    padding: 2rem 0 1.8rem;
+  }
   .page-title {
-    font-size: var(--font-size-l);
-    font-weight: var(--font-weight-bold);
-    margin: 0 0 1.5rem;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
   }
   .about-content {
     margin-bottom: 3rem;
   }
   .about-meta h2 {
-    font-size: var(--font-size-m);
-    font-weight: var(--font-weight-bold);
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--text-secondary);
     margin: 0 0 1rem;
     padding-bottom: 0.5rem;
@@ -69,6 +92,9 @@ const { Content } = hasContent && aboutEntry ? await render(aboutEntry) : { Cont
   }
   .about-meta a:hover {
     text-decoration-color: var(--text-secondary);
+  }
+  @media (max-width: 640px) {
+    .page-title { font-size: 1.55rem; }
   }
   @media (max-width: 600px) {
     .about-meta dl {

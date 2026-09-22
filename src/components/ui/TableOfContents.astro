@@ -4,12 +4,12 @@ import type { TOCProps } from '@/types'
 
 const { toc = [] }: TOCProps = Astro.props
 
-// 预计算每项是否有子级（下一项 level 更大）以及最小层级（用于缩进）
+// 预计算每项是否有子级、最小层级、缩进
 const minLevel = toc.reduce((m, t) => Math.min(m, t.level), 6)
 const items = toc.map((item, i) => ({
   ...item,
   hasChildren: i < toc.length - 1 && toc[i + 1].level > item.level,
-  indent: (item.level - minLevel) * 1.05
+  indent: (item.level - minLevel) * 1.5 // 1.5rem/级，比之前 1.05 更有层次
 }))
 ---
 
@@ -20,10 +20,10 @@ const items = toc.map((item, i) => ({
       {
         items.map((item) => (
           <li
-            class={`toc-item${item.hasChildren ? ' has-children' : ''}`}
+            class={`toc-item${item.hasChildren ? ' has-children collapsed' : ''}`}
             data-level={item.level}
             data-has-children={String(item.hasChildren)}
-            style={`--indent: ${item.indent}rem`}
+            style={`--indent: ${item.indent}rem; --level: ${item.level}`}
           >
             {item.hasChildren ? (
               <button class="toc-toggle" type="button" aria-label="折叠/展开">
@@ -58,7 +58,7 @@ const items = toc.map((item, i) => ({
     const activeOffset = 128
     const jumpOffset = 96
     const tocWidth = 14 * 16 // 14rem
-    const gap = 2.5 * 16 // 2.5rem
+    const gap = 4.5 * 16 // 4.5rem — 更靠左
 
     const state = {
       container: null,
@@ -123,6 +123,22 @@ const items = toc.map((item, i) => ({
         state.container.classList.remove('fixed-position')
         state.container.style.left = ''
       }
+    }
+
+    // 初始化时把 collapsed 项的子级隐藏（HTML 里已给父级加了 collapsed 类）
+    function applyInitialCollapse() {
+      const items = document.querySelectorAll('.toc-item')
+      items.forEach((item) => {
+        const isCollapsed = item.classList.contains('collapsed')
+        if (isCollapsed) {
+          const level = parseInt(item.dataset.level, 10)
+          let next = item.nextElementSibling
+          while (next && parseInt(next.dataset.level, 10) > level) {
+            next.classList.add('toc-hidden')
+            next = next.nextElementSibling
+          }
+        }
+      })
     }
 
     function handleToggle(e) {
@@ -206,6 +222,7 @@ const items = toc.map((item, i) => ({
     function init(retryCount = 0) {
       const maxRetries = 5
       if (initElements()) {
+        applyInitialCollapse()
         checkContent()
         adjustPosition()
         if (state.container) {
@@ -312,7 +329,7 @@ const items = toc.map((item, i) => ({
     font-weight: 700;
     letter-spacing: 0.12em;
     color: var(--text-tertiary);
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.8rem;
     padding-left: 0.1rem;
   }
 
@@ -346,20 +363,39 @@ const items = toc.map((item, i) => ({
     display: flex;
     align-items: flex-start;
     gap: 0.3rem;
-    padding: 0.16rem 0;
+    padding: 0.18rem 0;
     padding-left: var(--indent, 0);
     position: relative;
+  }
+
+  /* 等级感：不同 level 用不同字号/字重 */
+  .toc-item[data-level="1"] .toc-link {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .toc-item[data-level="2"] .toc-link {
+    font-size: 0.76rem;
+  }
+  .toc-item[data-level="3"] .toc-link {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+  }
+
+  /* 竖线：在缩进前画一条淡线表示层级 */
+  .toc-item {
+    /* 用伪元素画层级竖线 */
   }
 
   .toc-toggle,
   .toc-dot {
     flex-shrink: 0;
-    width: 0.95rem;
+    width: 0.9rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--text-tertiary);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     line-height: 1.5;
     height: 1.5rem;
   }
@@ -374,7 +410,7 @@ const items = toc.map((item, i) => ({
   .toc-arrow {
     display: inline-block;
     transition: transform 0.18s ease-out;
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     line-height: 1;
   }
 
@@ -384,7 +420,7 @@ const items = toc.map((item, i) => ({
 
   .toc-dot {
     color: var(--text-tertiary);
-    opacity: 0.6;
+    opacity: 0.45;
   }
 
   .toc-link {
@@ -393,7 +429,7 @@ const items = toc.map((item, i) => ({
     min-width: 0;
     color: var(--text-tertiary);
     text-decoration: none;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     line-height: 1.5;
     padding: 0.05rem 0;
     transition: color 0.15s ease-out;
@@ -410,6 +446,19 @@ const items = toc.map((item, i) => ({
   .toc-link.active {
     color: var(--text-primary);
     font-weight: 600;
+  }
+
+  /* 子级项左侧画竖线，强化层级感 */
+  .toc-item[data-level="2"]:not(.collapsed)::before,
+  .toc-item[data-level="3"]:not(.collapsed)::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--indent) - 0.55rem);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--surface-border);
+    opacity: 0.6;
   }
 
   .toc-item.toc-hidden {

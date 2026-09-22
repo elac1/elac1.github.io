@@ -1,46 +1,76 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import PostList from '@/components/widgets/PostList.astro'
+import PostCard from '@/components/widgets/PostCard.astro'
 import { themeConfig } from '@/config'
 import { getSortedFilteredPosts } from '@/utils/draft'
 
 const allPosts = await getSortedFilteredPosts()
-const notes = allPosts.filter((p) => p.data.category === '学习笔记')
+const posts = allPosts.filter((p) => p.data.category === '学习笔记')
 ---
 
 <IndexLayout title={`学习笔记 - ${themeConfig.site.title}`} description="学习笔记专栏：记录学习路上的点滴、踩过的坑和总结">
-  <main>
-    <header class="section-header">
+  <div class="category-page">
+    <header class="page-header">
       <h1 class="page-title">学习笔记</h1>
       <p class="page-desc">这个栏目放的是我的学习笔记——工具怎么装怎么用、概念怎么理解、遇到坑怎么绕过去。内容比较碎，但都是实际操作过的，你遇到类似问题可以直接抄。</p>
     </header>
-    {notes.length > 0 ? (
-      <PostList posts={notes} />
-    ) : (
-      <p class="empty-hint">学习笔记栏目暂无内容。</p>
-    )}
-  </main>
+    {
+      posts.length > 0 ? (
+        <div class="cards-grid">
+          {posts.map((post) => <PostCard post={post} />)}
+        </div>
+      ) : (
+        <p class="empty-hint">学习笔记栏目暂无内容。</p>
+      )
+    }
+  </div>
 </IndexLayout>
 
+<style is:global>
+  body:has(.category-page) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+    background: #f6f6f4;
+  }
+  html.dark body:has(.category-page) {
+    background: #1a1a1a;
+  }
+</style>
+
 <style>
-  .section-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
+  .category-page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0.5rem 0 3rem;
+  }
+  .page-header {
+    padding: 2rem 0 1.8rem;
   }
   .page-title {
-    font-size: var(--font-size-l);
-    font-weight: var(--font-weight-bold);
-    margin: 0 0 0.4rem;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
   }
   .page-desc {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    font-size: var(--font-size-s);
-    margin: 0;
+    line-height: 1.7;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
   }
   .empty-hint {
     text-align: center;
     color: var(--text-secondary);
     padding: 2rem 0;
+  }
+  @media (max-width: 640px) {
+    .page-title { font-size: 1.55rem; }
+    .cards-grid { grid-template-columns: 1fr; }
   }
 </style>
