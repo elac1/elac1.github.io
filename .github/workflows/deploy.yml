@@ -21,20 +21,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-
-      - name: Setup pnpm
-        run: corepack enable && corepack prepare pnpm@latest --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm run build
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Astro Build
+        run: pnpm exec astro build
+
+      - name: Pagefind
+        run: pnpm exec pagefind --site dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
