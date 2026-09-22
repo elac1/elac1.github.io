@@ -1,30 +1,126 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import About from '@/components/widgets/About.astro'
-import PostList from '@/components/widgets/PostList.astro'
+import PostCard from '@/components/widgets/PostCard.astro'
+import FeaturedCard from '@/components/widgets/FeaturedCard.astro'
+import Pagination from '@/components/widgets/Pagination.astro'
 import { themeConfig } from '@/config'
-import { getSortedFilteredPosts } from '@/utils/draft'
+import { getFeaturedAndStream, POST_PAGE_SIZE } from '@/utils/draft'
 
-const allPosts = await getSortedFilteredPosts()
-// 首页只展示标记为 featured 的重要文章
-const posts = allPosts.filter((p) => p.data.featured)
+// 置顶文章与常规文章流（单一数据源）
+const { featured, stream } = await getFeaturedAndStream()
+
+// 首页渲染文章流第 1 页；后续页由 /page/[page] 承载
+const firstPagePosts = stream.slice(0, POST_PAGE_SIZE)
+const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
-  <About />
-  <main>
-    {posts.length > 0 ? (
-      <PostList posts={posts} />
-    ) : (
-      <p class="empty-hint">垂直领域研究栏目暂无内容，敬请期待。</p>
-    )}
-  </main>
+  <div class="blog-home">
+    <!-- Hero：站名与一句介绍 -->
+    <section class="hero-block">
+      <h1 class="hero-title">{themeConfig.site.title}</h1>
+      <p class="hero-desc">{themeConfig.site.description}</p>
+    </section>
+
+    <!-- 置顶文章 -->
+    {
+      featured.length > 0 && (
+        <section class="featured-section">
+          <div class="featured-list">
+            {featured.map((post) => <FeaturedCard post={post} />)}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- 最新文章（第 1 页） -->
+    <section class="stream-section">
+      <h2 class="section-title">最新文章</h2>
+      <div class="cards-grid">
+        {firstPagePosts.map((post) => <PostCard post={post} />)}
+      </div>
+      {stream.length === 0 && <p class="empty-state">近一周还没有新文章，去<a href="/archive/">归档页</a>翻翻旧文吧。</p>}
+    </section>
+
+    <Pagination current={1} total={totalPages} />
+  </div>
 </IndexLayout>
 
+<style is:global>
+  /* 首页宽屏 + 柔和底色 */
+  body:has(.blog-home) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+    background: #f6f6f4;
+  }
+  html.dark body:has(.blog-home) {
+    background: #1a1a1a;
+  }
+</style>
+
 <style>
-  .empty-hint {
-    text-align: center;
+  .blog-home {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0.5rem 0 3rem;
+  }
+
+  /* Hero */
+  .hero-block {
+    padding: 2rem 0 1.8rem;
+  }
+  .hero-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .hero-desc {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
     color: var(--text-secondary);
+  }
+
+  /* 置顶区 */
+  .featured-section {
+    margin-bottom: 2.4rem;
+  }
+  .featured-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* 文章流 */
+  .section-title {
+    margin: 0 0 1.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+  .empty-state {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
     padding: 2rem 0;
+  }
+  .empty-state a {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .hero-title {
+      font-size: 1.55rem;
+    }
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

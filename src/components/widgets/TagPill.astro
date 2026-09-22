@@ -1,0 +1,64 @@
+---
+// 可复用的标签药丸：点击跳转到 /tags/[tag] 聚合页
+type Props = {
+  tag: string
+  size?: 'sm' | 'md'
+}
+const { tag, size = 'md' } = Astro.props
+const href = `/tags/${encodeURIComponent(tag)}/`
+---
+
+<a class:list={['tag-pill', `size-${size}`]} href={href}>
+  <span class="hash" aria-hidden="true">#</span>{tag}
+</a>
+
+<style>
+  .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.05rem;
+    border-radius: 999px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+      background 0.15s ease-out,
+      border-color 0.15s ease-out;
+  }
+
+  /* 尺寸 */
+  .size-md {
+    padding: 0.38rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  .size-sm {
+    padding: 0.26rem 0.6rem;
+    font-size: 0.72rem;
+  }
+
+  /* 浅色：淡紫底 + 紫字 */
+  .tag-pill {
+    background: rgba(124, 107, 212, 0.09);
+    color: #6a5ac0;
+  }
+  .tag-pill:hover {
+    background: rgba(124, 107, 212, 0.18);
+    border-color: rgba(124, 107, 212, 0.35);
+  }
+  .hash {
+    opacity: 0.55;
+    margin-right: 0.1rem;
+  }
+
+  /* 暗黑：提高紫底明度，保证对比度 */
+  html.dark .tag-pill {
+    background: rgba(124, 107, 212, 0.18);
+    color: #b6aaf3;
+  }
+  html.dark .tag-pill:hover {
+    background: rgba(124, 107, 212, 0.3);
+    border-color: rgba(124, 107, 212, 0.45);
+  }
+</style>

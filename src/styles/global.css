@@ -43,6 +43,11 @@
   --astro-code-token-string-expression: rgba(0, 0, 0, 0.55);
   --astro-code-token-punctuation: rgba(0, 0, 0, 0.55);
   --astro-code-token-link: rgba(0, 0, 0, 0.55);
+
+  /* Card Surfaces（卡片、面板） */
+  --surface: #ffffff;
+  --surface-border: #e3e3df;
+  --surface-muted: #efefec;
 }
 
 /* Light Mode (Explicit) */
@@ -72,27 +77,33 @@ html.light {
 
 /* Dark Mode (Explicit) */
 html.dark {
-  --bg: #1c1c1c;
-  --text-primary: rgba(255, 255, 255, 0.9);
-  --text-secondary: rgba(255, 255, 255, 0.4);
-  --text-tertiary: rgba(255, 255, 255, 0.24);
+  /* 深灰底 + 浅灰字，不使用纯黑纯白 */
+  --bg: #1a1a1a;
+  --text-primary: rgba(255, 255, 255, 0.8);
+  --text-secondary: rgba(255, 255, 255, 0.45);
+  --text-tertiary: rgba(255, 255, 255, 0.28);
   --border: rgba(255, 255, 255, 0.1);
-  --selection: rgba(255, 255, 255, 0.08);
-  --code-bg: rgba(255, 255, 255, 0.04);
-  --mark: #545b37;
+  --selection: rgba(255, 255, 255, 0.12);
+  --code-bg: rgba(255, 255, 255, 0.06);
+  --mark: #4d5438;
 
-  /* Syntax Theme  */
-  --astro-code-foreground: rgba(255, 255, 255, 0.9);
-  --astro-code-background: rgba(255, 255, 255, 0.03);
-  --astro-code-token-constant: rgba(255, 255, 255, 0.9);
-  --astro-code-token-string: rgba(255, 255, 255, 0.9);
-  --astro-code-token-comment: rgba(255, 255, 255, 0.35);
-  --astro-code-token-keyword: rgba(255, 255, 255, 0.55);
-  --astro-code-token-parameter: rgba(255, 255, 255, 0.9);
-  --astro-code-token-function: rgba(255, 255, 255, 0.9);
-  --astro-code-token-string-expression: rgba(255, 255, 255, 0.55);
-  --astro-code-token-punctuation: rgba(255, 255, 255, 0.55);
-  --astro-code-token-link: rgba(255, 255, 255, 0.55);
+  /* Card Surfaces */
+  --surface: #232323;
+  --surface-border: rgba(255, 255, 255, 0.1);
+  --surface-muted: rgba(255, 255, 255, 0.07);
+
+  /* Syntax Theme —— 暗色专用彩色高亮（One Dark 风格） */
+  --astro-code-foreground: #abb2bf;
+  --astro-code-background: #141414;
+  --astro-code-token-constant: #d19a66;
+  --astro-code-token-string: #98c379;
+  --astro-code-token-comment: #5c6370;
+  --astro-code-token-keyword: #c678dd;
+  --astro-code-token-parameter: #c9d1d9;
+  --astro-code-token-function: #61afef;
+  --astro-code-token-string-expression: #98c379;
+  --astro-code-token-punctuation: #abb2bf;
+  --astro-code-token-link: #61afef;
 }
 
 html {

@@ -2,149 +2,152 @@
 import { themeConfig } from '@/config'
 import ThemeToggle from '@/components/ui/ThemeToggle.astro'
 
+// 文字导航项
 const navItems = [
-  { href: '/narrow', label: '窄门' },
-  { href: '/notes', label: '学习笔记' },
+  { href: '/', label: '首页' },
+  { href: '/notes', label: '笔记' },
+  { href: '/narrow', label: '技术' },
   { href: '/archive', label: '归档' },
-  { href: '/tags', label: '标签' },
   { href: '/about', label: '关于' }
 ]
+
+// 当前页面高亮
+const path = Astro.url.pathname
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href)
 ---
 
-<header>
-  <nav>
-    <a href="/">{themeConfig.site.title}</a>
-    <div class="nav-right">
-      <ul class="nav-links">
-        {
-          navItems.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))
-        }
-      </ul>
-      {themeConfig.general.themeToggle && <ThemeToggle />}
-      <details class="nav-mobile">
-        <summary aria-label="菜单"></summary>
-        <ul>
-          {
-            navItems.map((item) => (
-              <li>
-                <a href={item.href}>{item.label}</a>
-              </li>
-            ))
-          }
-        </ul>
-      </details>
-    </div>
+<header class="site-header">
+  <a href="/" class="site-brand">
+    <img src="/images/avatar.png" alt="" class="brand-avatar" width="28" height="28" />
+    <span class="brand-text">{themeConfig.site.title}</span>
+  </a>
+
+  <nav class="site-nav" aria-label="主导航">
+    {
+      navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { active: isActive(item.href) }]}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))
+    }
   </nav>
+
+  <div class="header-actions">
+    <a href="/search" aria-label="搜索" title="搜索" class="action-icon">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </svg>
+    </a>
+    <a href="/rss.xml" aria-label="RSS 订阅" title="RSS" class="action-icon hide-mobile">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 11a9 9 0 0 1 9 9" />
+        <path d="M4 4a16 16 0 0 1 16 16" />
+        <circle cx="5" cy="19" r="1.4" fill="currentColor" stroke="none" />
+      </svg>
+    </a>
+    {themeConfig.general.themeToggle && <ThemeToggle />}
+  </div>
 </header>
 
 <style>
-  header {
-    margin: 0;
-  }
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  header > nav > a {
-    font-weight: var(--font-weight-bold);
-    color: var(--text-primary);
-    text-decoration: none;
-    min-width: 3rem;
-    display: inline-block;
-  }
-  .nav-right {
+  .site-header {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1.5rem;
+    padding: 0.55rem 0;
   }
-  .nav-links {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 1.25rem;
-  }
-  .nav-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: var(--font-size-s);
-    transition: color 0.15s ease-out;
-  }
-  .nav-links a:hover {
-    color: var(--text-primary);
-  }
-  .nav-mobile {
-    display: none;
-    position: relative;
-  }
-  .nav-mobile > summary {
-    list-style: none;
-    cursor: pointer;
-    width: 1.25rem;
-    height: 1.25rem;
-    position: relative;
+
+  /* 站名 + 头像 */
+  .site-brand {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    flex-shrink: 0;
   }
-  .nav-mobile > summary::-webkit-details-marker {
-    display: none;
-  }
-  .nav-mobile > summary::before {
-    content: '';
-    width: 1.1rem;
-    height: 1.5px;
-    background: var(--text-primary);
-    box-shadow: 0 -5px 0 var(--text-primary), 0 5px 0 var(--text-primary);
-  }
-  .nav-mobile[open] > summary::before {
-    box-shadow: 0 0 0 var(--text-primary), 0 0 0 var(--text-primary);
-    background: transparent;
-    border: 1.5px solid var(--text-primary);
-    border-radius: 50%;
-    width: 0.7rem;
-    height: 0.7rem;
-  }
-  .nav-mobile ul {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin: 0.5rem 0 0;
-    padding: 0.5rem 0;
-    list-style: none;
-    background: var(--bg);
-    border: 1px solid var(--border);
+  .brand-avatar {
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 0.5rem;
-    min-width: 7rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    z-index: 100;
-  }
-  .nav-mobile li a {
+    object-fit: cover;
     display: block;
-    padding: 0.5rem 1rem;
+  }
+  .brand-text {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  /* 中部导航 */
+  .site-nav {
+    display: flex;
+    gap: 1.3rem;
+    margin-left: auto;
+  }
+  .nav-link {
+    font-size: 0.85rem;
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: var(--font-size-s);
+    padding: 0.2rem 0;
+    position: relative;
+    transition: color 0.15s ease-out;
   }
-  .nav-mobile li a:hover {
+  .nav-link:hover {
     color: var(--text-primary);
-    background: var(--code-bg);
   }
-  @media (max-width: 768px) {
-    .nav-links {
-      display: none;
-    }
-    .nav-mobile {
-      display: block;
-    }
+  .nav-link.active {
+    color: var(--text-primary);
+    font-weight: 700;
   }
-  @media (min-width: 769px) {
-    .nav-mobile {
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.35rem;
+    height: 2px;
+    background: var(--text-primary);
+  }
+
+  /* 右侧操作图标 */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-shrink: 0;
+  }
+  .action-icon {
+    color: var(--text-secondary);
+    display: inline-flex;
+    transition: color 0.15s ease-out;
+  }
+  .action-icon:hover {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 640px) {
+    .site-header {
+      gap: 0.9rem;
+    }
+    .brand-text {
+      max-width: 5.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .site-nav {
+      gap: 0.7rem;
+    }
+    .nav-link {
+      font-size: 0.8rem;
+    }
+    .hide-mobile {
       display: none;
     }
   }

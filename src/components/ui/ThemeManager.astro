@@ -8,7 +8,7 @@
   }
 
   html.dark {
-    --bg: #1c1c1c;
+    --bg: #1a1a1a;
   }
 
   html {
@@ -66,8 +66,8 @@
 
       getEffectiveTheme() {
         const stored = this.getStoredTheme()
-        // Default to light theme; only an explicit user choice overrides it.
-        return stored || 'light'
+        // 用户未手动选择时，跟随系统偏好 (prefers-color-scheme)
+        return stored || this.getSystemTheme()
       },
 
       isUsingSystemTheme() {
@@ -108,8 +108,7 @@
         this.applyTheme(this.getEffectiveTheme())
 
         systemThemeQuery.addEventListener('change', () => {
-          // Keep the site on its chosen theme (light by default); system
-          // theme changes no longer override it.
+          // 用户没有手动选择时跟随系统变化；手动选择后以用户选择为准
           this.applyTheme(this.getEffectiveTheme())
         })
 

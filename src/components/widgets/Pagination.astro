@@ -1,0 +1,157 @@
+---
+// 文章流分页器：首页为第 1 页（/），其后为 /page/2、/page/3 …
+type Props = {
+  current: number // 当前页（1 起）
+  total: number // 总页数
+}
+const { current, total } = Astro.props
+
+// 页码链接：第 1 页就是首页
+const pageHref = (n: number) => (n === 1 ? '/' : `/page/${n}/`)
+
+// 生成窗口式页码：首尾常显，当前页前后各 1 页，其余以省略号占位
+function buildPages(): (number | 'gap')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+  const pages: (number | 'gap')[] = [1]
+  const start = Math.max(2, current - 1)
+  const end = Math.min(total - 1, current + 1)
+  if (start > 2) pages.push('gap')
+  for (let n = start; n <= end; n++) pages.push(n)
+  if (end < total - 1) pages.push('gap')
+  pages.push(total)
+  return pages
+}
+const pages = buildPages()
+---
+
+{
+  total > 1 && (
+    <nav class="pagination" aria-label="分页">
+      {current > 1 ? (
+        <a href={pageHref(current - 1)} class="page-step" rel="prev">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          上一页
+        </a>
+      ) : (
+        <span class="page-step disabled">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          上一页
+        </span>
+      )}
+
+      <ul class="page-numbers">
+        {
+          pages.map((p) =>
+            p === 'gap' ? (
+              <li class="page-gap" aria-hidden="true">…</li>
+            ) : (
+              <li>
+                {p === current ? (
+                  <span class="page-number current" aria-current="page">{p}</span>
+                ) : (
+                  <a href={pageHref(p)} class="page-number">{p}</a>
+                )}
+              </li>
+            )
+          )
+        }
+      </ul>
+
+      {
+        current < total ? (
+          <a href={pageHref(current + 1)} class="page-step" rel="next">
+            下一页
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </a>
+        ) : (
+          <span class="page-step disabled">
+            下一页
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </span>
+        )
+      }
+    </nav>
+  )
+}
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.2rem;
+  }
+  .page-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    transition:
+      border-color 0.15s ease-out,
+      background 0.15s ease-out;
+  }
+  a.page-step:hover {
+    border-color: var(--text-tertiary);
+    background: var(--code-bg);
+  }
+  .page-step.disabled {
+    color: var(--text-tertiary);
+    opacity: 0.5;
+  }
+  .page-numbers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .page-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.9rem;
+    height: 1.9rem;
+    padding: 0 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 0.45rem;
+    transition:
+      color 0.15s ease-out,
+      background 0.15s ease-out;
+  }
+  a.page-number:hover {
+    color: var(--text-primary);
+    background: var(--code-bg);
+  }
+  .page-number.current {
+    color: #fff;
+    background: #7c6bd4;
+    font-weight: 700;
+  }
+  .page-gap {
+    color: var(--text-tertiary);
+    font-size: 0.8rem;
+    padding: 0 0.2rem;
+  }
+  @media (max-width: 640px) {
+    .page-step {
+      padding: 0.35rem 0.55rem;
+    }
+  }
+</style>

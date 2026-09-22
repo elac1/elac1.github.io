@@ -1,0 +1,117 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { getSortedFilteredPosts } from '@/utils/draft'
+import TagPill from '@/components/widgets/TagPill.astro'
+import FormattedDate from '@/components/widgets/FormattedDate.astro'
+
+// 文章页底部：标签 Pill + 基于标签自动推荐的相关文章
+type Props = { post: CollectionEntry<'posts'> }
+const { post } = Astro.props
+const tags = post.data.tags ?? []
+
+// 计算相关文章：共同标签越多越相关；同分时新文章优先；取前 3
+const otherPosts = (await getSortedFilteredPosts()).filter((p) => p.id !== post.id)
+const related = otherPosts
+  .map((p) => ({
+    post: p,
+    score: p.data.tags.filter((t) => tags.includes(t)).length
+  }))
+  .filter((r) => r.score > 0)
+  .sort(
+    (a, b) =>
+      b.score - a.score ||
+      b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf()
+  )
+  .slice(0, 3)
+  .map((r) => r.post)
+---
+
+<footer class="post-footer">
+  {
+    tags.length > 0 && (
+      <section class="footer-block">
+        <h2 class="footer-heading">标签</h2>
+        <div class="footer-pills">
+          {tags.map((t) => <TagPill tag={t} />)}
+        </div>
+      </section>
+    )
+  }
+  {
+    related.length > 0 && (
+      <section class="footer-block">
+        <h2 class="footer-heading">相关文章</h2>
+        <ul class="related-list">
+          {related.map((r) => (
+            <li>
+              <a href={`/${r.id}/`} class="related-item">
+                <span class="related-title">{r.data.title}</span>
+                <span class="related-date">
+                  <FormattedDate date={r.data.pubDate} context="list" />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</footer>
+
+<style>
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+  }
+  .footer-heading {
+    margin: 0 0 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .footer-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* 相关文章列表 */
+  .related-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .related-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    text-decoration: none;
+  }
+  .related-title {
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    transition: color 0.15s ease-out;
+  }
+  .related-item:hover .related-title {
+    color: #6a5ac0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  html.dark .related-item:hover .related-title {
+    color: #b6aaf3;
+  }
+  .related-date {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

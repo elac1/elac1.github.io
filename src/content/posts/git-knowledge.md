@@ -6,7 +6,7 @@ tags:
   - Git
   - 工具
 category: 学习笔记
-featured: true
+featured: false
 ---
 
 `git 是一个分布式版本控制的软件`

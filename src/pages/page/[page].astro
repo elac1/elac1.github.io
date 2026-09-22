@@ -1,0 +1,76 @@
+---
+import type { GetStaticPaths } from 'astro'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import PostCard from '@/components/widgets/PostCard.astro'
+import Pagination from '@/components/widgets/Pagination.astro'
+import { themeConfig } from '@/config'
+import { getFeaturedAndStream, POST_PAGE_SIZE } from '@/utils/draft'
+
+// 文章流分页：第 1 页由首页 / 承载，这里只生成第 2 页起，避免内容重复
+export const getStaticPaths = (async ({ paginate }) => {
+  const { stream } = await getFeaturedAndStream()
+  return paginate(stream, { pageSize: POST_PAGE_SIZE }).filter(
+    (result) => result.params.page !== '1'
+  )
+}) satisfies GetStaticPaths
+
+const { page } = Astro.props
+---
+
+<IndexLayout
+  title={`第 ${page.currentPage} 页 - ${themeConfig.site.title}`}
+  description={themeConfig.site.description}
+>
+  <div class="paged-home">
+    <section class="stream-section">
+      <h1 class="section-title">最新文章 <span class="page-indicator">第 {page.currentPage} 页</span></h1>
+      <div class="cards-grid">
+        {page.data.map((post) => <PostCard post={post} />)}
+      </div>
+    </section>
+
+    <Pagination current={page.currentPage} total={page.lastPage} />
+  </div>
+</IndexLayout>
+
+<style is:global>
+  /* 分页页与首页同一套宽屏底色 */
+  body:has(.paged-home) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+    background: #f6f6f4;
+  }
+  html.dark body:has(.paged-home) {
+    background: #1a1a1a;
+  }
+</style>
+
+<style>
+  .paged-home {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 1.5rem 0 3rem;
+  }
+  .section-title {
+    margin: 0 0 1.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .page-indicator {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-left: 0.5rem;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+  @media (max-width: 640px) {
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,12 +1,12 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import FormattedDate from '@/components/widgets/FormattedDate.astro'
+import PostCard from '@/components/widgets/PostCard.astro'
 import { getSortedFilteredPosts } from '@/utils/draft'
 import { themeConfig } from '@/config'
 
 const posts = await getSortedFilteredPosts()
 
-// 按年份分组
+// 按年份分组（保持时间线浏览的核心价值）
 const postsByYear = new Map<number, typeof posts>()
 for (const post of posts) {
   const year = post.data.pubDate.getFullYear()
@@ -17,32 +17,45 @@ const years = [...postsByYear.keys()].sort((a, b) => b - a)
 ---
 
 <IndexLayout title={`归档 - ${themeConfig.site.title}`} description="所有文章按时间归档">
-  <main>
-    <h1 class="page-title">归档</h1>
-    <p class="page-count">共 {posts.length} 篇文章</p>
+  <div class="archive-page">
+    <header class="archive-header">
+      <h1 class="page-title">归档</h1>
+      <p class="page-count">共 {posts.length} 篇文章</p>
+    </header>
     {
       years.map((year) => (
         <section class="archive-year">
           <h2 class="year-title">{year}</h2>
-          <ul class="archive-list">
-            {postsByYear.get(year)!.map((post) => (
-              <li>
-                <a href={`/${post.id}/`} class="archive-item">
-                  <span class="archive-date">
-                    <FormattedDate date={post.data.pubDate} context="list" />
-                  </span>
-                  <span class="archive-title">{post.data.title}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div class="archive-grid">
+            {postsByYear.get(year)!.map((post) => <PostCard post={post} />)}
+          </div>
         </section>
       ))
     }
-  </main>
+  </div>
 </IndexLayout>
 
+<style is:global>
+  /* 归档页使用宽屏布局，与首页保持一致 */
+  body:has(.archive-page) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+    background: #f6f6f4;
+  }
+  html.dark body:has(.archive-page) {
+    background: #1a1a1a;
+  }
+</style>
+
 <style>
+  .archive-page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 1rem 0 3rem;
+  }
+  .archive-header {
+    margin-bottom: 0.5rem;
+  }
   .page-title {
     font-size: var(--font-size-l);
     font-weight: var(--font-weight-bold);
@@ -64,38 +77,15 @@ const years = [...postsByYear.keys()].sort((a, b) => b - a)
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border);
   }
-  .archive-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  /* 年内复用首页卡片网格：封面/圆角/阴影/降级逻辑只此一份 */
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem;
   }
-  .archive-item {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: opacity 0.15s ease-out;
-  }
-  .archive-item:hover {
-    opacity: 0.6;
-  }
-  .archive-date {
-    color: var(--text-secondary);
-    font-size: var(--font-size-s);
-    flex-shrink: 0;
-    font-variant-numeric: tabular-nums;
-  }
-  .archive-title {
-    flex: 1;
-  }
-  @media (max-width: 600px) {
-    .archive-item {
-      flex-direction: column;
-      gap: 0.25rem;
+  @media (max-width: 640px) {
+    .archive-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -60,6 +60,8 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
         <article class="content" data-pagefind-body>
           <slot />
         </article>
+        {/* 文章底部：标签与相关文章（命名插槽，不混入 article 语义） */}
+        <slot name="postFooter" />
       </div>
     </main>
     {shouldRenderImageOptimizer && <ImageOptimizer />}

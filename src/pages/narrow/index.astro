@@ -8,16 +8,16 @@ const allPosts = await getSortedFilteredPosts()
 const posts = allPosts.filter((p) => p.data.category === '垂直领域研究')
 ---
 
-<IndexLayout title={`窄门 - ${themeConfig.site.title}`} description="窄门专栏：聚焦机器人、ROS 2 等方向的实战研究">
+<IndexLayout title={`ROS 机器人 - ${themeConfig.site.title}`} description="ROS 机器人专栏：ROS 2、建图导航、部署调参方向的实战研究">
   <main>
     <header class="section-header">
-      <h1 class="page-title">窄门</h1>
-      <p class="page-desc">这个栏目放的是我在机器人、ROS 2 等方向上的实战研究——从建图导航到部署调参，记录从零搭建到跑通的完整过程，包括参数选择、踩坑总结和效果分析。如果你也在搞机器人，希望这些经验能帮你少走弯路。叫"窄门"是因为深入一个领域的路很窄，得一步步走。</p>
+      <h1 class="page-title">ROS 机器人</h1>
+      <p class="page-desc">这个栏目只放机器人 / ROS 2 相关内容——从建图导航到部署调参，记录从零搭建到跑通的完整过程，包括参数选择、踩坑总结和效果分析。如果你也在搞机器人，希望这些经验能帮你少走弯路。</p>
     </header>
     {posts.length > 0 ? (
       <PostList posts={posts} />
     ) : (
-      <p class="empty-hint">垂直领域研究栏目暂无内容。</p>
+      <p class="empty-hint">ROS 机器人栏目暂无内容。</p>
     )}
   </main>
 </IndexLayout>
