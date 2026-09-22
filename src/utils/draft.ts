@@ -33,7 +33,7 @@ export async function getFeaturedAndStream() {
   const posts = await getSortedFilteredPosts()
   const cutoff = Date.now() - STREAM_WINDOW_DAYS * 24 * 60 * 60 * 1000
   return {
-    featured: posts.filter((p) => p.data.featured),
-    stream: posts.filter((p) => p.data.pubDate.valueOf() >= cutoff)
+    featured: posts.filter((p: CollectionEntry<'posts'>) => p.data.featured),
+    stream: posts.filter((p: CollectionEntry<'posts'>) => p.data.pubDate.valueOf() >= cutoff)
   }
 }
