@@ -2,6 +2,8 @@
 
 > 这是一份"照着做就能发文章"的模板。每次写新文章时打开本文件，按顺序操作即可。
 > 配套的背景说明见 [BLOG_GUIDE.md](./BLOG_GUIDE.md)。
+> ⚠️ 两点已更新：草稿转正命令是 `pnpm release`（不是 `pnpm publish`）；文章按「每篇一个目录」存放，即 `文章名/index.md`。
+> 最新教程见 [WRITING_GUIDE.md](./WRITING_GUIDE.md)。
 
 - 线上博客：https://elac1.github.io/
 - 文章存放目录：`src/content/posts/`
@@ -37,7 +39,7 @@ pnpm new "_草稿标题"           # 创建草稿（文件名以 _ 开头，不�
 
 1. 在 `src/content/posts/` 下新建文件，文件名用**英文小写 + 连字符**，例如：
    `hardware-basics.md`、`ros2-nav2-debug.md`
-2. 文件名开头加 `_` 表示草稿，不会出现在线上，例如：`_hardware-basics.md`
+2. 目录名开头加 `_` 表示草稿，不会出现在线上，例如：`_hardware-basics/index.md`
 
 ### frontmatter 模板（复制到文章最顶部，含 `---` 两行）
 
@@ -78,7 +80,7 @@ featured: false
 
 ```bash
 pnpm drafts                 # 查看现在有哪些草稿
-pnpm publish hardware-basics # 草稿转正：自动把 _hardware-basics.md 改名并把日期更新为今天
+pnpm release hardware-basics # 草稿转正：把 _hardware-basics/ 目录改名为 hardware-basics/，日期改成今天
 ```
 
 ---
@@ -318,7 +320,7 @@ git push origin main
 | `pnpm build` | 完整构建检查（推送前自查） |
 | `pnpm new` | 新建文章 |
 | `pnpm drafts` | 查看所有草稿 |
-| `pnpm publish 文件名` | 草稿转正（去下划线 + 日期改今天） |
+| `pnpm release 目录名` | 草稿转正（去下划线 + 日期改今天） |
 | `git add . && git commit -m "说明" && git push origin main` | 提交并上线 |
 
 ---

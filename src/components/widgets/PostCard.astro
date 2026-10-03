@@ -2,6 +2,7 @@
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import TagPill from '@/components/widgets/TagPill.astro'
 import type { CollectionEntry } from 'astro:content'
+import { getPostSlug } from '@/utils/post'
 
 type Props = { post: CollectionEntry<'posts'> }
 const { post } = Astro.props
@@ -35,7 +36,7 @@ function readingMinutes(p: CollectionEntry<'posts'>): number {
 
 const excerpt = getExcerpt(post)
 const minutes = readingMinutes(post)
-const href = `/${post.id}/`
+const href = `/${getPostSlug(post)}/`
 ---
 
 <article class="post-card">

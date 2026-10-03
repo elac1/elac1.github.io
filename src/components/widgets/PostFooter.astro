@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 import { getSortedFilteredPosts } from '@/utils/draft'
+import { getPostSlug } from '@/utils/post'
 import TagPill from '@/components/widgets/TagPill.astro'
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
 
@@ -10,7 +11,8 @@ const { post } = Astro.props
 const tags = post.data.tags ?? []
 
 // 计算相关文章：共同标签越多越相关；同分时新文章优先；取前 3
-const otherPosts = (await getSortedFilteredPosts()).filter((p) => p.id !== post.id)
+const postSlug = getPostSlug(post)
+const otherPosts = (await getSortedFilteredPosts()).filter((p) => getPostSlug(p) !== postSlug)
 const related = otherPosts
   .map((p) => ({
     post: p,
@@ -44,7 +46,7 @@ const related = otherPosts
         <ul class="related-list">
           {related.map((r) => (
             <li>
-              <a href={`/${r.id}/`} class="related-item">
+              <a href={`/${getPostSlug(r)}/`} class="related-item">
                 <span class="related-title">{r.data.title}</span>
                 <span class="related-date">
                   <FormattedDate date={r.data.pubDate} context="list" />

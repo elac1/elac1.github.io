@@ -5,6 +5,12 @@
   font-size: var(--font-size-m);
 }
 
+/* 正文区域更易读 */
+.prose .content {
+  font-size: 1.09375rem;
+  line-height: 1.85;
+}
+
 /* Main content container */
 .prose {
   margin-bottom: 8rem;
@@ -31,10 +37,26 @@
 .prose h3,
 .prose h4,
 .prose h5 {
-  font-size: var(--font-size-m);
   font-weight: var(--font-weight-bold);
-  line-height: 1.75;
-  margin: 3.75em 0 1.75em 0;
+  line-height: 1.4;
+  margin: 3em 0 1.25em 0;
+}
+
+.prose h1 {
+  font-size: 1.5rem;
+}
+
+.prose h2 {
+  font-size: 1.25rem;
+}
+
+.prose h3 {
+  font-size: 1.09375rem;
+}
+
+.prose h4,
+.prose h5 {
+  font-size: var(--font-size-m);
 }
 
 /* Bold text */
@@ -65,8 +87,8 @@
 
 /* Paragraphs */
 .prose p {
-  line-height: 1.75;
-  margin: 1.75em 0;
+  line-height: 1.85;
+  margin: 1.5em 0;
 }
 
 /* Tables */
@@ -193,9 +215,10 @@
 /* Blockquotes */
 .prose blockquote {
   border-left: 2px solid var(--border);
-  margin: 0 0 1.75em 0.125em;
-  padding: 0 0 0 1.375em;
+  margin: 1.75em 0;
+  padding: 0.25em 0 0.25em 1.5em;
   text-align: left;
+  color: var(--text-primary);
 }
 
 .prose blockquote p {
@@ -211,9 +234,9 @@
 .prose ul {
   list-style-type: none;
   padding-left: 0;
-  margin-left: 1rem;
+  margin-left: 1.25rem;
   margin-bottom: 1.75em;
-  line-height: 1.75;
+  line-height: 1.85;
 }
 
 .prose ul ul {
@@ -253,8 +276,9 @@
 .prose ol {
   list-style-position: outside;
   padding-left: 0;
-  margin-left: 1.25rem;
+  margin-left: 1.5rem;
   margin-bottom: 1.75em;
+  line-height: 1.85;
   counter-reset: item;
 }
 
@@ -505,7 +529,7 @@
   margin: 0;
   background: none;
   border: none;
-  line-height: 1.5;
+  line-height: 1.7;
   border-radius: 0;
 }
 

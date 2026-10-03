@@ -6,7 +6,14 @@
  *   pnpm new                   # 交互模式，依次问 标题/tags/是否草稿
  *   pnpm new "_标题"           # 文件名以 _ 开头表示草稿
  *
- * 草稿不会出现在博客列表，发布时用 `pnpm publish <文件名>` 去掉下划线前缀。
+ * 每篇文章存在自己的目录（post bundle），图片可放在文章目录下，方便管理：
+ *   src/content/posts/我的文章/
+ *   └── index.md
+ *       images/
+ *   src/content/posts/_草稿/         # 草稿目录以 _ 开头
+ *   └── index.md
+ *
+ * 草稿不会出现在博客列表，发布时用 `pnpm release <目录名>` 去掉下划线前缀。
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
@@ -47,29 +54,30 @@ async function main() {
     rl.close()
   }
 
-  // 草稿：文件名加下划线前缀
+  // 草稿：目录名加下划线前缀
   const isDraftFromName = rawTitle.startsWith('_')
   if (isDraftFromName) {
     isDraft = true
     rawTitle = rawTitle.slice(1)
   }
 
-  // 生成文件名（kebab-case）
-  const fileName: string = (isDraft ? '_' : '') + rawTitle
+  // 生成目录名（kebab-case）
+  let dirName: string = rawTitle
     .toLowerCase()
-    .replace(/[^a-z0-9\s\-_]/g, '')
+    .replace(/[^a-z0-9\u4e00-\u9fa5\s\-_]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
-  const targetFile: string = `${fileName}.md`
-  const fullPath: string = join('src/content/posts', targetFile)
+  if (!dirName) dirName = `post-${Date.now()}`
+  const dirFull = (isDraft ? '_' : '') + dirName
+  const targetFile: string = join('src/content/posts', dirFull, 'index.md')
 
-  if (existsSync(fullPath)) {
-    console.error(`😇 文件已存在：${fullPath}`)
+  if (existsSync(targetFile)) {
+    console.error(`😇 文件已存在：${targetFile}`)
     process.exit(1)
   }
 
-  mkdirSync(dirname(fullPath), { recursive: true })
+  mkdirSync(dirname(targetFile), { recursive: true })
 
   // 解析 tags
   const tags = tagsInput
@@ -79,19 +87,23 @@ async function main() {
 
   // 生成 frontmatter
   const today = new Date().toISOString().split('T')[0]
-  let content = `---\ntitle: ${rawTitle}\npubDate: '${today}'\n`
+  const safeTitle = rawTitle.replace(/'/g, "\\'")
+  let content = `---\ntitle: '${safeTitle}'\npubDate: '${today}'\n`
   if (tags.length > 0) {
     content += `tags:\n${tags.map((t) => `  - ${t}`).join('\n')}\n`
   }
   content += `---\n\n`
 
   try {
-    writeFileSync(fullPath, content)
+    writeFileSync(targetFile, content)
+    const postDir = join('src/content/posts', dirFull)
     if (isDraft) {
-      console.log(`📝 草稿已创建：${fullPath}`)
-      console.log(`   发布时运行：pnpm publish ${fileName.replace(/^_/, '')}`)
+      console.log(`📝 草稿已创建：${postDir}/`)
+      console.log(`   图片可放在：${postDir}/images/`)
+      console.log(`   发布时运行：pnpm release ${dirName}`)
     } else {
-      console.log(`✅ 文章已创建：${fullPath}`)
+      console.log(`✅ 文章已创建：${postDir}/`)
+      console.log(`   图片可放在：${postDir}/images/`)
     }
   } catch (error) {
     console.error('⚠️ 创建失败：', error)

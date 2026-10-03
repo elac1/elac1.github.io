@@ -4,35 +4,20 @@ import type { TOCProps } from '@/types'
 
 const { toc = [] }: TOCProps = Astro.props
 
-// 预计算每项是否有子级、最小层级、缩进
 const minLevel = toc.reduce((m, t) => Math.min(m, t.level), 6)
-const items = toc.map((item, i) => ({
+const items = toc.map((item) => ({
   ...item,
-  hasChildren: i < toc.length - 1 && toc[i + 1].level > item.level,
-  indent: (item.level - minLevel) * 1.5 // 1.5rem/级，比之前 1.05 更有层次
+  indent: (item.level - minLevel) * 0.75
 }))
 ---
 
 <div class="toc-container" id="toc">
-  <div class="toc-title">目录</div>
-  <nav class="toc-nav">
-    <ul class="toc-list" id="toc-list">
+  <nav class="toc-nav" aria-label="文章目录">
+    <ul class="toc-list">
       {
         items.map((item) => (
-          <li
-            class={`toc-item${item.hasChildren ? ' has-children collapsed' : ''}`}
-            data-level={item.level}
-            data-has-children={String(item.hasChildren)}
-            style={`--indent: ${item.indent}rem; --level: ${item.level}`}
-          >
-            {item.hasChildren ? (
-              <button class="toc-toggle" type="button" aria-label="折叠/展开">
-                <span class="toc-arrow">▾</span>
-              </button>
-            ) : (
-              <span class="toc-dot" aria-hidden="true">·</span>
-            )}
-            <a href={`#${item.id}`} class="toc-link" title={item.text} data-id={item.id}>
+          <li class="toc-item" data-id={item.id} style={`--indent: ${item.indent}rem`}>
+            <a href={`#${item.id}`} class="toc-link" title={item.text}>
               {item.text}
             </a>
           </li>
@@ -46,8 +31,7 @@ const items = toc.map((item, i) => ({
   is:inline
   define:vars={{
     contentWidth: themeConfig.general.contentWidth,
-    centeredLayout: themeConfig.general.centeredLayout,
-    toc: themeConfig.post.toc
+    centeredLayout: themeConfig.general.centeredLayout
   }}
 >
   ;(function () {
@@ -55,22 +39,18 @@ const items = toc.map((item, i) => ({
       window.__tocController.destroy()
     }
 
-    const activeOffset = 128
     const jumpOffset = 96
-    const tocWidth = 14 * 16 // 14rem
-    const gap = 4.5 * 16 // 4.5rem — 更靠左
+    const tocWidth = 12 * 16
+    const gap = 4 * 16
 
     const state = {
       container: null,
       linkList: [],
-      toggleList: [],
       headingList: [],
       headingMap: new Map(),
-      scrollFrame: null,
-      resizeTimeout: null,
-      resetTimeout: null,
       activeLink: null,
       activeId: null,
+      scrollFrame: null,
       hasContent: false
     }
 
@@ -79,8 +59,7 @@ const items = toc.map((item, i) => ({
       if (!state.container) return false
 
       state.linkList = Array.from(document.querySelectorAll('.toc-link'))
-      state.toggleList = Array.from(document.querySelectorAll('.toc-toggle'))
-      state.headingList = Array.from(document.querySelectorAll('h1, h2, h3')).filter(
+      state.headingList = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).filter(
         (heading, index, headings) => !(index === 0 && headings[0].tagName === 'H1') && heading.id
       )
 
@@ -92,15 +71,8 @@ const items = toc.map((item, i) => ({
         }
       })
 
-      return true
-    }
-
-    function checkContent() {
-      if (!state.container) return
       state.hasContent = state.linkList.length > 0
-      if (!state.hasContent) {
-        state.container.style.display = 'none'
-      }
+      return true
     }
 
     function adjustPosition() {
@@ -125,39 +97,6 @@ const items = toc.map((item, i) => ({
       }
     }
 
-    // 初始化时把 collapsed 项的子级隐藏（HTML 里已给父级加了 collapsed 类）
-    function applyInitialCollapse() {
-      const items = document.querySelectorAll('.toc-item')
-      items.forEach((item) => {
-        const isCollapsed = item.classList.contains('collapsed')
-        if (isCollapsed) {
-          const level = parseInt(item.dataset.level, 10)
-          let next = item.nextElementSibling
-          while (next && parseInt(next.dataset.level, 10) > level) {
-            next.classList.add('toc-hidden')
-            next = next.nextElementSibling
-          }
-        }
-      })
-    }
-
-    function handleToggle(e) {
-      const btn = e.target.closest('.toc-toggle')
-      if (!btn) return
-      e.stopPropagation()
-      const item = btn.closest('.toc-item')
-      if (!item) return
-      const level = parseInt(item.dataset.level, 10)
-      item.classList.toggle('collapsed')
-      const collapsed = item.classList.contains('collapsed')
-      let next = item.nextElementSibling
-      while (next && parseInt(next.dataset.level, 10) > level) {
-        if (collapsed) next.classList.add('toc-hidden')
-        else next.classList.remove('toc-hidden')
-        next = next.nextElementSibling
-      }
-    }
-
     function handleClick(e) {
       const link = e.target.closest('.toc-link')
       if (!link) return
@@ -179,15 +118,19 @@ const items = toc.map((item, i) => ({
       const nextActiveLink =
         nextActiveId && state.headingMap.has(nextActiveId) ? state.headingMap.get(nextActiveId) : null
 
-      if (state.activeId === nextActiveId && state.activeLink === nextActiveLink) {
-        return
-      }
+      if (state.activeId === nextActiveId && state.activeLink === nextActiveLink) return
 
-      if (state.activeLink) {
-        state.activeLink.classList.remove('active')
-      }
-      if (nextActiveLink) {
-        nextActiveLink.classList.add('active')
+      if (state.activeLink) state.activeLink.classList.remove('active')
+      if (nextActiveLink) nextActiveLink.classList.add('active')
+
+      // 目录比屏幕长时，让当前项滚进可视区域（只动目录自己的滚动条）
+      if (nextActiveLink && state.container) {
+        const box = state.container
+        const linkTop = nextActiveLink.offsetTop
+        const linkBottom = linkTop + nextActiveLink.offsetHeight
+        if (linkTop < box.scrollTop || linkBottom > box.scrollTop + box.clientHeight) {
+          box.scrollTo({ top: linkTop - box.clientHeight / 2, behavior: 'smooth' })
+        }
       }
 
       state.activeId = nextActiveId
@@ -199,12 +142,12 @@ const items = toc.map((item, i) => ({
         setActive(null)
         return
       }
-      if (window.pageYOffset < 16 || state.headingList[0].getBoundingClientRect().top > activeOffset) {
+      if (window.pageYOffset < 16 || state.headingList[0].getBoundingClientRect().top > 128) {
         setActive(null)
         return
       }
       for (let i = state.headingList.length - 1; i >= 0; i--) {
-        if (state.headingList[i].getBoundingClientRect().top <= activeOffset) {
+        if (state.headingList[i].getBoundingClientRect().top <= 128) {
           setActive(state.headingList[i].id)
           break
         }
@@ -219,85 +162,44 @@ const items = toc.map((item, i) => ({
       })
     }
 
-    function init(retryCount = 0) {
-      const maxRetries = 5
-      if (initElements()) {
-        applyInitialCollapse()
-        checkContent()
-        adjustPosition()
-        if (state.container) {
-          state.container.addEventListener('click', handleClick)
-          state.toggleList.forEach((btn) => btn.addEventListener('click', handleToggle))
-        }
-        refreshActiveHeading()
-      } else if (retryCount < maxRetries) {
-        setTimeout(() => init(retryCount + 1), 100)
+    function init() {
+      if (!initElements()) return
+      adjustPosition()
+      if (state.container) {
+        state.container.addEventListener('click', handleClick)
       }
-    }
-
-    function handleResize() {
-      if (state.resizeTimeout) cancelAnimationFrame(state.resizeTimeout)
-      state.resizeTimeout = requestAnimationFrame(() => {
-        adjustPosition()
-        refreshActiveHeading()
-      })
+      refreshActiveHeading()
     }
 
     function cleanup() {
       if (state.activeLink) state.activeLink.classList.remove('active')
       if (state.container) state.container.removeEventListener('click', handleClick)
-      state.toggleList.forEach((btn) => btn.removeEventListener('click', handleToggle))
       if (state.scrollFrame) {
         cancelAnimationFrame(state.scrollFrame)
         state.scrollFrame = null
       }
-      if (state.resizeTimeout) {
-        cancelAnimationFrame(state.resizeTimeout)
-        state.resizeTimeout = null
-      }
-      if (state.resetTimeout) {
-        cancelAnimationFrame(state.resetTimeout)
-        state.resetTimeout = null
-      }
-      Object.assign(state, {
-        container: null,
-        linkList: [],
-        toggleList: [],
-        headingList: [],
-        headingMap: new Map(),
-        scrollFrame: null,
-        activeLink: null,
-        activeId: null,
-        hasContent: false
-      })
-    }
-
-    function reset() {
-      state.resetTimeout = null
-      cleanup()
-      init()
-    }
-
-    function scheduleReset() {
-      if (state.resetTimeout) cancelAnimationFrame(state.resetTimeout)
-      state.resetTimeout = requestAnimationFrame(reset)
     }
 
     function destroy() {
       cleanup()
-      document.removeEventListener('astro:page-load', scheduleReset)
-      document.removeEventListener('astro:after-swap', scheduleReset)
+      document.removeEventListener('astro:page-load', reset)
+      document.removeEventListener('astro:after-swap', reset)
       window.removeEventListener('scroll', scheduleActiveRefresh)
-      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', adjustPosition)
       if (window.__tocController?.destroy === destroy) {
         window.__tocController = null
       }
     }
 
-    document.addEventListener('astro:page-load', scheduleReset)
-    document.addEventListener('astro:after-swap', scheduleReset)
+    function reset() {
+      cleanup()
+      init()
+    }
+
+    document.addEventListener('astro:page-load', reset)
+    document.addEventListener('astro:after-swap', reset)
     window.addEventListener('scroll', scheduleActiveRefresh, { passive: true })
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', adjustPosition)
 
     window.__tocController = { destroy }
     init()
@@ -306,7 +208,7 @@ const items = toc.map((item, i) => ({
 
 <style is:inline>
   .toc-container {
-    width: 14rem;
+    width: 12rem;
     position: relative;
     opacity: 0;
     transition: opacity 0.2s ease-out;
@@ -316,25 +218,30 @@ const items = toc.map((item, i) => ({
   .toc-container.fixed-position {
     opacity: 1;
     position: fixed;
-    top: 12rem;
-    margin-top: 0;
-    padding-left: 1rem;
+    top: 8rem;
     z-index: 10;
     left: auto;
+    /* 长文章标题多，超出屏幕时目录自己滚动 */
+    max-height: calc(100vh - 12rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+    padding-right: 0.4rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
 
-  .toc-title {
-    font-family: var(--sans);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--text-tertiary);
-    margin-bottom: 0.8rem;
-    padding-left: 0.1rem;
+  .toc-container.fixed-position::-webkit-scrollbar {
+    width: 4px;
   }
 
-  .toc-nav {
-    font-family: var(--sans);
+  .toc-container.fixed-position::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toc-container.fixed-position::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
   }
 
   .toc-list,
@@ -349,94 +256,33 @@ const items = toc.map((item, i) => ({
     margin-left: 0 !important;
     padding-left: 0 !important;
   }
+
   .prose .toc-container .toc-list li {
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  .toc-item::before,
-  .toc-item::marker {
-    display: none;
-  }
-
   .toc-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.3rem;
-    padding: 0.18rem 0;
+    padding: 0.25rem 0;
     padding-left: var(--indent, 0);
-    position: relative;
+    border-left: 1px solid transparent;
+    transition: border-color 0.15s ease-out;
   }
 
-  /* 等级感：不同 level 用不同字号/字重 */
-  .toc-item[data-level="1"] .toc-link {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  .toc-item[data-level="2"] .toc-link {
-    font-size: 0.76rem;
-  }
-  .toc-item[data-level="3"] .toc-link {
-    font-size: 0.72rem;
-    color: var(--text-tertiary);
-  }
-
-  /* 竖线：在缩进前画一条淡线表示层级 */
-  .toc-item {
-    /* 用伪元素画层级竖线 */
-  }
-
-  .toc-toggle,
-  .toc-dot {
-    flex-shrink: 0;
-    width: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-tertiary);
-    font-size: 0.7rem;
-    line-height: 1.5;
-    height: 1.5rem;
-  }
-
-  .toc-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .toc-arrow {
-    display: inline-block;
-    transition: transform 0.18s ease-out;
-    font-size: 0.55rem;
-    line-height: 1;
-  }
-
-  .toc-item.collapsed .toc-arrow {
-    transform: rotate(-90deg);
-  }
-
-  .toc-dot {
-    color: var(--text-tertiary);
-    opacity: 0.45;
+  .toc-item:has(.active) {
+    border-left-color: var(--text-tertiary);
   }
 
   .toc-link {
     display: block;
-    flex: 1;
-    min-width: 0;
     color: var(--text-tertiary);
     text-decoration: none;
-    font-size: 0.76rem;
-    line-height: 1.5;
-    padding: 0.05rem 0;
+    font-size: 0.78rem;
+    line-height: 1.55;
     transition: color 0.15s ease-out;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    cursor: pointer;
   }
 
   .toc-link:hover {
@@ -445,27 +291,8 @@ const items = toc.map((item, i) => ({
 
   .toc-link.active {
     color: var(--text-primary);
-    font-weight: 600;
   }
 
-  /* 子级项左侧画竖线，强化层级感 */
-  .toc-item[data-level="2"]:not(.collapsed)::before,
-  .toc-item[data-level="3"]:not(.collapsed)::before {
-    content: '';
-    position: absolute;
-    left: calc(var(--indent) - 0.55rem);
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--surface-border);
-    opacity: 0.6;
-  }
-
-  .toc-item.toc-hidden {
-    display: none !important;
-  }
-
-  /* Hide on mobile */
   @media (max-width: 768px) {
     .toc-container {
       display: none !important;

@@ -2,6 +2,7 @@
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import type { PostListProps } from '@/types'
 import type { CollectionEntry } from 'astro:content'
+import { getPostSlug } from '@/utils/post'
 
 const { posts } = Astro.props as PostListProps
 
@@ -30,7 +31,7 @@ function getExcerpt(post: CollectionEntry<'posts'>): string {
       const excerpt = getExcerpt(post)
       return (
         <li class="post-card">
-          <a class="card-link" href={`/${post.id}/`} aria-label={post.data.title}></a>
+          <a class="card-link" href={`/${getPostSlug(post)}/`} aria-label={post.data.title}></a>
           <h2 class="card-title">{post.data.title}</h2>
           {excerpt && <p class="card-excerpt">{excerpt}</p>}
           <div class="card-meta">

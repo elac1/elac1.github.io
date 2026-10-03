@@ -1,11 +1,12 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
+import { getPostSlug } from '@/utils/post'
 
 // 首页置顶文章大卡片：横向布局，纯文字
 type Props = { post: CollectionEntry<'posts'> }
 const { post } = Astro.props
-const href = `/${post.id}/`
+const href = `/${getPostSlug(post)}/`
 
 // 摘要与阅读时长（与 PostCard 保持同一套规则）
 function getExcerpt(p: CollectionEntry<'posts'>): string {

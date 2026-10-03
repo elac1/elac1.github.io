@@ -5,7 +5,6 @@ import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import FootnoteScroll from '@/components/widgets/FootnoteScroll.astro'
 import BaseHead from '@/components/layout/BaseHead.astro'
 import Footer from '@/components/layout/Footer.astro'
-import BackButton from '@/components/ui/BackButton.astro'
 import TableOfContents from '@/components/ui/TableOfContents.astro'
 import GradientMask from '@/components/ui/GradientMask.astro'
 import ImageOptimizer from '@/components/ui/ImageOptimizer.astro'
@@ -41,7 +40,6 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     <main>
       <div class="prose">
         <GradientMask />
-        <BackButton />
         {shouldRenderToc && <TableOfContents toc={toc} />}
         <div class="title">
           <h1 data-pagefind-meta="title">{title}</h1>

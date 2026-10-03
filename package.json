@@ -17,6 +17,7 @@
     "format:check": "prettier --check .",
     "new": "tsx scripts/new-post.ts",
     "publish": "tsx scripts/publish.ts",
+    "release": "tsx scripts/publish.ts",
     "drafts": "tsx scripts/drafts.ts",
     "update-link-metadata": "tsx scripts/update-link-metadata.ts",
     "update-theme": "tsx scripts/update-theme.ts"

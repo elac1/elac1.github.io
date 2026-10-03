@@ -2,6 +2,7 @@
 import IndexLayout from '@/layouts/IndexLayout.astro'
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import { getSortedFilteredPosts } from '@/utils/draft'
+import { getPostSlug } from '@/utils/post'
 import { themeConfig } from '@/config'
 
 export async function getStaticPaths() {
@@ -34,7 +35,7 @@ const filteredPosts = allPosts.filter((p) => (p.data.tags || []).includes(tag))
       {
         filteredPosts.map((post) => (
           <li>
-            <a href={`/${post.id}/`} class="tag-item">
+            <a href={`/${getPostSlug(post)}/`} class="tag-item">
               <span class="tag-date">
                 <FormattedDate date={post.data.pubDate} context="list" />
               </span>

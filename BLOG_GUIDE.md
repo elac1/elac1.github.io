@@ -1,5 +1,8 @@
 # 博客操作说明书
 
+> ⚠️ 本文部分内容已过时：文章现在按「每篇一个目录」存放（`文章名/index.md`），草稿转正命令已从 `pnpm publish` 改为 `pnpm release`。
+> 最新、完整的教程请看 [WRITING_GUIDE.md](./WRITING_GUIDE.md)。
+
 ## 项目地址
 
 - 本地：`c:\Users\bgq\Desktop\elac1.github.io`
@@ -64,13 +67,13 @@ featured: false          # true = 上首页；false = 只在栏目页
 
 | 状态 | 文件名 | 是否发布 |
 |------|--------|---------|
-| 草稿 | `_my-draft.md`（开头下划线） | ❌ 不出现在列表 |
-| 正式 | `my-draft.md` | ✅ 发布 |
+| 草稿 | `_my-draft/index.md`（目录名开头下划线） | ❌ 不出现在列表 |
+| 正式 | `my-draft/index.md` | ✅ 发布 |
 
 **草稿转正**：
 
 ```bash
-pnpm publish my-draft     # 自动去掉下划线 + 更新 pubDate 为今天
+pnpm release my-draft     # 把 _my-draft/ 目录改名为 my-draft/ + 更新 pubDate 为今天
 ```
 
 **查看所有草稿**：
@@ -106,7 +109,7 @@ pnpm dev          # 启动本地预览（http://localhost:4321/），改完自�
 pnpm build        # 完整构建检查（含类型检查、搜索索引生成）
 pnpm new          # 新建文章
 pnpm drafts       # 查看所有草稿
-pnpm publish 名字  # 草稿转正
+pnpm release 名字  # 草稿转正
 
 git add .
 git commit -m "说明"
