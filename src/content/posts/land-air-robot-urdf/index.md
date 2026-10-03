@@ -7,7 +7,7 @@ tags:
   - URDF
   - 机器人
 category: '垂直领域研究'
-featured: false
+featured: true
 ---
 
 > 本文给出“四旋翼 + 四轮”双模态机器人的完整 URDF 建模工程。模型按零件拆分为多个 xacro 文件，尺寸参数集中定义一处，重复件用宏生成。

@@ -33,8 +33,12 @@ export const STREAM_WINDOW_DAYS = 7
 export async function getFeaturedAndStream() {
   const posts = await getSortedFilteredPosts()
   const cutoff = Date.now() - STREAM_WINDOW_DAYS * 24 * 60 * 60 * 1000
+  const featured = posts.filter((p: CollectionEntry<'posts'>) => p.data.featured)
   return {
-    featured: posts.filter((p: CollectionEntry<'posts'>) => p.data.featured),
-    stream: posts.filter((p: CollectionEntry<'posts'>) => p.data.pubDate.valueOf() >= cutoff)
+    featured,
+    // 排除置顶文章：它们已经在首页顶部展示过，不再进入文章流
+    stream: posts.filter(
+      (p: CollectionEntry<'posts'>) => p.data.pubDate.valueOf() >= cutoff && !p.data.featured
+    )
   }
 }
