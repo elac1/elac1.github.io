@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!-- ============================================================
+     全机唯一一份参数表。
+     所有尺寸、质量、安装偏移都定义在这里；零件文件只引用，不重定义。
+     想改整机大小，只改这个文件就够了。
+     （pi 是 xacro 内置常量，不需要自己定义。）
+     ============================================================ -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- 机身：一块方形板 -->
+  <xacro:property name="body_length" value="0.24"/>
+  <xacro:property name="body_width"  value="0.24"/>
+  <xacro:property name="body_height" value="0.06"/>
+  <xacro:property name="body_mass"   value="1.6"/>
+  <xacro:property name="body_half"   value="${body_length/2}"/>
+
+  <!-- 机臂：+ 型布局，前后左右各一条 -->
+  <xacro:property name="arm_length" value="0.14"/>
+  <xacro:property name="arm_width"  value="0.02"/>
+  <xacro:property name="arm_height" value="0.02"/>
+  <xacro:property name="arm_mass"   value="0.05"/>
+  <xacro:property name="arm_center" value="${body_half + arm_length/2}"/>
+  <xacro:property name="arm_half"   value="${arm_length/2}"/>
+  <xacro:property name="rotor_offset" value="${body_half + arm_length}"/>
+
+  <!-- 旋翼：电机 + 桨盘 -->
+  <xacro:property name="motor_length"    value="0.04"/>
+  <xacro:property name="hub_radius"      value="0.015"/>
+  <xacro:property name="rotor_radius"    value="0.10"/>
+  <xacro:property name="rotor_thickness" value="0.006"/>
+  <xacro:property name="rotor_mass"      value="0.04"/>
+  <xacro:property name="rotor_z"         value="${motor_length}"/>
+
+  <!-- 轮子：同时充当起落架 -->
+  <xacro:property name="wheel_radius"    value="0.05"/>
+  <xacro:property name="wheel_width"     value="0.025"/>
+  <xacro:property name="wheel_mass"      value="0.12"/>
+  <xacro:property name="wheel_offset_xy" value="0.145"/>
+
+  <!-- IMU 传感器 -->
+  <xacro:property name="imu_size" value="0.04"/>
+  <xacro:property name="imu_mass" value="0.02"/>
+
+  <!-- 高度关系：机身底面留 ground_clearance，轮心高度靠 wheel_radius 反推。
+       这两个表达式是"改尺寸不出错"的关键，不要改成手写数字。 -->
+  <xacro:property name="ground_clearance" value="0.05"/>
+  <xacro:property name="base_z" value="${ground_clearance + body_height/2}"/>
+  <xacro:property name="wheel_offset_z" value="${wheel_radius - base_z}"/>
+
+</robot>

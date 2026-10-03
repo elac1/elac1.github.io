@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- ============================================================
+     机身：贴地坐标系 base_footprint + 机身本体 base_link。
+     全机只有一件，不需要宏，直接写 link 和 joint。
+     依赖：common/params.xacro（尺寸）、common/materials.xacro（颜色）、
+          common/inertia.xacro（惯量宏）—— 由顶层按顺序先 include。
+     ============================================================ -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- 贴地的虚拟坐标系：本身没有几何，只表示机器人在地面的投影点 -->
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${base_z}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 机身本体：所有零件的父坐标系 -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${body_length} ${body_width} ${body_height}"/>
+      </geometry>
+      <material name="body"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${body_length} ${body_width} ${body_height}"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertia m="${body_mass}" x="${body_length}" y="${body_width}" z="${body_height}"/>
+  </link>
+
+</robot>

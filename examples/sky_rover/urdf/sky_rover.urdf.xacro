@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- ============================================================
+     顶层文件：只负责"组装"，不放任何几何。
+     加一个新零件 = 在对应文件夹里新建一个文件 + 在下面加一行 include。
+     ============================================================ -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="sky_rover">
+
+  <!-- 顺序有讲究：先参数和公共资源，再零件。
+       零件文件里会用到参数和惯量宏，所以必须排在它们后面，
+       否则 xacro 会报 name 'xxx' is not defined。 -->
+
+  <!-- 1. 全机参数、颜色、惯量宏 -->
+  <xacro:include filename="common/params.xacro"/>
+  <xacro:include filename="common/materials.xacro"/>
+  <xacro:include filename="common/inertia.xacro"/>
+
+  <!-- 2. 各部件：一个文件夹一个部件 -->
+  <xacro:include filename="body/base.xacro"/>
+  <xacro:include filename="arm/arm.xacro"/>
+  <xacro:include filename="rotor/rotor.xacro"/>
+  <xacro:include filename="wheel/wheel.xacro"/>
+
+  <!-- 3. 传感器 -->
+  <xacro:include filename="sensor/imu.xacro"/>
+  <!-- 以后加雷达，就在这里再加一行：
+       <xacro:include filename="sensor/lidar.xacro"/> -->
+
+</robot>
