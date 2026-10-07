@@ -22,8 +22,8 @@ export async function getSortedFilteredPosts() {
 /** 文章流每页篇数（双列布局，6 = 3 行） */
 export const POST_PAGE_SIZE = 6
 
-/** 「最新文章」只收录近 N 天发布的文章 */
-export const STREAM_WINDOW_DAYS = 7
+/** 「最新文章」只收录近 N 天发布的文章（60 天 ≈ 2 个月） */
+export const STREAM_WINDOW_DAYS = 60
 
 /**
  * 将文章拆为「置顶」与「常规文章流」。

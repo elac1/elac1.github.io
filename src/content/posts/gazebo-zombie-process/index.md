@@ -8,7 +8,7 @@ tags:
   - ROS2
   - 调试
 category: '垂直领域研究'
-featured: false
+featured: true
 ---
 
 **上一次没杀干净的 Gazebo，会以两种看起来毫无关系的方式搞死你的仿真。**
