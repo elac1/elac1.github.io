@@ -3,10 +3,11 @@ import type { CollectionEntry } from 'astro:content'
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import { getPostSlug } from '@/utils/post'
 
-// 首页置顶文章：极简编辑式布局
+// 首页置顶文章：软卡片 + 强调色小色块
 type Props = { post: CollectionEntry<'posts'> }
 const { post } = Astro.props
 const href = `/${getPostSlug(post)}/`
+const category = post.data.category
 
 function getExcerpt(p: CollectionEntry<'posts'>): string {
   if (p.data.description) return p.data.description
@@ -24,63 +25,61 @@ function getExcerpt(p: CollectionEntry<'posts'>): string {
 const excerpt = getExcerpt(post)
 ---
 
-<article class="featured-row">
-  <div class="featured-marker" aria-hidden="true">
-    <span class="marker-label">置顶</span>
-    <span class="marker-line"></span>
-  </div>
-  <div class="featured-main">
-    <h2 class="featured-title">
-      <a href={href}>{post.data.title}</a>
-    </h2>
-    {excerpt && <p class="featured-excerpt">{excerpt}</p>}
-    <div class="featured-meta">
+<article class="featured-card">
+  <span class="featured-chip">置顶</span>
+  <h2 class="featured-title">
+    <a href={href}>{post.data.title}</a>
+  </h2>
+  {excerpt && <p class="featured-excerpt">{excerpt}</p>}
+  <div class="featured-meta">
+    {category && <span class="meta-cat">{category}</span>}
+    {category && <span class="meta-dot" aria-hidden="true">•</span>}
+    <span class="meta-date">
       <FormattedDate date={post.data.pubDate} context="list" />
-    </div>
+    </span>
   </div>
 </article>
 
 <style>
-  .featured-row {
-    display: grid;
-    grid-template-columns: 6.5rem 1fr;
-    gap: 1.5rem;
-    padding: 1.5rem 0.75rem;
-    margin: 0 -0.75rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.15s ease-out;
+  .featured-card {
+    background: var(--sheet);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.6rem 1.9rem 1.45rem;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 8px 24px rgba(0, 0, 0, 0.035);
+    transition:
+      transform 0.2s ease-out,
+      box-shadow 0.2s ease-out;
   }
-  .featured-row:hover {
-    background-color: var(--surface-muted);
+  .featured-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.03),
+      0 14px 34px rgba(0, 0, 0, 0.06);
+  }
+  html.dark .featured-card {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+  html.dark .featured-card:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
   }
 
-  .featured-marker {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding-top: 0.3rem;
-  }
-  .marker-label {
+  .featured-chip {
+    display: inline-flex;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.14em;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-  }
-  .marker-line {
-    width: 1.5rem;
-    height: 1px;
-    background: var(--border-strong);
-  }
-
-  .featured-main {
-    min-width: 0;
   }
 
   .featured-title {
-    margin: 0;
-    font-size: 1.25rem;
+    margin: 0.85rem 0 0;
+    font-size: 1.375rem;
     font-weight: 700;
     line-height: 1.4;
     letter-spacing: -0.015em;
@@ -88,7 +87,6 @@ const excerpt = getExcerpt(post)
   .featured-title a {
     color: var(--text-primary);
     text-decoration: none;
-    transition: color 0.15s ease-out;
   }
 
   .featured-excerpt {
@@ -103,31 +101,28 @@ const excerpt = getExcerpt(post)
   }
 
   .featured-meta {
-    margin-top: 0.9rem;
-    font-size: 0.8125rem;
+    margin-top: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
     color: var(--text-tertiary);
-    font-variant-numeric: tabular-nums;
     letter-spacing: 0.01em;
+  }
+  .meta-date {
+    font-variant-numeric: tabular-nums;
+  }
+  .meta-dot {
+    color: var(--accent);
   }
 
   @media (max-width: 640px) {
-    .featured-row {
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-      padding: 1.25rem 0.5rem;
-      margin: 0 -0.5rem;
-    }
-    .featured-marker {
-      flex-direction: row;
-      align-items: center;
-      gap: 0.6rem;
-      padding-top: 0;
-    }
-    .marker-line {
-      width: 2rem;
+    .featured-card {
+      padding: 1.3rem 1.15rem 1.15rem;
+      border-radius: 14px;
     }
     .featured-title {
-      font-size: 1.125rem;
+      font-size: 1.1875rem;
     }
   }
 </style>
