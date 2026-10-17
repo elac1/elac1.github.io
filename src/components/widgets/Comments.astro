@@ -10,6 +10,30 @@
 
 <script is:inline>
   ;(function () {
+    function reveal(frame) {
+      frame.style.removeProperty('opacity')
+      frame.classList.remove('giscus-frame--loading')
+    }
+
+    // giscus 官方脚本靠 iframe 的 load 事件去掉透明态，懒加载时机下偶尔丢失该回调，
+    // 这里用「iframe 已被撑出高度」（即评论界面渲染完成）作为兜底信号强制显示。
+    function watchReveal(host) {
+      const poll = setInterval(() => {
+        const frame = host.querySelector('iframe.giscus-frame')
+        if (!frame) return
+        clearInterval(poll)
+        frame.addEventListener('load', () => reveal(frame), { once: true })
+        const fallback = setInterval(() => {
+          if (frame.getBoundingClientRect().height > 0) {
+            reveal(frame)
+            clearInterval(fallback)
+          }
+        }, 400)
+        setTimeout(() => clearInterval(fallback), 20000)
+      }, 200)
+      setTimeout(() => clearInterval(poll), 20000)
+    }
+
     function mount() {
       const host = document.querySelector('.comments-block .giscus')
       if (!host || host.firstElementChild) return
@@ -32,6 +56,7 @@
       script.setAttribute('data-lang', 'zh-CN')
       script.setAttribute('data-loading', 'lazy')
       host.appendChild(script)
+      watchReveal(host)
     }
 
     function syncTheme() {
