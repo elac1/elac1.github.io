@@ -132,6 +132,8 @@ html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
   overscroll-behavior-y: contain;
+  /* 头部胶囊用 100vw 出血到视口，clip 掉滚动条宽度造成的横向溢出（clip 不会破坏 sticky） */
+  overflow-x: clip;
   -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
   transition: background-color 0.2s ease-out;

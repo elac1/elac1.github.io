@@ -93,11 +93,11 @@ const items = toc.map((item) => ({
       if (margin >= minSpace) {
         state.container.style.display = 'block'
         state.container.classList.add('fixed-position')
-        state.container.style.left = `${margin - minSpace}px`
+        state.container.style.right = `${margin - minSpace}px`
       } else {
         state.container.style.display = 'none'
         state.container.classList.remove('fixed-position')
-        state.container.style.left = ''
+        state.container.style.right = ''
       }
     }
 

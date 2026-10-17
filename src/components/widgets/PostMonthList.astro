@@ -1,0 +1,66 @@
+---
+import PostCard from '@/components/widgets/PostCard.astro'
+import { groupByMonth } from '@/utils/draft'
+import type { CollectionEntry } from 'astro:content'
+
+type Props = { posts: CollectionEntry<'posts'>[] }
+const { posts } = Astro.props
+
+const groups = groupByMonth(posts)
+---
+
+<div class="month-groups">
+  {
+    groups.map((group) => (
+      <section class="month-group">
+        <h2 class="month-label">
+          <span>{group.label}</span>
+        </h2>
+        <div class="posts-list">
+          {group.posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .month-group + .month-group {
+    margin-top: 2.25rem;
+  }
+
+  .month-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 0 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+  .month-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  @media (max-width: 640px) {
+    .month-group + .month-group {
+      margin-top: 1.75rem;
+    }
+    .posts-list {
+      gap: 0.75rem;
+    }
+  }
+</style>

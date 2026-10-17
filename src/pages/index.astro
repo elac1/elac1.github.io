@@ -1,12 +1,11 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import PostCard from '@/components/widgets/PostCard.astro'
-import FeaturedCard from '@/components/widgets/FeaturedCard.astro'
+import PostMonthList from '@/components/widgets/PostMonthList.astro'
 import Pagination from '@/components/widgets/Pagination.astro'
 import { themeConfig } from '@/config'
-import { getFeaturedAndStream, POST_PAGE_SIZE } from '@/utils/draft'
+import { getPostStream, POST_PAGE_SIZE } from '@/utils/draft'
 
-const { featured, stream } = await getFeaturedAndStream()
+const stream = await getPostStream()
 
 const firstPagePosts = stream.slice(0, POST_PAGE_SIZE)
 const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
@@ -19,24 +18,16 @@ const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
       <p class="hero-desc">{themeConfig.site.description}</p>
     </section>
 
-    {
-      featured.length > 0 && (
-        <section class="home-section">
-          <div class="featured-list">
-            {featured.map((post) => <FeaturedCard post={post} />)}
-          </div>
-        </section>
-      )
-    }
-
     <section class="home-section">
-      <h2 class="section-label">最新文章</h2>
-      <div class="posts-list">
-        {firstPagePosts.map((post) => <PostCard post={post} />)}
-      </div>
-      {stream.length === 0 && (
-        <p class="empty-state">近一周还没有新文章，去<a href="/archive/">归档页</a>翻翻旧文吧。</p>
-      )}
+      {
+        firstPagePosts.length > 0 ? (
+          <PostMonthList posts={firstPagePosts} />
+        ) : (
+          <p class="empty-state">
+            还没有文章，去<a href="/archive/">归档页</a>看看，或在 <code>src/content/posts</code> 里写一篇。
+          </p>
+        )
+      }
     </section>
 
     <Pagination current={1} total={totalPages} />
@@ -60,7 +51,6 @@ const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
   /* Hero —— 克制的开场 */
   .hero-block {
     padding: 3.5rem 0 2.5rem;
-    border-bottom: 1px solid var(--border);
   }
   .hero-title {
     margin: 0;
@@ -77,33 +67,8 @@ const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
     line-height: 1.6;
   }
 
-  /* 区块 */
   .home-section {
-    padding: 2.5rem 0 0;
-  }
-  .home-section + .home-section {
-    padding-top: 2.75rem;
-  }
-
-  .section-label {
-    margin: 0 0 1rem;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-  }
-
-  .featured-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
+    padding: 1rem 0 0;
   }
 
   .empty-state {
@@ -118,19 +83,23 @@ const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
     text-decoration-color: var(--text-tertiary);
     text-underline-offset: 3px;
   }
+  .empty-state code {
+    background: var(--code-bg);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.85em;
+    font-family: var(--mono);
+  }
 
   @media (max-width: 640px) {
     .blog-home {
       padding-bottom: 3rem;
     }
     .hero-block {
-      padding: 2rem 0 1.75rem;
+      padding: 2rem 0 1.5rem;
     }
     .hero-title {
       font-size: 1.375rem;
-    }
-    .home-section {
-      padding-top: 2rem;
     }
   }
 </style>

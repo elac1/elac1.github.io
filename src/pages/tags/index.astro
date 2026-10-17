@@ -17,15 +17,15 @@ for (const post of posts) {
 const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1])
 ---
 
-<IndexLayout title={`标签 - ${themeConfig.site.title}`} description="按标签浏览文章">
+<IndexLayout title={`专题 - ${themeConfig.site.title}`} description="按专题浏览文章">
   <div class="tags-page">
     <header class="page-header">
-      <h1 class="page-title">标签</h1>
+      <h1 class="page-title">专题</h1>
       <p class="page-count">共 {tags.length} 个</p>
     </header>
     {
       tags.length === 0 ? (
-        <p class="empty">还没有标签，写文章时在 frontmatter 加 <code>tags:</code> 字段即可生成标签。</p>
+        <p class="empty">还没有专题，写文章时在 frontmatter 加 <code>tags:</code> 字段即可生成专题。</p>
       ) : (
         <ul class="tag-list">
           {tags.map(([tag, count]) => (
@@ -96,6 +96,7 @@ const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1])
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0;
+    column-gap: 3rem;
   }
   .tag-item {
     display: flex;

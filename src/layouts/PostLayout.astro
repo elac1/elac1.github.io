@@ -16,6 +16,7 @@ import XPOST from '@/components/ui/XPOST.astro'
 import CopyCode from '@/components/ui/CopyCode.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
+import Comments from '@/components/widgets/Comments.astro'
 
 import { themeConfig } from '@/config'
 
@@ -62,6 +63,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
         </article>
         {/* 文章底部：标签与相关文章（命名插槽，不混入 article 语义） */}
         <slot name="postFooter" />
+        <Comments />
       </div>
     </main>
     {shouldRenderImageOptimizer && <ImageOptimizer />}
