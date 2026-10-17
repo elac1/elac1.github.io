@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- ============================================================
+     机臂：+ 型布局，前后左右各一条。
+     四条臂形状完全一样，只有"装在哪、朝哪个方向"不同，
+     所以写成一个宏，末尾调用四次 —— 布局集中在那四行里。
+     依赖：common/params.xacro、common/materials.xacro、common/inertia.xacro。
+     ============================================================ -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="arm" params="prefix dx dy yaw">
+    <link name="${prefix}_arm_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${yaw}"/>
+        <geometry>
+          <box size="${arm_length} ${arm_width} ${arm_height}"/>
+        </geometry>
+        <material name="dark"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${yaw}"/>
+        <geometry>
+          <box size="${arm_length} ${arm_width} ${arm_height}"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia m="${arm_mass}" x="${arm_length}" y="${arm_width}" z="${arm_height}" yaw="${yaw}"/>
+    </link>
+
+    <joint name="${prefix}_arm_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${prefix}_arm_link"/>
+      <!-- 注意：这里 rpy 是 0，子坐标系和 base_link 同向。
+           左右两条臂的 box 转向靠的是视觉/碰撞/惯量里的 yaw，
+           不是关节的 rpy —— 所以旋翼的偏移可以直接用 dy 写。 -->
+      <origin xyz="${dx} ${dy} 0" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- 四条机臂的布局：改布局只改这四行 -->
+  <xacro:arm prefix="front" dx="${arm_center}"  dy="0"              yaw="0"/>
+  <xacro:arm prefix="back"  dx="${-arm_center}" dy="0"              yaw="0"/>
+  <xacro:arm prefix="left"  dx="0"              dy="${arm_center}"  yaw="${pi/2}"/>
+  <xacro:arm prefix="right" dx="0"              dy="${-arm_center}" yaw="${pi/2}"/>
+
+</robot>

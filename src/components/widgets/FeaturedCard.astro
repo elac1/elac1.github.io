@@ -1,0 +1,133 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import FormattedDate from '@/components/widgets/FormattedDate.astro'
+import { getPostSlug } from '@/utils/post'
+
+// 首页置顶文章：极简编辑式布局
+type Props = { post: CollectionEntry<'posts'> }
+const { post } = Astro.props
+const href = `/${getPostSlug(post)}/`
+
+function getExcerpt(p: CollectionEntry<'posts'>): string {
+  if (p.data.description) return p.data.description
+  const text = (p.body ?? '')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/[`*_~|>]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return text.length > 140 ? text.slice(0, 140) + '…' : text
+}
+
+const excerpt = getExcerpt(post)
+---
+
+<article class="featured-row">
+  <div class="featured-marker" aria-hidden="true">
+    <span class="marker-label">置顶</span>
+    <span class="marker-line"></span>
+  </div>
+  <div class="featured-main">
+    <h2 class="featured-title">
+      <a href={href}>{post.data.title}</a>
+    </h2>
+    {excerpt && <p class="featured-excerpt">{excerpt}</p>}
+    <div class="featured-meta">
+      <FormattedDate date={post.data.pubDate} context="list" />
+    </div>
+  </div>
+</article>
+
+<style>
+  .featured-row {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0.75rem;
+    margin: 0 -0.75rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.15s ease-out;
+  }
+  .featured-row:hover {
+    background-color: var(--surface-muted);
+  }
+
+  .featured-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding-top: 0.3rem;
+  }
+  .marker-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+  }
+  .marker-line {
+    width: 1.5rem;
+    height: 1px;
+    background: var(--border-strong);
+  }
+
+  .featured-main {
+    min-width: 0;
+  }
+
+  .featured-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+  }
+  .featured-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.15s ease-out;
+  }
+
+  .featured-excerpt {
+    margin: 0.6rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .featured-meta {
+    margin-top: 0.9rem;
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
+  @media (max-width: 640px) {
+    .featured-row {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding: 1.25rem 0.5rem;
+      margin: 0 -0.5rem;
+    }
+    .featured-marker {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.6rem;
+      padding-top: 0;
+    }
+    .marker-line {
+      width: 2rem;
+    }
+    .featured-title {
+      font-size: 1.125rem;
+    }
+  }
+</style>

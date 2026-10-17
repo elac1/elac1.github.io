@@ -1,0 +1,43 @@
+---
+// 可复用的标签：极简文字样式，点击跳转到 /tags/[tag]
+type Props = {
+  tag: string
+  size?: 'sm' | 'md'
+}
+const { tag, size = 'md' } = Astro.props
+const href = `/tags/${encodeURIComponent(tag)}/`
+---
+
+<a class:list={['tag-pill', `size-${size}`]} href={href}>
+  <span class="hash" aria-hidden="true">#</span>{tag}
+</a>
+
+<style>
+  .tag-pill {
+    display: inline-flex;
+    align-items: baseline;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 400;
+    transition: color 0.15s ease-out;
+  }
+  .tag-pill:hover {
+    color: var(--text-primary);
+  }
+
+  /* 尺寸 */
+  .size-md {
+    font-size: 0.8125rem;
+  }
+  .size-sm {
+    font-size: 0.75rem;
+  }
+
+  .hash {
+    opacity: 0.45;
+    margin-right: 0.1rem;
+    font-weight: 400;
+  }
+</style>

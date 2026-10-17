@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!-- ============================================================
+     旋翼：电机 + 桨盘。四个形状一样，用宏生成。
+     父 link 是"自己那条机臂"，所以偏移量是相对机臂中心的：
+     x 或 y = ±arm_half（0.07），不是 rotor_offset（0.26）。
+     转向靠 axis 的正负号表达：四旋翼要"相邻反向、对角同向"，
+     所以 front / back 传 +1，left / right 传 -1。
+     依赖：common/params.xacro、common/materials.xacro、common/inertia.xacro。
+     ============================================================ -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="rotor" params="prefix dx dy spin">
+    <link name="${prefix}_rotor_link">
+      <!-- 桨盘 -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${rotor_radius}" length="${rotor_thickness}"/>
+        </geometry>
+        <material name="prop"/>
+      </visual>
+      <!-- 电机：从机臂平面长到桨盘下方。origin 的负偏移就是这么来的 -->
+      <visual>
+        <origin xyz="0 0 ${-motor_length/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${hub_radius}" length="${motor_length}"/>
+        </geometry>
+        <material name="dark"/>
+      </visual>
+      <!-- 碰撞只算桨盘：电机是细长小件，碰撞体越简单仿真越稳 -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${rotor_radius}" length="${rotor_thickness}"/>
+        </geometry>
+      </collision>
+      <xacro:cylinder_inertia m="${rotor_mass}" r="${rotor_radius}" h="${rotor_thickness}"/>
+    </link>
+
+    <joint name="${prefix}_rotor_joint" type="continuous">
+      <parent link="${prefix}_arm_link"/>
+      <child link="${prefix}_rotor_link"/>
+      <origin xyz="${dx} ${dy} ${rotor_z}" rpy="0 0 0"/>
+      <!-- spin 传 ±1：写 -1 不是"装反了"，而是这个关节的正方向绕 z 反向 -->
+      <axis xyz="0 0 ${spin}"/>
+      <dynamics damping="0.001" friction="0.0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- 相邻反向、对角同向 -->
+  <xacro:rotor prefix="front" dx="${arm_half}"  dy="0"            spin="1"/>
+  <xacro:rotor prefix="back"  dx="${-arm_half}" dy="0"            spin="1"/>
+  <xacro:rotor prefix="left"  dx="0"            dy="${arm_half}"  spin="-1"/>
+  <xacro:rotor prefix="right" dx="0"            dy="${-arm_half}" spin="-1"/>
+
+</robot>

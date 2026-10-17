@@ -1,0 +1,82 @@
+---
+import type { GetStaticPaths } from 'astro'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import PostCard from '@/components/widgets/PostCard.astro'
+import Pagination from '@/components/widgets/Pagination.astro'
+import { themeConfig } from '@/config'
+import { getFeaturedAndStream, POST_PAGE_SIZE } from '@/utils/draft'
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const { stream } = await getFeaturedAndStream()
+  return paginate(stream, { pageSize: POST_PAGE_SIZE }).filter(
+    (result) => result.params.page !== '1'
+  )
+}) satisfies GetStaticPaths
+
+const { page } = Astro.props
+---
+
+<IndexLayout
+  title={`第 ${page.currentPage} 页 - ${themeConfig.site.title}`}
+  description={themeConfig.site.description}
+>
+  <div class="paged-home">
+    <section class="page-section">
+      <div class="section-head">
+        <h1 class="section-label">最新文章</h1>
+        <span class="page-indicator">第 {page.currentPage} / {page.lastPage} 页</span>
+      </div>
+      <div class="posts-list">
+        {page.data.map((post) => <PostCard post={post} />)}
+      </div>
+    </section>
+
+    <Pagination current={page.currentPage} total={page.lastPage} />
+  </div>
+</IndexLayout>
+
+<style is:global>
+  body:has(.paged-home) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+  }
+</style>
+
+<style>
+  .paged-home {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 3.5rem 0 4rem;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+  }
+  .section-label {
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+  .page-indicator {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 640px) {
+    .paged-home {
+      padding: 2rem 0 3rem;
+    }
+  }
+</style>

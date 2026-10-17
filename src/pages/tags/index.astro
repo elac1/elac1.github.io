@@ -1,0 +1,137 @@
+---
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import { getSortedFilteredPosts } from '@/utils/draft'
+import { themeConfig } from '@/config'
+
+const posts = await getSortedFilteredPosts()
+
+// 统计每个标签的文章数
+const tagCount = new Map<string, number>()
+for (const post of posts) {
+  for (const tag of post.data.tags || []) {
+    tagCount.set(tag, (tagCount.get(tag) || 0) + 1)
+  }
+}
+
+// 按文章数降序排序
+const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1])
+---
+
+<IndexLayout title={`标签 - ${themeConfig.site.title}`} description="按标签浏览文章">
+  <div class="tags-page">
+    <header class="page-header">
+      <h1 class="page-title">标签</h1>
+      <p class="page-count">共 {tags.length} 个</p>
+    </header>
+    {
+      tags.length === 0 ? (
+        <p class="empty">还没有标签，写文章时在 frontmatter 加 <code>tags:</code> 字段即可生成标签。</p>
+      ) : (
+        <ul class="tag-list">
+          {tags.map(([tag, count]) => (
+            <li>
+              <a href={`/tags/${encodeURIComponent(tag)}/`} class="tag-item">
+                <span class="tag-name">#{tag}</span>
+                <span class="tag-count">{count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</IndexLayout>
+
+<style is:global>
+  body:has(.tags-page) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+  }
+</style>
+
+<style>
+  .tags-page {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 3.5rem 0 4rem;
+  }
+  .page-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.85rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  .page-title {
+    margin: 0;
+    font-size: 1.625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+  .page-count {
+    margin: 0;
+    color: var(--text-tertiary);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .empty {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    padding: 2rem 0;
+    line-height: 1.7;
+  }
+  .empty code {
+    background: var(--code-bg);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.85em;
+    font-family: var(--mono);
+  }
+  .tag-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .tag-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0.75rem;
+    margin: 0 -0.75rem;
+    border-radius: 0.35rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: background-color 0.15s ease-out;
+  }
+  .tag-item:hover {
+    background: var(--surface-muted);
+  }
+  .tag-name {
+    color: var(--text-primary);
+    font-weight: 400;
+  }
+  .tag-count {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  @media (max-width: 640px) {
+    .tags-page {
+      padding: 2rem 0 3rem;
+    }
+    .page-title {
+      font-size: 1.375rem;
+    }
+    .tag-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

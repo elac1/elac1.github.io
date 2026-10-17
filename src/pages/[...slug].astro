@@ -1,0 +1,31 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '@/layouts/PostLayout.astro'
+import PostFooter from '@/components/widgets/PostFooter.astro'
+import { render } from 'astro:content'
+import { getPostSlug, isDraftPost } from '@/utils/post'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts')
+  return posts
+    .filter((post) => !isDraftPost(post))
+    .map((post) => ({
+      params: { slug: getPostSlug(post) },
+      props: post
+    }))
+}
+
+type Props = CollectionEntry<'posts'>
+
+const post = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(post)
+
+const readingTime = remarkPluginFrontmatter.readingTime
+const toc = remarkPluginFrontmatter.toc || []
+const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
+---
+
+<PostLayout {...post.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures}>
+  <Content />
+  <PostFooter post={post} slot="postFooter" />
+</PostLayout>

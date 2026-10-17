@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- ============================================================
+     颜色定义。
+     URDF 规定 <material> 必须是 <robot> 的直接子元素，
+     所以单独放一个文件，由顶层 include 进 <robot> 里。
+     零件文件里只写 <material name="blue"/> 这样按名字引用。
+     ============================================================ -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <material name="body">  <color rgba="0.25 0.35 0.75 1.0"/></material>
+  <material name="dark">  <color rgba="0.15 0.15 0.18 1.0"/></material>
+  <material name="prop">  <color rgba="0.85 0.85 0.90 0.85"/></material>
+  <material name="rubber"><color rgba="0.10 0.10 0.10 1.0"/></material>
+  <material name="imu">   <color rgba="0.85 0.35 0.20 1.0"/></material>
+
+</robot>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- ============================================================
+     传感器：IMU。
+     全部传感器都放这个文件夹，一个传感器一个文件：
+       sensor/imu.xacro   ← 现在这个
+       sensor/lidar.xacro ← 以后加雷达时新建，然后在顶层加一行 include
+     装的位置在机身顶面中心；它的朝向是给以后的飞行控制用的
+     （姿态反馈），现在先把坐标系放对。
+     依赖：common/params.xacro、common/materials.xacro、common/inertia.xacro。
+     ============================================================ -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${imu_size} ${imu_size} ${imu_size}"/>
+      </geometry>
+      <material name="imu"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${imu_size} ${imu_size} ${imu_size}"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertia m="${imu_mass}" x="${imu_size}" y="${imu_size}" z="${imu_size}"/>
+  </link>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <!-- 机身顶面中心：半个机身厚 + 半个 IMU 边长 -->
+    <origin xyz="0 0 ${body_height/2 + imu_size/2}" rpy="0 0 0"/>
+  </joint>
+
+</robot>

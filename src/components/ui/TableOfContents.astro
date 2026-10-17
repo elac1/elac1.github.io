@@ -1,0 +1,359 @@
+---
+import { themeConfig } from '@/config'
+import type { TOCProps } from '@/types'
+
+const { toc = [] }: TOCProps = Astro.props
+
+const minLevel = toc.reduce((m, t) => Math.min(m, t.level), 6)
+const items = toc.map((item) => ({
+  ...item,
+  indent: (item.level - minLevel) * 0.75
+}))
+---
+
+<div class="toc-container" id="toc">
+  <nav class="toc-nav" aria-label="文章目录">
+    <p class="toc-heading">目录</p>
+    <ul class="toc-list">
+      <span class="toc-indicator" aria-hidden="true"></span>
+      {
+        items.map((item) => (
+          <li class="toc-item" data-id={item.id} style={`--indent: ${item.indent}rem`}>
+            <a href={`#${item.id}`} class="toc-link" title={item.text}>
+              {item.text}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</div>
+
+<script
+  is:inline
+  define:vars={{
+    contentWidth: themeConfig.general.contentWidth,
+    centeredLayout: themeConfig.general.centeredLayout
+  }}
+>
+  ;(function () {
+    if (window.__tocController?.destroy) {
+      window.__tocController.destroy()
+    }
+
+    const jumpOffset = 96
+    const tocWidth = 12 * 16
+    const gap = 4 * 16
+
+    const state = {
+      container: null,
+      indicator: null,
+      linkList: [],
+      headingList: [],
+      headingMap: new Map(),
+      activeLink: null,
+      activeId: null,
+      scrollFrame: null,
+      hasContent: false
+    }
+
+    function initElements() {
+      state.container = document.querySelector('.toc-container')
+      state.indicator = document.querySelector('.toc-indicator')
+      if (!state.container) return false
+
+      state.linkList = Array.from(document.querySelectorAll('.toc-link'))
+      state.headingList = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).filter(
+        (heading, index, headings) => !(index === 0 && headings[0].tagName === 'H1') && heading.id
+      )
+
+      state.headingMap.clear()
+      state.linkList.forEach((link) => {
+        const href = link.getAttribute('href')
+        if (href?.startsWith('#')) {
+          state.headingMap.set(href.substring(1), link)
+        }
+      })
+
+      state.hasContent = state.linkList.length > 0
+      return true
+    }
+
+    function adjustPosition() {
+      if (!state.container || !centeredLayout || !state.hasContent) {
+        if (state.container) state.container.style.display = 'none'
+        return
+      }
+
+      const pageWidth = window.innerWidth
+      const contentWidthValue = Math.max(parseFloat(contentWidth), 25)
+      const margin = (pageWidth - contentWidthValue * 16) / 2
+      const minSpace = tocWidth + gap
+
+      if (margin >= minSpace) {
+        state.container.style.display = 'block'
+        state.container.classList.add('fixed-position')
+        state.container.style.left = `${margin - minSpace}px`
+      } else {
+        state.container.style.display = 'none'
+        state.container.classList.remove('fixed-position')
+        state.container.style.left = ''
+      }
+    }
+
+    function handleClick(e) {
+      const link = e.target.closest('.toc-link')
+      if (!link) return
+      e.preventDefault()
+      const href = link.getAttribute('href')
+      if (href?.startsWith('#')) {
+        const target = document.getElementById(href.substring(1))
+        if (target) {
+          const rect = target.getBoundingClientRect()
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+          const offset = rect.top + scrollTop - jumpOffset
+          window.scrollTo({ top: offset, behavior: 'smooth' })
+          history.pushState(null, null, href)
+        }
+      }
+    }
+
+    function positionIndicator(link) {
+      if (!state.indicator) return
+      if (!link) {
+        state.indicator.style.opacity = '0'
+        return
+      }
+      const item = link.closest('.toc-item')
+      if (!item) return
+      state.indicator.style.opacity = '1'
+      state.indicator.style.transform = `translateY(${item.offsetTop}px)`
+      state.indicator.style.height = `${item.offsetHeight}px`
+    }
+
+    function setActive(nextActiveId) {
+      const nextActiveLink =
+        nextActiveId && state.headingMap.has(nextActiveId) ? state.headingMap.get(nextActiveId) : null
+
+      if (state.activeId === nextActiveId && state.activeLink === nextActiveLink) return
+
+      if (state.activeLink) state.activeLink.classList.remove('active')
+      if (nextActiveLink) nextActiveLink.classList.add('active')
+      positionIndicator(nextActiveLink)
+
+      // 目录比屏幕长时，让当前项滚进可视区域（只动目录自己的滚动条）
+      if (nextActiveLink && state.container) {
+        const box = state.container
+        const linkTop = nextActiveLink.offsetTop
+        const linkBottom = linkTop + nextActiveLink.offsetHeight
+        if (linkTop < box.scrollTop || linkBottom > box.scrollTop + box.clientHeight) {
+          box.scrollTo({ top: linkTop - box.clientHeight / 2, behavior: 'smooth' })
+        }
+      }
+
+      state.activeId = nextActiveId
+      state.activeLink = nextActiveLink
+    }
+
+    function refreshActiveHeading() {
+      if (!state.headingList.length) {
+        setActive(null)
+        return
+      }
+      if (window.pageYOffset < 16 || state.headingList[0].getBoundingClientRect().top > 128) {
+        setActive(null)
+        return
+      }
+      for (let i = state.headingList.length - 1; i >= 0; i--) {
+        if (state.headingList[i].getBoundingClientRect().top <= 128) {
+          setActive(state.headingList[i].id)
+          break
+        }
+      }
+    }
+
+    function scheduleActiveRefresh() {
+      if (state.scrollFrame) return
+      state.scrollFrame = requestAnimationFrame(() => {
+        state.scrollFrame = null
+        refreshActiveHeading()
+      })
+    }
+
+    function init() {
+      if (!initElements()) return
+      adjustPosition()
+      if (state.container) {
+        state.container.addEventListener('click', handleClick)
+      }
+      refreshActiveHeading()
+    }
+
+    function cleanup() {
+      if (state.activeLink) state.activeLink.classList.remove('active')
+      if (state.container) state.container.removeEventListener('click', handleClick)
+      if (state.scrollFrame) {
+        cancelAnimationFrame(state.scrollFrame)
+        state.scrollFrame = null
+      }
+    }
+
+    function destroy() {
+      cleanup()
+      document.removeEventListener('astro:page-load', reset)
+      document.removeEventListener('astro:after-swap', reset)
+      window.removeEventListener('scroll', scheduleActiveRefresh)
+      window.removeEventListener('resize', adjustPosition)
+      if (window.__tocController?.destroy === destroy) {
+        window.__tocController = null
+      }
+    }
+
+    function reset() {
+      cleanup()
+      init()
+    }
+
+    document.addEventListener('astro:page-load', reset)
+    document.addEventListener('astro:after-swap', reset)
+    window.addEventListener('scroll', scheduleActiveRefresh, { passive: true })
+    window.addEventListener('resize', adjustPosition)
+
+    window.__tocController = { destroy }
+    init()
+  })()
+</script>
+
+<style is:inline>
+  .toc-container {
+    width: 12rem;
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    display: none;
+  }
+
+  .toc-container.fixed-position {
+    opacity: 1;
+    position: fixed;
+    top: 7rem;
+    z-index: 10;
+    left: auto;
+    max-height: calc(100vh - 11rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+    padding-right: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .toc-container.fixed-position::-webkit-scrollbar {
+    width: 3px;
+  }
+  .toc-container.fixed-position::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .toc-container.fixed-position::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+  }
+
+  /* 顶部小标签 */
+  .toc-heading {
+    margin: 0 0 0.85rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .toc-list,
+  .toc-list li,
+  .toc-item {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* 中和 .prose 对列表的污染：去外边距/项目符号，恢复层级缩进 */
+  .prose .toc-container .toc-list {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+  .prose .toc-container .toc-list li {
+    margin: 0 !important;
+    padding-left: calc(0.85rem + var(--indent, 0rem)) !important;
+  }
+  .prose .toc-container .toc-list li::before {
+    content: none !important;
+  }
+
+  /* 列表 + 左侧细轨道线 */
+  .toc-list {
+    position: relative;
+  }
+  .toc-list::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 1px;
+    background: var(--border);
+  }
+
+  /* 滑动指示条：跟随当前阅读位置 */
+  .toc-indicator {
+    position: absolute;
+    left: -1px;
+    top: 0;
+    width: 2px;
+    height: 0;
+    border-radius: 2px;
+    background: var(--text-secondary);
+    opacity: 0;
+    transition:
+      transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+      height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.2s ease-out;
+    pointer-events: none;
+  }
+
+  .toc-item {
+    position: relative;
+    padding-left: calc(0.85rem + var(--indent, 0rem));
+  }
+
+  .toc-container .toc-link {
+    display: block;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    padding: 0.3rem 0;
+    transition:
+      color 0.18s ease-out,
+      font-weight 0.18s ease-out;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toc-container .toc-link:hover {
+    color: var(--text-secondary);
+  }
+
+  .toc-container .toc-link.active {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .toc-container {
+      display: none !important;
+    }
+  }
+</style>
