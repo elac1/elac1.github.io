@@ -15,6 +15,7 @@ import NeoDBCard from '@/components/ui/NeoDBCard.astro'
 import XPOST from '@/components/ui/XPOST.astro'
 import CopyCode from '@/components/ui/CopyCode.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import Header from '@/components/layout/Header.astro'
 
 import { themeConfig } from '@/config'
 
@@ -37,6 +38,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     slot="head"
   />
   <div class="post-container">
+    <Header />
     <main>
       <div class="prose">
         <GradientMask />
