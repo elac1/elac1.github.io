@@ -8,6 +8,8 @@ export interface SiteInfo {
   author: string
   description: string
   language: string
+  tagline?: string
+  github?: string
 }
 
 // General settings configuration type
@@ -43,4 +45,6 @@ export interface ThemeConfig {
   general: GeneralSettings
   date: DateSettings
   post: PostSettings
+  techStack?: string[]
+  friendLinks?: { name: string; href: string }[]
 }

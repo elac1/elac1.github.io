@@ -3,37 +3,45 @@ import type { ThemeConfig } from './types'
 export const themeConfig: ThemeConfig = {
   // SITE INFO ///////////////////////////////////////////////////////////////////////////////////////////
   site: {
-    website: 'https://elac1.github.io/', // Site domain
-    title: 'elac 的博客', // Site title
-    author: 'elac', // Author name
-    description: '一名 ROS 学习者的机器人学习笔记', // Site description
-    language: 'zh-CN' // Default language
+    website: 'https://elac1.github.io/',
+    title: 'elac 的博客',
+    author: 'elac',
+    description: '记录 ROS 2、机器人仿真与机器视觉实践，也分享 Python 和算法学习笔记。',
+    language: 'zh-CN',
+    tagline: '间接性踌躇满志，持续性记录生活。',
+    github: 'https://github.com/elac1'
   },
 
   // GENERAL SETTINGS ////////////////////////////////////////////////////////////////////////////////////
   general: {
-    contentWidth: '48rem', // Content area width —— 阅读面板外宽（内文约 42rem）
-    centeredLayout: true, // Use centered layout (false for left-aligned)
-    themeToggle: true, // Show theme toggle button (uses system theme by default)
-    postListDottedDivider: false, // Show dotted divider in post list
-    footer: true, // Show footer
-    fadeAnimation: true // Enable fade animations
+    contentWidth: '52rem',
+    centeredLayout: true,
+    themeToggle: true,
+    postListDottedDivider: false,
+    footer: true,
+    fadeAnimation: true
   },
 
   // DATE SETTINGS ///////////////////////////////////////////////////////////////////////////////////////
   date: {
-    dateFormat: 'YYYY-MM-DD', // Date format: YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY, MONTH DAY YYYY, DAY MONTH YYYY
-    dateSeparator: '.', // Date separator: . - / (except for MONTH DAY YYYY and DAY MONTH YYYY)
-    dateOnRight: true // Date position in post list (true for right, false for left)
+    dateFormat: 'YYYY-MM-DD',
+    dateSeparator: '.',
+    dateOnRight: true
   },
 
   // POST SETTINGS ///////////////////////////////////////////////////////////////////////////////////////
   post: {
-    readingTime: false, // Show reading time in posts
-    toc: true, // Show table of contents (when there is enough page width)
-    imageViewer: true, // Enable image viewer
-    copyCode: true, // Enable copy button in code blocks
-    linkCard: true, // Enable link card
-    katex: true // Enable KaTeX math rendering
-  }
+    readingTime: false,
+    toc: true,
+    imageViewer: true,
+    copyCode: true,
+    linkCard: true,
+    katex: true
+  },
+
+  // FOOTER EXTRAS ///////////////////////////////////////////////////////////////////////////////////////
+  techStack: ['ROS 2', 'Python', 'OpenCV', 'Gazebo', 'Docker'],
+  friendLinks: [
+    { name: 'GitHub', href: 'https://github.com/elac1' }
+  ]
 }

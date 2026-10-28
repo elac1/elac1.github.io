@@ -1,36 +1,78 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import PostMonthList from '@/components/widgets/PostMonthList.astro'
-import Pagination from '@/components/widgets/Pagination.astro'
+import PostCard from '@/components/widgets/PostCard.astro'
 import { themeConfig } from '@/config'
-import { getPostStream, POST_PAGE_SIZE } from '@/utils/draft'
+import { getPostStream } from '@/utils/draft'
+import { getCollection } from 'astro:content'
 
 const stream = await getPostStream()
+const latestPosts = stream.slice(0, 6)
 
-const firstPagePosts = stream.slice(0, POST_PAGE_SIZE)
-const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
+// 统计标签
+const allPosts = await getCollection('posts', ({ id }) => !id.startsWith('_'))
+const tagCounts = new Map<string, number>()
+for (const post of allPosts) {
+  for (const tag of (post.data.tags || [])) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1)
+  }
+}
+const topTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12)
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
   <div class="blog-home">
-    <section class="hero-block">
+    <!-- Hero -->
+    <section class="hero">
       <h1 class="hero-title">{themeConfig.site.title}</h1>
+      {themeConfig.site.tagline && <p class="hero-tagline">{themeConfig.site.tagline}</p>}
       <p class="hero-desc">{themeConfig.site.description}</p>
+      <div class="hero-actions">
+        {
+          themeConfig.site.github && (
+            <a class="btn btn-primary" href={themeConfig.site.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+          )
+        }
+        <a class="btn btn-ghost" href="/about">关于我</a>
+      </div>
     </section>
 
+    <!-- 最新文章 -->
     <section class="home-section">
+      <div class="section-head">
+        <h2 class="section-title">📝 最新文章</h2>
+        <a class="section-more" href="/archive/">查看更多文章 →</a>
+      </div>
       {
-        firstPagePosts.length > 0 ? (
-          <PostMonthList posts={firstPagePosts} />
+        latestPosts.length > 0 ? (
+          <div class="latest-list">
+            {latestPosts.map((post) => (
+              <PostCard post={post} variant="list" />
+            ))}
+          </div>
         ) : (
-          <p class="empty-state">
-            还没有文章，去<a href="/archive/">归档页</a>看看，或在 <code>src/content/posts</code> 里写一篇。
-          </p>
+          <p class="empty-state">还没有文章，去 <a href="/archive/">归档页</a> 看看。</p>
         )
       }
     </section>
 
-    <Pagination current={1} total={totalPages} />
+    <!-- 文章分类/标签云 -->
+    {
+      topTags.length > 0 && (
+        <section class="home-section">
+          <div class="section-head">
+            <h2 class="section-title">📂 文章分类</h2>
+          </div>
+          <div class="tag-cloud">
+            {topTags.map(([tag, count]) => (
+              <a class="tag-chip" href={`/tags/${encodeURIComponent(tag)}/`}>
+                <span class="chip-tag">{tag}</span>
+                <span class="chip-count">{count}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
   </div>
 </IndexLayout>
 
@@ -43,63 +85,159 @@ const totalPages = Math.max(1, Math.ceil(stream.length / POST_PAGE_SIZE))
 
 <style>
   .blog-home {
-    max-width: 44rem;
+    max-width: 52rem;
     margin: 0 auto;
     padding: 0 0 4rem;
   }
 
-  /* Hero —— 克制的开场 */
-  .hero-block {
-    padding: 3.5rem 0 2.5rem;
+  /* ========== Hero ========== */
+  .hero {
+    padding: 4rem 0 2.5rem;
   }
   .hero-title {
     margin: 0;
-    font-size: 1.625rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.02em;
-    line-height: 1.3;
+    line-height: 1.25;
+  }
+  .hero-tagline {
+    margin: 0.6rem 0 0;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--text-secondary);
   }
   .hero-desc {
-    margin: 0.55rem 0 0;
+    margin: 0.5rem 0 0;
     font-size: 0.9375rem;
+    color: var(--text-tertiary);
+    line-height: 1.7;
+    max-width: 36rem;
+  }
+  .hero-actions {
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background-color 0.15s ease-out,
+      color 0.15s ease-out,
+      border-color 0.15s ease-out;
+  }
+  .btn-primary {
+    background: var(--text-primary);
+    color: var(--bg);
+  }
+  .btn-primary:hover {
+    opacity: 0.88;
+  }
+  .btn-ghost {
+    background: transparent;
     color: var(--text-secondary);
-    line-height: 1.6;
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    color: var(--text-primary);
+    border-color: var(--text-tertiary);
   }
 
+  /* ========== Section ========== */
   .home-section {
-    padding: 1rem 0 0;
+    padding: 1.5rem 0 0;
+    margin-top: 1rem;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .section-more {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.15s ease-out;
+  }
+  .section-more:hover {
+    color: var(--text-primary);
   }
 
+  /* ========== Latest list ========== */
+  .latest-list {
+    margin-top: 0.5rem;
+  }
   .empty-state {
     color: var(--text-secondary);
     font-size: 0.875rem;
     padding: 2rem 0;
-    line-height: 1.7;
   }
   .empty-state a {
     color: var(--text-primary);
     text-decoration: underline;
-    text-decoration-color: var(--text-tertiary);
-    text-underline-offset: 3px;
   }
-  .empty-state code {
-    background: var(--code-bg);
-    padding: 0.1rem 0.35rem;
-    border-radius: 3px;
-    font-size: 0.85em;
-    font-family: var(--mono);
+
+  /* ========== Tag cloud ========== */
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition:
+      background-color 0.15s ease-out,
+      border-color 0.15s ease-out;
+  }
+  .tag-chip:hover {
+    background: var(--surface-hover, var(--surface-muted));
+    border-color: var(--text-tertiary);
+  }
+  .chip-tag {
+    font-size: 0.8125rem;
+    color: var(--text-primary);
+  }
+  .chip-count {
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
   }
 
   @media (max-width: 640px) {
     .blog-home {
       padding-bottom: 3rem;
     }
-    .hero-block {
-      padding: 2rem 0 1.5rem;
+    .hero {
+      padding: 2.5rem 0 1.5rem;
     }
     .hero-title {
-      font-size: 1.375rem;
+      font-size: 1.5rem;
+    }
+    .hero-tagline {
+      font-size: 0.9375rem;
     }
   }
 </style>

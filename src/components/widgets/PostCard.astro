@@ -3,10 +3,12 @@ import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import type { CollectionEntry } from 'astro:content'
 import { getPostSlug } from '@/utils/post'
 
-type Props = { post: CollectionEntry<'posts'> }
-const { post } = Astro.props
+type Props = {
+  post: CollectionEntry<'posts'>
+  variant?: 'card' | 'list'
+}
+const { post, variant = 'card' } = Astro.props
 
-// 摘要：优先 frontmatter description，否则取正文纯文本
 function getExcerpt(p: CollectionEntry<'posts'>): string {
   if (p.data.description) return p.data.description
   const text = (p.body ?? '')
@@ -22,34 +24,107 @@ function getExcerpt(p: CollectionEntry<'posts'>): string {
 
 const excerpt = getExcerpt(post)
 const href = `/${getPostSlug(post)}/`
-const tags = (post.data.tags || []).slice(0, 3)
+const tags = (post.data.tags || []).slice(0, 4)
 ---
 
-<article class="post-card">
-  <h3 class="card-title">
-    <a href={href}>{post.data.title}</a>
-  </h3>
-  {excerpt && <p class="card-excerpt">{excerpt}</p>}
-  <div class="card-meta">
-    {
-      tags.length > 0 && (
-        <span class="meta-tags">
-          {tags.map((tag) => (
-            <a class="meta-tag" href={`/tags/${encodeURIComponent(tag)}/`}>
-              #{tag}
-            </a>
-          ))}
+{
+  variant === 'list' ? (
+    <a class="post-item" href={href}>
+      <h3 class="item-title">{post.data.title}</h3>
+      {excerpt && <p class="item-excerpt">{excerpt}</p>}
+      <div class="item-meta">
+        <span class="item-date">
+          <FormattedDate date={post.data.pubDate} context="list" />
         </span>
-      )
-    }
-    {tags.length > 0 && <span class="meta-dot" aria-hidden="true">•</span>}
-    <span class="meta-date">
-      <FormattedDate date={post.data.pubDate} context="list" />
-    </span>
-  </div>
-</article>
+        {
+          tags.length > 0 && (
+            <span class="item-tags">
+              {tags.map((tag) => (
+                <span class="item-tag">#{tag}</span>
+              ))}
+            </span>
+          )
+        }
+      </div>
+    </a>
+  ) : (
+    <article class="post-card">
+      <h3 class="card-title">
+        <a href={href}>{post.data.title}</a>
+      </h3>
+      {excerpt && <p class="card-excerpt">{excerpt}</p>}
+      <div class="card-meta">
+        {
+          tags.length > 0 && (
+            <span class="meta-tags">
+              {tags.map((tag) => (
+                <a class="meta-tag" href={`/tags/${encodeURIComponent(tag)}/`}>
+                  #{tag}
+                </a>
+              ))}
+            </span>
+          )
+        }
+        {tags.length > 0 && <span class="meta-dot" aria-hidden="true">•</span>}
+        <span class="meta-date">
+          <FormattedDate date={post.data.pubDate} context="list" />
+        </span>
+      </div>
+    </article>
+  )
+}
 
 <style>
+  /* ========== List variant (首页最新文章) ========== */
+  .post-item {
+    display: block;
+    padding: 1rem 0;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: background-color 0.15s ease-out;
+  }
+  .post-item:hover {
+    background: var(--surface-muted);
+  }
+  .item-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+  }
+  .item-excerpt {
+    margin: 0.3rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .item-meta {
+    margin-top: 0.45rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+  }
+  .item-date {
+    font-variant-numeric: tabular-nums;
+  }
+  .item-tags {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .item-tag {
+    color: var(--text-tertiary);
+  }
+
+  /* ========== Card variant (归档/分类页) ========== */
   .post-card {
     background: var(--sheet);
     border: 1px solid var(--border);
