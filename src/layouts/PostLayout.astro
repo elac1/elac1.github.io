@@ -15,7 +15,7 @@ import NeoDBCard from '@/components/ui/NeoDBCard.astro'
 import XPOST from '@/components/ui/XPOST.astro'
 import CopyCode from '@/components/ui/CopyCode.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import Header from '@/components/layout/Header.astro'
+import TabNav from '@/components/layout/TabNav.astro'
 import Comments from '@/components/widgets/Comments.astro'
 
 import { themeConfig } from '@/config'
@@ -39,7 +39,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     slot="head"
   />
   <div class="post-container">
-    <Header />
+    <TabNav />
     <main>
       <div class="prose">
         <GradientMask />
@@ -78,11 +78,23 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
   </div>
 </BaseLayout>
 
+<style is:global>
+  /* 文章页与内页共用同一套外壳：满宽底 + 56rem 居中，吸顶栏宽度与首页一致 */
+  body:has(.post-container) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+  }
+</style>
+
 <style>
   .post-container {
     display: flex;
     flex-direction: column;
     flex: 1;
+    width: 100%;
+    max-width: var(--layout-max);
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 
   .post-container main {

@@ -9,71 +9,21 @@ const posts = allPosts.filter((p) => p.data.category === '学习笔记')
 ---
 
 <IndexLayout title={`学习笔记 - ${themeConfig.site.title}`} description="学习笔记专栏：记录学习路上的点滴、踩过的坑和总结">
-  <div class="category-page">
-    <header class="page-header">
-      <h1 class="page-title">学习笔记</h1>
-      <p class="page-desc">工具怎么装怎么用、概念怎么理解、遇到坑怎么绕过去。内容比较碎，但都是实际操作过的。</p>
-    </header>
-    {
-      posts.length > 0 ? (
-        <div class="posts-list">
-          {posts.map((post) => <PostCard post={post} />)}
+  <header class="page-header stack">
+    <h1 class="page-title">学习笔记</h1>
+    <p class="page-desc">工具怎么装怎么用、概念怎么理解、遇到坑怎么绕过去。内容比较碎，但都是实际操作过的。</p>
+  </header>
+  {
+    posts.length > 0 ? (
+      <section class="panel">
+        <div class="panel-list">
+          {posts.map((post) => (
+            <PostCard post={post} variant="list" thumb />
+          ))}
         </div>
-      ) : (
-        <p class="empty-hint">学习笔记栏目暂无内容。</p>
-      )
-    }
-  </div>
+      </section>
+    ) : (
+      <p class="page-empty">学习笔记栏目暂无内容。</p>
+    )
+  }
 </IndexLayout>
-
-<style is:global>
-  body:has(.category-page) {
-    max-width: none !important;
-    padding: 1.5rem !important;
-  }
-</style>
-
-<style>
-  .category-page {
-    max-width: 44rem;
-    margin: 0 auto;
-    padding: 3.5rem 0 4rem;
-  }
-  .page-header {
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 1rem;
-  }
-  .page-title {
-    margin: 0;
-    font-size: 1.625rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-  }
-  .page-desc {
-    margin: 0.6rem 0 0;
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    max-width: 36rem;
-  }
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-  }
-  .empty-hint {
-    color: var(--text-secondary);
-    padding: 2rem 0;
-    font-size: 0.875rem;
-  }
-  @media (max-width: 640px) {
-    .category-page {
-      padding: 2rem 0 3rem;
-    }
-    .page-title {
-      font-size: 1.375rem;
-    }
-  }
-</style>

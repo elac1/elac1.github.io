@@ -1,8 +1,7 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import FormattedDate from '@/components/widgets/FormattedDate.astro'
+import PostCard from '@/components/widgets/PostCard.astro'
 import { getSortedFilteredPosts } from '@/utils/draft'
-import { getPostSlug } from '@/utils/post'
 import { themeConfig } from '@/config'
 
 export async function getStaticPaths() {
@@ -24,64 +23,30 @@ const allPosts = await getSortedFilteredPosts()
 const filteredPosts = allPosts.filter((p) => (p.data.tags || []).includes(tag))
 ---
 
-<IndexLayout title={`#${tag} - ${themeConfig.site.title}`} description={`专题 ${tag} 下的文章`}>
-  <div class="tag-page">
-    <header class="page-header">
-      <div class="header-row">
-        <h1 class="page-title">#{tag}</h1>
-        <a href="/tags/" class="back-link">← 所有专题</a>
-      </div>
-      <p class="page-count">共 {filteredPosts.length} 篇</p>
-    </header>
-    <ul class="tag-list">
-      {
-        filteredPosts.map((post) => (
-          <li>
-            <a href={`/${getPostSlug(post)}/`} class="tag-item">
-              <span class="tag-date">
-                <FormattedDate date={post.data.pubDate} context="list" />
-              </span>
-              <span class="tag-title">{post.data.title}</span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </div>
+<IndexLayout title={`#${tag} - ${themeConfig.site.title}`} description={`标签 ${tag} 下的文章`}>
+  <header class="page-header">
+    <h1 class="page-title">#{tag}</h1>
+    <p class="page-count">共 {filteredPosts.length} 篇</p>
+    <a class="back-link" href="/tags/">← 所有标签</a>
+  </header>
+  {
+    filteredPosts.length > 0 ? (
+      <section class="panel">
+        <div class="panel-list">
+          {filteredPosts.map((post) => (
+            <PostCard post={post} variant="list" thumb />
+          ))}
+        </div>
+      </section>
+    ) : (
+      <p class="page-empty">这个标签下还没有文章。</p>
+    )
+  }
 </IndexLayout>
 
-<style is:global>
-  body:has(.tag-page) {
-    max-width: none !important;
-    padding: 1.5rem !important;
-  }
-</style>
-
 <style>
-  .tag-page {
-    max-width: 44rem;
-    margin: 0 auto;
-    padding: 3.5rem 0 4rem;
-  }
-  .page-header {
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 1rem;
-  }
-  .header-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .page-title {
-    margin: 0;
-    font-size: 1.625rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
-  }
   .back-link {
+    margin-left: auto;
     color: var(--text-tertiary);
     font-size: 0.8125rem;
     text-decoration: none;
@@ -89,65 +54,5 @@ const filteredPosts = allPosts.filter((p) => (p.data.tags || []).includes(tag))
   }
   .back-link:hover {
     color: var(--text-primary);
-  }
-  .page-count {
-    margin: 0.4rem 0 0;
-    color: var(--text-tertiary);
-    font-size: 0.8125rem;
-    font-variant-numeric: tabular-nums;
-  }
-  .tag-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .tag-item {
-    display: grid;
-    grid-template-columns: 6.5rem 1fr;
-    gap: 1.5rem;
-    padding: 1rem 0.75rem;
-    margin: 0 -0.75rem;
-    border-radius: 0.5rem;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: background-color 0.15s ease-out;
-  }
-  .tag-item:hover {
-    background: var(--surface-muted);
-  }
-  .tag-item + .tag-item {
-    border-top: 1px solid var(--border);
-  }
-  .tag-date {
-    color: var(--text-tertiary);
-    font-size: 0.8125rem;
-    flex-shrink: 0;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
-    padding-top: 0.15rem;
-  }
-  .tag-title {
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.5;
-    color: var(--text-primary);
-  }
-  @media (max-width: 640px) {
-    .tag-page {
-      padding: 2rem 0 3rem;
-    }
-    .page-title {
-      font-size: 1.375rem;
-    }
-    .tag-item {
-      grid-template-columns: 1fr;
-      gap: 0.3rem;
-    }
-    .tag-date {
-      font-size: 0.75rem;
-      padding-top: 0;
-    }
   }
 </style>

@@ -19,17 +19,17 @@ const href = `/tags/${encodeURIComponent(tag)}/`
     line-height: 1.4;
     white-space: nowrap;
     text-decoration: none;
-    color: var(--text-secondary);
+    color: var(--tag-text);
     font-weight: 400;
-    background: var(--surface-muted);
-    border-radius: 999px;
+    background: var(--tag-bg);
+    border-radius: var(--radius-pill);
     transition:
       color 0.15s ease-out,
-      background-color 0.15s ease-out;
+      background-color 0.15s ease-out,
+      box-shadow 0.15s ease-out;
   }
   .tag-pill:hover {
-    color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    box-shadow: inset 0 0 0 1px var(--tag-text);
   }
 
   /* 尺寸 */

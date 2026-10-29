@@ -6,8 +6,26 @@ import { getPostSlug } from '@/utils/post'
 type Props = {
   post: CollectionEntry<'posts'>
   variant?: 'card' | 'list'
+  thumb?: boolean
 }
-const { post, variant = 'card' } = Astro.props
+const { post, variant = 'card', thumb = false } = Astro.props
+
+// 文章目录内自带的配图（如 opencv-face-recognition/images/*.png），取第一张作缩略图
+const postImages = import.meta.glob<{ src: string }>('/src/content/posts/**/images/*.{png,jpg,jpeg,webp,avif}', {
+  eager: true,
+  import: 'default'
+})
+
+function getThumb(p: CollectionEntry<'posts'>): string | null {
+  if (!thumb) return null
+  if (p.data.cover) return p.data.cover
+  // 目录型文章（xxx/index.md）自带的 images/ 目录，取第一张
+  const dir = `/src/content/posts/${p.id.replace(/\/index(\.mdx?)?$/, '')}/images/`
+  const matched = Object.keys(postImages)
+    .filter((key) => key.startsWith(dir))
+    .sort()[0]
+  return matched ? postImages[matched].src : null
+}
 
 function getExcerpt(p: CollectionEntry<'posts'>): string {
   if (p.data.description) return p.data.description
@@ -25,27 +43,39 @@ function getExcerpt(p: CollectionEntry<'posts'>): string {
 const excerpt = getExcerpt(post)
 const href = `/${getPostSlug(post)}/`
 const tags = (post.data.tags || []).slice(0, 4)
+const thumbSrc = getThumb(post)
 ---
 
 {
   variant === 'list' ? (
-    <a class="post-item" href={href}>
-      <h3 class="item-title">{post.data.title}</h3>
-      {excerpt && <p class="item-excerpt">{excerpt}</p>}
-      <div class="item-meta">
-        <span class="item-date">
-          <FormattedDate date={post.data.pubDate} context="list" />
-        </span>
-        {
-          tags.length > 0 && (
-            <span class="item-tags">
-              {tags.map((tag) => (
-                <span class="item-tag">#{tag}</span>
-              ))}
-            </span>
+    <a class:list={['post-item', { 'has-thumb': thumb }]} href={href}>
+      {
+        thumb && (
+          thumbSrc ? (
+            <img class="item-thumb" src={thumbSrc} alt="" loading="lazy" />
+          ) : (
+            <span class="item-thumb placeholder" aria-hidden="true"></span>
           )
-        }
-      </div>
+        )
+      }
+      <span class="item-body">
+        <h3 class="item-title">{post.data.title}</h3>
+        {excerpt && <p class="item-excerpt">{excerpt}</p>}
+        <div class="item-meta">
+          <span class="item-date">
+            <FormattedDate date={post.data.pubDate} context="list" />
+          </span>
+          {
+            tags.length > 0 && (
+              <span class="item-tags">
+                {tags.map((tag) => (
+                  <span class="item-tag">#{tag}</span>
+                ))}
+              </span>
+            )
+          }
+        </div>
+      </span>
     </a>
   ) : (
     <article class="post-card">
@@ -78,17 +108,44 @@ const tags = (post.data.tags || []).slice(0, 4)
   /* ========== List variant (首页最新文章) ========== */
   .post-item {
     display: block;
-    padding: 1rem 0;
+    padding: 1.05rem 1rem;
+    margin: 0 -1rem;
+    border-radius: 10px;
     text-decoration: none;
     border-bottom: 1px solid var(--border);
     transition: background-color 0.15s ease-out;
   }
+  .post-item:last-child {
+    border-bottom: 0;
+  }
   .post-item:hover {
     background: var(--surface-muted);
   }
+  .post-item.has-thumb {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+  .item-body {
+    display: block;
+    flex: 1;
+    min-width: 0;
+  }
+  .item-thumb {
+    flex: 0 0 auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: var(--surface-muted);
+  }
+  .item-thumb.placeholder {
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+  }
   .item-title {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.0625rem;
     font-weight: 600;
     color: var(--text-primary);
     line-height: 1.5;
@@ -105,9 +162,10 @@ const tags = (post.data.tags || []).slice(0, 4)
     overflow: hidden;
   }
   .item-meta {
-    margin-top: 0.45rem;
+    margin-top: 0.55rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.6rem;
     font-size: 0.75rem;
     color: var(--text-tertiary);
@@ -118,10 +176,16 @@ const tags = (post.data.tags || []).slice(0, 4)
   .item-tags {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.35rem;
   }
   .item-tag {
-    color: var(--text-tertiary);
+    padding: 0.16rem 0.55rem;
+    border-radius: var(--radius-pill);
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 0.6875rem;
+    line-height: 1.5;
   }
 
   /* ========== Card variant (归档/分类页) ========== */
@@ -190,12 +254,13 @@ const tags = (post.data.tags || []).slice(0, 4)
     gap: 0.55rem;
   }
   .meta-tag {
-    color: var(--text-tertiary);
+    color: var(--tag-text);
+    opacity: 0.8;
     text-decoration: none;
-    transition: color 0.15s ease-out;
+    transition: opacity 0.15s ease-out;
   }
   .meta-tag:hover {
-    color: var(--accent);
+    opacity: 1;
   }
   .meta-date {
     font-variant-numeric: tabular-nums;
@@ -205,6 +270,14 @@ const tags = (post.data.tags || []).slice(0, 4)
   }
 
   @media (max-width: 640px) {
+    .post-item.has-thumb {
+      gap: 0.9rem;
+    }
+    .item-thumb {
+      width: 68px;
+      height: 68px;
+      border-radius: 10px;
+    }
     .post-card {
       padding: 1.15rem 1.15rem 1rem;
       border-radius: 14px;

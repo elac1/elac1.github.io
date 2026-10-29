@@ -1,7 +1,7 @@
 ---
 import '@/styles/global.css'
 import BaseHead from '@/components/layout/BaseHead.astro'
-import Header from '@/components/layout/Header.astro'
+import TabNav from '@/components/layout/TabNav.astro'
 import Footer from '@/components/layout/Footer.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import GradientMask from '@/components/ui/GradientMask.astro'
@@ -14,9 +14,7 @@ const { title, description } = Astro.props
   <BaseHead title={title} description={description} slot="head" />
   <div class="page-content">
     <GradientMask />
-    <div>
-      <Header />
-    </div>
+    <TabNav />
     <main>
       <slot />
     </main>
@@ -31,6 +29,13 @@ const { title, description } = Astro.props
 </BaseLayout>
 
 <style is:global>
+  /* 全站页面外壳：body 铺满视口，内容统一收在 56rem 居中容器里
+     这样首页 / 归档 / 标签 / 关于 / 项目等页面的宽度与留白完全一致 */
+  body:has(.page-content) {
+    max-width: none !important;
+    padding: 1.5rem !important;
+  }
+
   .page-content {
     flex: 1;
     display: flex;
@@ -39,5 +44,10 @@ const { title, description } = Astro.props
 
   .page-content main {
     flex: 1;
+    width: 100%;
+    max-width: var(--layout-max);
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 0.25rem 0 1rem;
   }
 </style>

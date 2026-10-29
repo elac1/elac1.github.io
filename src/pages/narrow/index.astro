@@ -9,71 +9,21 @@ const posts = allPosts.filter((p) => p.data.category === '垂直领域研究')
 ---
 
 <IndexLayout title={`ROS 机器人 - ${themeConfig.site.title}`} description="ROS 机器人专栏：ROS 2、建图导航、部署调参方向的实战研究">
-  <div class="category-page">
-    <header class="page-header">
-      <h1 class="page-title">ROS 机器人</h1>
-      <p class="page-desc">从建图导航到部署调参，记录从零搭建到跑通的完整过程——参数选择、踩坑总结、效果分析。</p>
-    </header>
-    {
-      posts.length > 0 ? (
-        <div class="posts-list">
-          {posts.map((post) => <PostCard post={post} />)}
+  <header class="page-header stack">
+    <h1 class="page-title">ROS 机器人</h1>
+    <p class="page-desc">从建图导航到部署调参，记录从零搭建到跑通的完整过程——参数选择、踩坑总结、效果分析。</p>
+  </header>
+  {
+    posts.length > 0 ? (
+      <section class="panel">
+        <div class="panel-list">
+          {posts.map((post) => (
+            <PostCard post={post} variant="list" thumb />
+          ))}
         </div>
-      ) : (
-        <p class="empty-hint">ROS 机器人栏目暂无内容。</p>
-      )
-    }
-  </div>
+      </section>
+    ) : (
+      <p class="page-empty">ROS 机器人栏目暂无内容。</p>
+    )
+  }
 </IndexLayout>
-
-<style is:global>
-  body:has(.category-page) {
-    max-width: none !important;
-    padding: 1.5rem !important;
-  }
-</style>
-
-<style>
-  .category-page {
-    max-width: 44rem;
-    margin: 0 auto;
-    padding: 3.5rem 0 4rem;
-  }
-  .page-header {
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 1rem;
-  }
-  .page-title {
-    margin: 0;
-    font-size: 1.625rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-  }
-  .page-desc {
-    margin: 0.6rem 0 0;
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    max-width: 36rem;
-  }
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-  }
-  .empty-hint {
-    color: var(--text-secondary);
-    padding: 2rem 0;
-    font-size: 0.875rem;
-  }
-  @media (max-width: 640px) {
-    .category-page {
-      padding: 2rem 0 3rem;
-    }
-    .page-title {
-      font-size: 1.375rem;
-    }
-  }
-</style>

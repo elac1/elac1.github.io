@@ -1,6 +1,7 @@
 ---
 title: '从零实现 LBP：基于 OpenCV 的机器人灾害场景识别'
 pubDate: '2026-10-17'
+cover: '/images/lbp/lbp-encoding-demo.png'
 description: '不用深度学习，用八邻域 LBP、256 维直方图和卡方距离完成五类灾害场景分类；再通过一组光照实验，看强光下的像素饱和如何逆转特征距离、导致误分类。'
 tags:
   - OpenCV

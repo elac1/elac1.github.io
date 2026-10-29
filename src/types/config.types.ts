@@ -10,6 +10,7 @@ export interface SiteInfo {
   language: string
   tagline?: string
   github?: string
+  leetcode?: string
 }
 
 // General settings configuration type

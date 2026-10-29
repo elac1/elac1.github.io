@@ -4,43 +4,42 @@ import { themeConfig } from '@/config'
 ---
 
 <IndexLayout title={`搜索 - ${themeConfig.site.title}`} description="搜索本站文章">
-  <main>
+  <header class="page-header stack">
     <h1 class="page-title">搜索</h1>
-    <p class="page-hint">输入关键词搜索全站文章</p>
+    <p class="page-desc">输入关键词搜索全站文章</p>
+  </header>
+
+  <section class="panel search-panel">
     <div id="search"></div>
-    <p class="search-note">
-      搜索基于构建产物生成，仅在构建后访问生效。本地预览运行 <code>npm run build && npm run preview</code> 后访问 /search 可用。
-    </p>
-  </main>
+  </section>
+
+  <p class="search-note">
+    搜索基于构建产物生成，仅在构建后访问生效。本地预览运行 <code>npm run build && npm run preview</code> 后访问 /search 可用。
+  </p>
 </IndexLayout>
 
-<style is:global>
-  .page-title {
-    font-size: var(--font-size-l);
-    font-weight: var(--font-weight-bold);
-    margin: 0 0 0.5rem;
-  }
-  .page-hint {
-    color: var(--text-secondary);
-    font-size: var(--font-size-s);
-    margin: 0 0 1.5rem;
+<style>
+  .search-panel {
+    padding-bottom: 1.25rem;
   }
   .search-note {
+    margin-top: 1rem;
     color: var(--text-tertiary);
     font-size: 0.75rem;
-    margin-top: 2rem;
   }
   .search-note code {
     background: var(--code-bg);
     padding: 0.1rem 0.3rem;
     border-radius: 0.25rem;
   }
+</style>
 
+<style is:global>
   /* Pagefind UI 主题适配 */
   :root {
     --pagefind-ui-primary: var(--text-primary);
     --pagefind-ui-text: var(--text-primary);
-    --pagefind-ui-background: var(--bg);
+    --pagefind-ui-background: var(--sheet);
     --pagefind-ui-border: var(--border);
     --pagefind-ui-tag: var(--code-bg);
     --pagefind-ui-border-radius: 0.5rem;

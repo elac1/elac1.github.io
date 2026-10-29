@@ -1,10 +1,16 @@
 @import './fonts.css';
 @import './post.css';
+@import './page.css';
 
 :root {
-  /* Content Width */
+  /* Layout —— 全站统一宽度与间距 */
   --content-width: 25rem;
-  --reading-width: 42rem; /* 文章正文最佳行长（约 68 字符） */
+  --layout-max: 56rem; /* 列表页 / Header / Footer / 文章容器统一宽度 */
+  --prose-pad-x: 2.25rem; /* 阅读面板左右内边距：正文实际行长约 48.5rem */
+  --space-page-top: 3rem;
+  --space-section: 2.5rem;
+  --radius-card: 14px;
+  --radius-pill: 999px;
 
   /* Typography —— 中英混排字体栈，中文优先系统字体 */
   --sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
@@ -29,10 +35,12 @@
   --spacing-cjk: 0.005em; /* 中文正文轻微字距，更透气 */
 
   /* Light Mode Colors (Default) */
-  --page-bg: #f4f5f7; /* 全局页面底色（偏冷浅灰，更通透） */
+  --page-bg: #fbfbfc; /* 全局页面底色（几乎纯白，更通透） */
   --sheet: #ffffff;   /* 文章阅读面板底色 */
   --header-bg: rgba(255, 255, 255, 0.72); /* 悬浮玻璃头部底色 */
-  --accent: #cf4b38;  /* 唯一强调色：仅用于元信息分隔点 */
+  --accent: #6f5bd6;  /* 唯一强调色：标签与激活态 */
+  --tag-bg: #f1eeff;  /* 标签胶囊底色（浅紫） */
+  --tag-text: #6f5bd6; /* 标签胶囊文字 */
   --bg: #ffffff;
   --text-primary: rgba(0, 0, 0, 0.88);
   --text-secondary: rgba(0, 0, 0, 0.55);
@@ -41,6 +49,7 @@
   --border-strong: rgba(0, 0, 0, 0.14);
   --selection: rgba(0, 0, 0, 0.06);
   --code-bg: rgba(0, 0, 0, 0.035);
+  --surface-hover: rgba(0, 0, 0, 0.05);
   --mark: #fff8b8;
 
   /* Syntax Theme  */
@@ -64,10 +73,12 @@
 
 /* Light Mode (Explicit) */
 html.light {
-  --page-bg: #f4f5f7;
+  --page-bg: #fbfbfc;
   --sheet: #ffffff;
   --header-bg: rgba(255, 255, 255, 0.72);
-  --accent: #cf4b38;
+  --accent: #6f5bd6;
+  --tag-bg: #f1eeff;
+  --tag-text: #6f5bd6;
   --bg: #ffffff;
   --text-primary: rgba(0, 0, 0, 0.88);
   --text-secondary: rgba(0, 0, 0, 0.55);
@@ -76,6 +87,7 @@ html.light {
   --border-strong: rgba(0, 0, 0, 0.14);
   --selection: rgba(0, 0, 0, 0.06);
   --code-bg: rgba(0, 0, 0, 0.035);
+  --surface-hover: rgba(0, 0, 0, 0.05);
   --mark: #fff8b8;
 
   /* Syntax Theme  */
@@ -94,22 +106,25 @@ html.light {
 
 /* Dark Mode (Explicit) —— 深灰底 + 柔白字，不使用纯黑纯白 */
 html.dark {
-  --page-bg: #0d0d0d; /* 全局页面底色（近黑） */
-  --sheet: #161616;   /* 文章阅读面板底色（略亮于页面） */
-  --header-bg: rgba(22, 22, 22, 0.72); /* 悬浮玻璃头部底色 */
-  --accent: #e0705c;  /* 唯一强调色：仅用于元信息分隔点 */
-  --bg: #111111;
-  --text-primary: rgba(255, 255, 255, 0.88);
+  --page-bg: #121212; /* 全局页面底色 */
+  --sheet: #1a1a1a;   /* 文章阅读面板底色（略亮于页面） */
+  --header-bg: rgba(26, 26, 26, 0.72); /* 悬浮玻璃头部底色 */
+  --accent: #a294f0;  /* 紫色强调（暗色下提亮） */
+  --tag-bg: rgba(140, 120, 255, 0.14);
+  --tag-text: #b3a6ff;
+  --bg: #1a1a1a;
+  --text-primary: rgba(255, 255, 255, 0.82);
   --text-secondary: rgba(255, 255, 255, 0.55);
   --text-tertiary: rgba(255, 255, 255, 0.32);
   --border: rgba(255, 255, 255, 0.09);
   --border-strong: rgba(255, 255, 255, 0.16);
   --selection: rgba(255, 255, 255, 0.1);
   --code-bg: rgba(255, 255, 255, 0.055);
+  --surface-hover: rgba(255, 255, 255, 0.08);
   --mark: #4d5438;
 
   /* Card Surfaces */
-  --surface: #161616;
+  --surface: #1a1a1a;
   --surface-border: rgba(255, 255, 255, 0.09);
   --surface-muted: rgba(255, 255, 255, 0.05);
 

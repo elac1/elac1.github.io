@@ -1,14 +1,7 @@
 ---
 import { themeConfig } from '@/config'
+import { navItems } from '@/data/nav'
 const today = new Date()
-
-const quickLinks = [
-  { href: '/', label: '首页' },
-  { href: '/archive', label: '文章' },
-  { href: '/notes', label: '笔记' },
-  { href: '/narrow', label: '技术' },
-  { href: '/about', label: '关于' }
-]
 ---
 
 <footer class="site-footer">
@@ -21,7 +14,7 @@ const quickLinks = [
     <div class="footer-col">
       <h4 class="footer-heading">快速导航</h4>
       <ul class="footer-links">
-        {quickLinks.map((link) => (
+        {navItems.map((link) => (
           <li><a href={link.href}>{link.label}</a></li>
         ))}
       </ul>
@@ -61,14 +54,21 @@ const quickLinks = [
 
 <style>
   .site-footer {
+    /* 从任意宽度的父容器出血到视口：文章页与外页页脚宽度表现一致 */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
     margin-top: 4rem;
-    padding: 3rem 0 2rem;
+    padding: 3rem 1.5rem 2rem;
+    box-sizing: border-box;
     border-top: 1px solid var(--border);
     color: var(--text-secondary);
     font-size: 0.8125rem;
   }
 
   .footer-inner {
+    width: 100%;
+    max-width: var(--layout-max);
+    margin: 0 auto;
     display: grid;
     grid-template-columns: 1.5fr repeat(3, 1fr);
     gap: 2.5rem;
