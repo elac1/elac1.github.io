@@ -92,23 +92,27 @@ const homeProjects = projects.slice(0, 4)
           <h2 class="section-title">项目列表</h2>
           <a class="section-more" href="/projects/">查看全部 →</a>
         </div>
-        <ul class="project-list">
-          {
-            homeProjects.map((project) => (
-              <li>
-                <a class="project-item" href={project.href}>
-                  <span class="project-name">{project.name}</span>
-                  <span class="project-desc">{project.description}</span>
-                  <span class="project-tech">
-                    {project.tech.map((tech) => (
-                      <span class="tech-pill">{tech}</span>
-                    ))}
-                  </span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+        {
+          homeProjects.length > 0 ? (
+            <ul class="project-list">
+              {homeProjects.map((project) => (
+                <li>
+                  <a class="project-item" href={project.href}>
+                    <span class="project-name">{project.name}</span>
+                    <span class="project-desc">{project.description}</span>
+                    <span class="project-tech">
+                      {project.tech.map((tech) => (
+                        <span class="tech-pill">{tech}</span>
+                      ))}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="page-empty">项目还在整理中，后续会陆续放上来。</p>
+          )
+        }
       </section>
     </div>
   </div>

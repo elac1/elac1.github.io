@@ -11,23 +11,27 @@ import { themeConfig } from '@/config'
   </header>
 
   <section class="panel">
-    <ul class="project-list">
-      {
-        projects.map((project) => (
-          <li>
-            <a class="project-item" href={project.href}>
-              <span class="project-name">{project.name}</span>
-              <span class="project-desc">{project.description}</span>
-              <span class="project-tech">
-                {project.tech.map((tech) => (
-                  <span class="tech-pill">{tech}</span>
-                ))}
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+    {
+      projects.length > 0 ? (
+        <ul class="project-list">
+          {projects.map((project) => (
+            <li>
+              <a class="project-item" href={project.href}>
+                <span class="project-name">{project.name}</span>
+                <span class="project-desc">{project.description}</span>
+                <span class="project-tech">
+                  {project.tech.map((tech) => (
+                    <span class="tech-pill">{tech}</span>
+                  ))}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="page-empty">项目还在整理中，后续会陆续放上来。</p>
+      )
+    }
   </section>
 </IndexLayout>
 
