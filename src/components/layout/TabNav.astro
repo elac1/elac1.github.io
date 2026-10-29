@@ -8,7 +8,7 @@ const path = Astro.url.pathname
 const isActive = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href))
 ---
 
-<header class="tab-nav">
+<header class="tab-nav" data-tab-nav>
   <nav class="tab-list" aria-label="主导航">
     {
       navItems.map((item) => (
@@ -69,6 +69,15 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path === href 
     backdrop-filter: blur(14px) saturate(1.4);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
     overflow: hidden;
+    transition:
+      transform 0.25s ease,
+      opacity 0.25s ease;
+  }
+  /* 向下滚动时自动收起，向上滚动时回到视野 */
+  .tab-nav.is-hidden {
+    transform: translateY(calc(-100% - 1.25rem));
+    opacity: 0;
+    pointer-events: none;
   }
   .tab-list {
     display: flex;
@@ -138,3 +147,47 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path === href 
     }
   }
 </style>
+
+<script>
+  // 栏目条滚动行为：向下滚动自动隐藏，向上滚动立即出现
+  // ClientRouter 切换页面时脚本只执行一次，因此用 window 标记避免重复绑定
+  const tabNavWindow = window as Window & { __tabNavScrollBound?: boolean }
+
+  if (!tabNavWindow.__tabNavScrollBound) {
+    tabNavWindow.__tabNavScrollBound = true
+
+    const HIDE_AFTER = 120 // 距离顶部超过这个像素才允许隐藏，避免轻微滚动就闪动
+    const DELTA = 10 // 判定滚动的方向阈值
+
+    let lastY = window.scrollY
+    let ticking = false
+
+    const update = () => {
+      ticking = false
+      const nav = document.querySelector('[data-tab-nav]')
+      if (!nav) return
+
+      const y = window.scrollY
+      const diff = y - lastY
+      lastY = y
+
+      if (y <= HIDE_AFTER) {
+        nav.classList.remove('is-hidden')
+      } else if (diff > DELTA) {
+        nav.classList.add('is-hidden')
+      } else if (diff < -DELTA) {
+        nav.classList.remove('is-hidden')
+      }
+    }
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return
+        ticking = true
+        requestAnimationFrame(update)
+      },
+      { passive: true }
+    )
+  }
+</script>

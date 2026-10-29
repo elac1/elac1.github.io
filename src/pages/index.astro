@@ -1,18 +1,24 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
+import TabNav from '@/components/layout/TabNav.astro'
 import PostCard from '@/components/widgets/PostCard.astro'
 import { themeConfig } from '@/config'
 import { projects } from '@/data/projects'
 import { getPostStream } from '@/utils/draft'
 
 const stream = await getPostStream()
-const latestPosts = stream.slice(0, 5)
+
+// 最新文章只展示最近三周（21 天）内的内容
+const THREE_WEEKS = 21 * 24 * 60 * 60 * 1000
+const cutoff = new Date(Date.now() - THREE_WEEKS)
+const latestPosts = stream.filter((post) => post.data.pubDate >= cutoff).slice(0, 5)
+
 const homeProjects = projects.slice(0, 4)
 ---
 
-<IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
-  <div class="home-grid">
-    <!-- 左栏：头像 / 简介 / 站点链接 / 技术栈 -->
+<IndexLayout title={themeConfig.site.title} description={themeConfig.site.description} nav={false}>
+  <div class="home-shell">
+    <!-- 左栏：头像 / 简介 / 站点链接 / 技术栈（与栏目条并排，位于栏目条左侧） -->
     <aside class="profile">
       <img class="profile-avatar" src="/images/avatar.png" alt={themeConfig.site.author} width="112" height="112" />
       <h1 class="profile-name">{themeConfig.site.title}</h1>
@@ -57,8 +63,10 @@ const homeProjects = projects.slice(0, 4)
       }
     </aside>
 
-    <!-- 右栏：最新文章 + 项目列表 -->
-    <div class="home-main">
+    <!-- 右栏：栏目条 + 最新文章 + 项目列表（与栏目条等宽对齐） -->
+    <div class="home-col">
+      <TabNav />
+
       <section class="panel latest-panel">
         <div class="panel-head">
           <h2 class="section-title">最新文章</h2>
@@ -72,7 +80,9 @@ const homeProjects = projects.slice(0, 4)
               ))}
             </div>
           ) : (
-            <p class="page-empty">还没有文章，去 <a href="/archive/">归档页</a> 看看。</p>
+            <p class="page-empty">
+              最近三周还没有新文章，去 <a href="/archive/">归档</a> 看看全部内容。
+            </p>
           )
         }
       </section>
@@ -104,9 +114,21 @@ const homeProjects = projects.slice(0, 4)
   </div>
 </IndexLayout>
 
+<style is:global>
+  /* 首页外壳比常规页面宽：左栏资料 + 右栏 56rem 内容区 */
+  body:has(.home-shell) .page-content main {
+    max-width: calc(var(--layout-max) + 16.5rem);
+  }
+
+  @media (max-width: 1024px) {
+    body:has(.home-shell) .page-content main {
+      max-width: var(--layout-max);
+    }
+  }
+</style>
+
 <style>
-  /* ========== 两栏布局 ========== */
-  .home-grid {
+  .home-shell {
     display: grid;
     grid-template-columns: 14rem minmax(0, 1fr);
     gap: 2.5rem;
@@ -116,7 +138,7 @@ const homeProjects = projects.slice(0, 4)
   /* ========== 左栏：个人资料 ========== */
   .profile {
     position: sticky;
-    top: 4.5rem;
+    top: 0.75rem;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -198,32 +220,42 @@ const homeProjects = projects.slice(0, 4)
     white-space: nowrap;
   }
 
-  /* ========== 右栏：卡片面板 ========== */
-  .home-main {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  /* ========== 右栏：栏目条 + 卡片面板 ========== */
+  .home-col {
     min-width: 0;
-  }
-  .projects-panel {
-    padding-bottom: 0.9rem;
   }
   .latest-list {
     margin-top: 0.25rem;
   }
+  .projects-panel {
+    margin-top: 1.5rem;
+    padding-bottom: 0.9rem;
+  }
 
   /* ========== 响应式 ========== */
-  @media (max-width: 860px) {
-    .home-grid {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 1.75rem;
+  @media (max-width: 1024px) {
+    /* 单列时把栏目条提回最上面：home-col 展开，用 order 控制顺序 */
+    .home-shell {
+      display: flex;
+      flex-direction: column;
+    }
+    .home-col {
+      display: contents;
     }
     .profile {
+      order: 1;
       position: static;
       flex-direction: row;
       flex-wrap: wrap;
       align-items: center;
       gap: 0 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .latest-panel {
+      order: 2;
+    }
+    .projects-panel {
+      order: 3;
     }
     .profile-avatar {
       width: 4.5rem;
@@ -246,9 +278,6 @@ const homeProjects = projects.slice(0, 4)
   }
 
   @media (max-width: 640px) {
-    .home-main {
-      gap: 1.5rem;
-    }
     .project-item {
       margin: 0 -0.6rem;
       padding: 0.85rem 0.6rem;
