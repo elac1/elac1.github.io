@@ -2,6 +2,7 @@
 title: 'OpenCV 人脸识别：400 张人脸上的 6 种经典特征'
 pubDate: '2026-10-25'
 description: '不训练神经网络，只用 OpenCV + scikit-learn：从原始像素到 LBP、LBPH、PCA、LDA、Fisherface，同一个 1-NN 分类器下准确率从 90.00% 走到 99.17%，每一步都解释数字为什么变。'
+cover: '/images/face-recognition/eigenfaces-cover.png'
 tags:
   - OpenCV
   - 人脸识别
