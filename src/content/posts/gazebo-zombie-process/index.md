@@ -2,6 +2,7 @@
 title: 'Gazebo 僵尸进程'
 pubDate: '2026-10-07'
 description: '残留的 gzserver 会以两种看不出关系的方式毁掉仿真：占住 11345 端口让新的 gzserver 静默退出（话题全空），或者继续发 /clock 与 /tf 和新实例打架（读到上一轮的旧数据、TF 错乱）。含确认方法与一键清场脚本。'
+cover: '/images/ros2/gazebo-zombie-cover.jpg'
 tags:
   - Gazebo
   - 仿真

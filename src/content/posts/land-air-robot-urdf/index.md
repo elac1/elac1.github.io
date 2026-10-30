@@ -2,6 +2,7 @@
 title: '陆地天空双栖机器人：四旋翼 + 四轮，用 URDF + xacro 建模'
 pubDate: '2026-10-03'
 description: '按文件夹组织的 URDF 建模工程：机身、机臂、旋翼组、轮组与 IMU 的实现方式，含坐标系与关节树、编译校验、RViz2 显示与 TF 数值核对。'
+cover: '/images/ros2/land-air-robot-cover.jpg'
 tags:
   - ROS2
   - URDF

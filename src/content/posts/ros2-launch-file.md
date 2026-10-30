@@ -2,6 +2,7 @@
 title: 'ROS 2 Launch 文件：从入门到日常使用'
 pubDate: '2026-09-28'
 description: 'Launch 文件是 ROS 2 中批量启动节点、配置参数的核心工具。从基本结构到完整仿真实例，理清 launch 文件的完整操作流程。'
+cover: '/images/ros2/launch-cover.jpg'
 tags:
   - ROS2
   - ROS
