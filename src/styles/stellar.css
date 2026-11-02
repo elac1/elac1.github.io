@@ -5,18 +5,19 @@
   --stellar-blue: #476d8d;
   --stellar-violet: #77608f;
   --stellar-gold: #8b6a39;
-  --stellar-star: #80728e;
-  --stellar-orbit: #9588aa;
-  --stellar-cloud-violet: #a38cbe26;
-  --stellar-cloud-blue: #759eb61f;
-  --stellar-cloud-gold: #b9a17a14;
-  --stellar-cloud-clear: #f5f4f800;
+  --stellar-star: #666666;
+  --stellar-orbit: #888888;
+  --stellar-sky-gradient: linear-gradient(135deg, #ffffff 5%, #eeeeee 55%, #d8d8d8 100%);
+  --stellar-cloud-bright: #ffffffb3;
+  --stellar-cloud-soft: #5555551c;
+  --stellar-cloud-deep: #22222218;
+  --stellar-cloud-clear: #ffffff00;
   --stellar-active: linear-gradient(100deg, #e2dcee, #e1e9ef);
   --stellar-project: linear-gradient(110deg, #f0ebf6, #e8eff4 50%, #f2eee7);
 }
 html.dark {
-  --page-bg: #0d0f15;
-  --bg: #0d0f15;
+  --page-bg: #080808;
+  --bg: #080808;
   --sheet: #161923;
   --header-bg: #11151ddd;
   --text-primary: #e7e7ec;
@@ -39,18 +40,19 @@ html.dark {
   --stellar-blue: #9cbcd5;
   --stellar-violet: #bca9d9;
   --stellar-gold: #d4b98d;
-  --stellar-star: #d5dbe8;
-  --stellar-orbit: #8d91ad;
-  --stellar-cloud-violet: #63507f38;
-  --stellar-cloud-blue: #27465f2b;
-  --stellar-cloud-gold: #6b52351b;
-  --stellar-cloud-clear: #0d0f1500;
+  --stellar-star: #eeeeee;
+  --stellar-orbit: #aaaaaa;
+  --stellar-sky-gradient: linear-gradient(135deg, #030303 5%, #111111 55%, #242424 100%);
+  --stellar-cloud-bright: #eeeeee30;
+  --stellar-cloud-soft: #99999924;
+  --stellar-cloud-deep: #55555520;
+  --stellar-cloud-clear: #00000000;
   --stellar-active: linear-gradient(100deg, #353043, #253240);
   --stellar-project: linear-gradient(110deg, #232333, #202b35 50%, #292a2a);
 }
 html.light {
-  --page-bg: #f5f4f8;
-  --bg: #f5f4f8;
+  --page-bg: #f4f4f4;
+  --bg: #f4f4f4;
   --sheet: #ffffff;
   --text-primary: #252333;
   --text-secondary: #605d70;
@@ -67,7 +69,7 @@ body.stellar-site {
   margin: 0;
   padding: 0 !important;
   min-height: 100svh;
-  background: var(--page-bg);
+  background: var(--page-bg) var(--stellar-sky-gradient) fixed;
 }
 .stellar-site *,
 .stellar-site *::before,
@@ -108,7 +110,7 @@ body.stellar-site {
   border-inline: 1px solid var(--border);
 }
 html.dark .stellar-sidebar {
-  background: linear-gradient(175deg, #171823, #11151d 42%, #11131b);
+  background: linear-gradient(175deg, #191919, #101010 42%, #0c0c0c);
 }
 .stellar-identity {
   display: flex;
@@ -461,8 +463,8 @@ body.stellar-site .post-item.has-thumb {
   height: 76%;
   border-radius: 50%;
   background:
-    radial-gradient(ellipse at 30% 28%, var(--stellar-cloud-violet), transparent 60%),
-    radial-gradient(ellipse at 65% 73%, var(--stellar-cloud-blue), transparent 66%);
+    radial-gradient(ellipse at 30% 28%, var(--stellar-cloud-bright), transparent 60%),
+    radial-gradient(ellipse at 65% 73%, var(--stellar-cloud-soft), transparent 66%);
 }
 .stellar-map-ring {
   position: absolute;
@@ -470,7 +472,7 @@ body.stellar-site .post-item.has-thumb {
   top: 25%;
   width: 70%;
   height: 45%;
-  border: 1px solid var(--stellar-violet);
+  border: 1px solid var(--stellar-orbit);
   opacity: 0.3;
   border-radius: 50%;
   transform: rotate(-34deg);
@@ -480,14 +482,14 @@ body.stellar-site .post-item.has-thumb {
   left: 24%;
   width: 55%;
   height: 59%;
-  border-color: var(--stellar-blue);
+  border-color: var(--stellar-star);
   transform: rotate(39deg);
 }
 .stellar-map-ring-a {
-  animation: orbit-a 18s ease-in-out infinite alternate;
+  animation: orbit-a 12s ease-in-out infinite alternate;
 }
 .stellar-map-ring-b {
-  animation: orbit-b 23s ease-in-out infinite alternate;
+  animation: orbit-b 16s ease-in-out infinite alternate;
 }
 html[data-star-motion='paused'] .stellar-map-ring {
   animation-play-state: paused;
@@ -817,18 +819,18 @@ html[data-star-motion='paused'] .stellar-map-ring {
 }
 @keyframes orbit-a {
   from {
-    transform: rotate(-46deg);
+    transform: rotate(-55deg);
   }
   to {
-    transform: rotate(-22deg);
+    transform: rotate(-13deg);
   }
 }
 @keyframes orbit-b {
   from {
-    transform: rotate(25deg);
+    transform: rotate(15deg);
   }
   to {
-    transform: rotate(53deg);
+    transform: rotate(63deg);
   }
 }
 @media (min-width: 1280px) {

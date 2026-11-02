@@ -36,13 +36,9 @@ import { themeConfig } from '@/config'
       phase = 0
     let colors = {
       star: '',
-      blue: '',
-      violet: '',
-      gold: '',
-      line: '',
-      violetCloud: '',
-      blueCloud: '',
-      goldCloud: '',
+      brightCloud: '',
+      softCloud: '',
+      deepCloud: '',
       clear: ''
     }
     const random = (i: number) => {
@@ -62,13 +58,9 @@ import { themeConfig } from '@/config'
       const color = (name: string) => style.getPropertyValue(name).trim()
       colors = {
         star: color('--stellar-star'),
-        blue: color('--stellar-blue'),
-        violet: color('--stellar-violet'),
-        gold: color('--stellar-gold'),
-        line: color('--stellar-orbit'),
-        violetCloud: color('--stellar-cloud-violet'),
-        blueCloud: color('--stellar-cloud-blue'),
-        goldCloud: color('--stellar-cloud-gold'),
+        brightCloud: color('--stellar-cloud-bright'),
+        softCloud: color('--stellar-cloud-soft'),
+        deepCloud: color('--stellar-cloud-deep'),
         clear: color('--stellar-cloud-clear')
       }
     }
@@ -79,27 +71,30 @@ import { themeConfig } from '@/config'
       ctx.clearRect(0, 0, width, height)
       const reading = document.body.dataset.pageType === 'post'
       const travel = phase * (reading ? 0.25 : 1)
+      const span = Math.max(width, height * 0.8)
+      const horizontalDrift = Math.max(32, Math.min(width * 0.065, 100))
+      const verticalDrift = Math.max(40, Math.min(height * 0.09, 95))
       const clouds = [
-        { x: 0.81, y: 150, r: 0.46, color: colors.violetCloud },
-        { x: 0.4, y: height * 0.52, r: 0.43, color: colors.blueCloud },
-        { x: 0.88, y: height * 0.8, r: 0.31, color: colors.goldCloud }
+        { x: 0.83, y: height * 0.2, r: 0.5, color: colors.brightCloud },
+        { x: 0.36, y: height * 0.58, r: 0.48, color: colors.softCloud },
+        { x: 0.84, y: height * 0.88, r: 0.36, color: colors.deepCloud }
       ]
       for (const [i, cloud] of clouds.entries()) {
-        const x = width * cloud.x + Math.sin(travel * 0.12 + i) * 18
-        const y = cloud.y + Math.sin(travel * 0.09 + i) * 12
-        const gradient = ctx.createRadialGradient(x, y, 0, x, y, width * cloud.r)
+        const x = width * cloud.x + Math.sin(travel * 0.18 + i) * horizontalDrift
+        const y = cloud.y + Math.sin(travel * 0.14 + i) * verticalDrift
+        const radius = span * cloud.r * (1 + Math.sin(travel * 0.16 + i) * 0.06)
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
         gradient.addColorStop(0, cloud.color)
         gradient.addColorStop(1, colors.clear)
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, width, height)
       }
       stars.forEach((star, i) => {
-        // 每秒漂移约 3–6 像素；留出边缘余量，让星点自然进出视口。
-        const x = ((star.x * (width + 8) + travel * star.speed * 2) % (width + 8)) - 4
-        const y = ((star.y * (height + 8) + travel * star.speed * 4.5) % (height + 8)) - 4
+        // 每秒漂移约 11–20 像素；文章页放慢，留出边缘余量让星点自然进出视口。
+        const x = ((star.x * (width + 8) + travel * star.speed * 7) % (width + 8)) - 4
+        const y = ((star.y * (height + 8) + travel * star.speed * 13.5) % (height + 8)) - 4
         ctx.globalAlpha = brightness * star.alpha * (0.77 + 0.23 * Math.sin(phase * 0.65 + i)) * (reading ? 0.3 : 1)
-        ctx.fillStyle =
-          i % 17 === 0 ? colors.gold : i % 11 === 0 ? colors.blue : i % 7 === 0 ? colors.violet : colors.star
+        ctx.fillStyle = colors.star
         ctx.beginPath()
         ctx.arc(x, y, star.radius, 0, Math.PI * 2)
         ctx.fill()
