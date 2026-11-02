@@ -2,6 +2,7 @@
 title: 'Git 知识库'
 pubDate: '2026-09-09'
 description: '系统整理 Git 本地命令、远程仓库操作、PR 流程与常见报错场景，一篇文章搞定日常协作。'
+cover: '/images/covers/git-knowledge.svg'
 tags:
   - Git
   - 工具

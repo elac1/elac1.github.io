@@ -29,7 +29,7 @@ const href = `/${getPostSlug(post)}/`
   <a href={href} class="stellar-entry-thumb" tabindex="-1" aria-hidden="true">
     {
       post.data.cover ? (
-        <img src={post.data.cover} alt="" loading="lazy" width="112" height="90" />
+        <img src={post.data.cover} alt="" loading="lazy" decoding="async" width="160" height="90" />
       ) : (
         <Icon name={subject === 'vision' ? 'scan' : subject === 'ros' ? 'bot' : 'code'} size={28} />
       )

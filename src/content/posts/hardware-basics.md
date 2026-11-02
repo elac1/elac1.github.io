@@ -2,6 +2,7 @@
 title: '控制板、舵机、IMU：一次搞懂'
 pubDate: '2026-09-19'
 description: '从控制板开始，一步步认识舵机、舵机控制板、IMU，最后把它们串起来，看看能做什么。'
+cover: '/images/covers/hardware-basics.svg'
 tags:
   - 硬件
 category: '垂直领域研究'

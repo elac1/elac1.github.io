@@ -356,6 +356,16 @@ html.dark .stellar-sidebar {
 }
 .stellar-site .post-item.has-thumb .item-thumb {
   order: 2;
+  width: clamp(8rem, 14vw, 10rem);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: #151923;
+}
+body.stellar-site .post-item.has-thumb {
+  align-items: center;
 }
 .stellar-site .post-item .item-title {
   font-weight: 500;
@@ -777,21 +787,21 @@ html[data-star-motion='paused'] .stellar-map-ring {
   color: inherit;
 }
 .stellar-entry-thumb {
-  width: 7rem;
-  height: 5.6rem;
+  width: clamp(8rem, 14vw, 10rem);
+  aspect-ratio: 16 / 9;
   flex-shrink: 0;
   display: grid;
   place-items: center;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--entry-color) 30%, transparent);
   border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--entry-color) 8%, var(--page-bg));
+  background: #151923;
   color: var(--entry-color);
 }
 .stellar-entry-thumb img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .stellar-entry-arrow {
   flex-shrink: 0;
@@ -917,8 +927,7 @@ html[data-star-motion='paused'] .stellar-map-ring {
     background: var(--tag-bg);
   }
   .stellar-entry-thumb {
-    width: 5rem;
-    height: 5rem;
+    width: 7rem;
   }
   .stellar-entry-arrow {
     display: none;
@@ -1038,17 +1047,64 @@ html[data-star-motion='paused'] .stellar-map-ring {
     font-size: 1.125rem;
   }
   .stellar-entry {
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 6rem;
+    gap: 0.45rem 0.75rem;
     padding-left: 1.3rem;
+  }
+  .stellar-entry-copy {
+    display: contents;
+  }
+  .stellar-entry-category,
+  .stellar-entry h3,
+  .stellar-entry-meta {
+    grid-column: 1 / -1;
   }
   .stellar-entry h3 {
     font-size: 1rem;
+    margin: 0;
   }
   .stellar-entry-copy > p {
     font-size: 0.8125rem;
+    grid-column: 1;
+    grid-row: 3;
+    margin: 0;
   }
   .stellar-entry-thumb {
-    display: none;
+    width: 6rem;
+    grid-column: 2;
+    grid-row: 3;
+    align-self: center;
+  }
+  .stellar-entry-meta {
+    grid-row: 4;
+  }
+  body.stellar-site .post-item.has-thumb {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 6rem;
+    gap: 0.45rem 0.75rem;
+  }
+  .stellar-site .post-item.has-thumb .item-body {
+    display: contents;
+  }
+  .stellar-site .post-item.has-thumb .item-title,
+  .stellar-site .post-item.has-thumb .item-meta {
+    grid-column: 1 / -1;
+  }
+  .stellar-site .post-item.has-thumb .item-excerpt {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+  }
+  .stellar-site .post-item.has-thumb .item-thumb {
+    width: 6rem;
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .stellar-site .post-item.has-thumb .item-meta {
+    grid-row: 3;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
   .stellar-filter-label {
     display: block;

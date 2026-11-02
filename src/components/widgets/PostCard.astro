@@ -52,7 +52,7 @@ const thumbSrc = getThumb(post)
       {
         thumb && (
           thumbSrc ? (
-            <img class="item-thumb" src={thumbSrc} alt="" loading="lazy" />
+            <img class="item-thumb" src={thumbSrc} alt="" loading="lazy" decoding="async" width="160" height="90" />
           ) : (
             <span class="item-thumb placeholder" aria-hidden="true"></span>
           )
