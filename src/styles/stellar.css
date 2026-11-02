@@ -473,11 +473,14 @@ html.dark .stellar-sidebar {
   border-color: var(--stellar-blue);
   transform: rotate(39deg);
 }
-html[data-star-motion='playing'] .stellar-map-ring-a {
-  animation: orbit-a 32s ease-in-out infinite alternate;
+.stellar-map-ring-a {
+  animation: orbit-a 18s ease-in-out infinite alternate;
 }
-html[data-star-motion='playing'] .stellar-map-ring-b {
-  animation: orbit-b 39s ease-in-out infinite alternate;
+.stellar-map-ring-b {
+  animation: orbit-b 23s ease-in-out infinite alternate;
+}
+html[data-star-motion='paused'] .stellar-map-ring {
+  animation-play-state: paused;
 }
 .stellar-map-arc {
   position: absolute;
@@ -804,18 +807,18 @@ html[data-star-motion='playing'] .stellar-map-ring-b {
 }
 @keyframes orbit-a {
   from {
-    transform: rotate(-38deg);
+    transform: rotate(-46deg);
   }
   to {
-    transform: rotate(-30deg);
+    transform: rotate(-22deg);
   }
 }
 @keyframes orbit-b {
   from {
-    transform: rotate(34deg);
+    transform: rotate(25deg);
   }
   to {
-    transform: rotate(44deg);
+    transform: rotate(53deg);
   }
 }
 @media (min-width: 1280px) {

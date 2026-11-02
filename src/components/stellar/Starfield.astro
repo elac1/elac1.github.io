@@ -52,6 +52,7 @@ import { themeConfig } from '@/config'
     const stars = Array.from({ length: density }, (_, i) => ({
       x: random(i * 3 + 1),
       y: random(i * 3 + 2),
+      speed: 0.7 + random(i + 320) * 0.6,
       radius: 0.45 + random(i * 3 + 3) * 0.7,
       alpha: 0.23 + random(i + 160) * 0.6
     }))
@@ -76,33 +77,31 @@ import { themeConfig } from '@/config'
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, width, height)
+      const reading = document.body.dataset.pageType === 'post'
+      const travel = phase * (reading ? 0.25 : 1)
       const clouds = [
         { x: 0.81, y: 150, r: 0.46, color: colors.violetCloud },
         { x: 0.4, y: height * 0.52, r: 0.43, color: colors.blueCloud },
         { x: 0.88, y: height * 0.8, r: 0.31, color: colors.goldCloud }
       ]
-      for (const cloud of clouds) {
-        const gradient = ctx.createRadialGradient(
-          width * cloud.x,
-          cloud.y,
-          0,
-          width * cloud.x,
-          cloud.y,
-          width * cloud.r
-        )
+      for (const [i, cloud] of clouds.entries()) {
+        const x = width * cloud.x + Math.sin(travel * 0.12 + i) * 18
+        const y = cloud.y + Math.sin(travel * 0.09 + i) * 12
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, width * cloud.r)
         gradient.addColorStop(0, cloud.color)
         gradient.addColorStop(1, colors.clear)
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, width, height)
       }
-      const reading = document.body.dataset.pageType === 'post'
       stars.forEach((star, i) => {
-        const y = (star.y * height + Math.sin(phase + i) * 1.6 + height) % height
-        ctx.globalAlpha = brightness * star.alpha * (0.77 + 0.23 * Math.sin(phase * 0.7 + i)) * (reading ? 0.3 : 1)
+        // 每秒漂移约 3–6 像素；留出边缘余量，让星点自然进出视口。
+        const x = ((star.x * (width + 8) + travel * star.speed * 2) % (width + 8)) - 4
+        const y = ((star.y * (height + 8) + travel * star.speed * 4.5) % (height + 8)) - 4
+        ctx.globalAlpha = brightness * star.alpha * (0.77 + 0.23 * Math.sin(phase * 0.65 + i)) * (reading ? 0.3 : 1)
         ctx.fillStyle =
           i % 17 === 0 ? colors.gold : i % 11 === 0 ? colors.blue : i % 7 === 0 ? colors.violet : colors.star
         ctx.beginPath()
-        ctx.arc(star.x * width, y, star.radius, 0, Math.PI * 2)
+        ctx.arc(x, y, star.radius, 0, Math.PI * 2)
         ctx.fill()
       })
       ctx.globalAlpha = 1
@@ -123,7 +122,7 @@ import { themeConfig } from '@/config'
         frame = requestAnimationFrame(animate)
         return
       }
-      if (last) phase += Math.min(now - last, 80) * 0.00022
+      if (last) phase += Math.min(now - last, 80) / 1000
       last = now
       draw()
       frame = requestAnimationFrame(animate)
@@ -135,7 +134,12 @@ import { themeConfig } from '@/config'
       const stopped = !playing || reduced.matches
       toggle.setAttribute('aria-pressed', String(stopped))
       toggle.setAttribute('aria-label', stopped ? '开启星空动态' : '暂停星空动态')
-      toggle.querySelector('.motion-label')!.textContent = stopped ? '流动星空' : '静止星空'
+      toggle.querySelector('.motion-label')!.textContent = reduced.matches
+        ? '动态已关闭'
+        : stopped
+          ? '开启动效'
+          : '暂停动态'
+      toggle.title = reduced.matches ? '已跟随系统设置减少动态效果' : stopped ? '开启星空动态' : '暂停星空动态'
       toggle.disabled = reduced.matches
       document.documentElement.dataset.starMotion = stopped ? 'paused' : 'playing'
       draw()
