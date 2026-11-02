@@ -1,0 +1,106 @@
+---
+import { themeConfig } from '@/config'
+import { navItems } from '@/data/nav'
+import ThemeToggle from '@/components/ui/ThemeToggle.astro'
+import Footer from '@/components/layout/Footer.astro'
+import Starfield from './Starfield.astro'
+import Icon from './Icon.astro'
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/'
+const routeNames: Record<string, string> = {
+  '/': '个人空间',
+  '/archive': '文章',
+  '/projects': '项目',
+  '/narrow': '技术',
+  '/about': '关于',
+  '/search': '搜索',
+  '/tags': '标签',
+  '/links': '友链',
+  '/notes': '随记'
+}
+const section = Object.keys(routeNames).find(
+  (route) => route !== '/' && (path === route || path.startsWith(route + '/'))
+)
+const current = path === '/' ? '个人空间' : section ? routeNames[section] : '阅读'
+const icons: Record<string, string> = {
+  '/': 'orbit',
+  '/archive': 'book',
+  '/projects': 'blocks',
+  '/narrow': 'code',
+  '/about': 'user'
+}
+const order = ['/', '/archive', '/projects', '/narrow', '/about']
+const links = [...navItems].sort((a, b) => order.indexOf(a.href) - order.indexOf(b.href))
+const active = (href: string) =>
+  href === '/'
+    ? path === '/'
+    : path === href || path.startsWith(href + '/') || (href === '/archive' && current === '阅读')
+---
+
+<a class="stellar-skip" href="#main-content">跳到正文</a>
+<Starfield />
+<div class="stellar-shell" id="top">
+  <aside class="stellar-sidebar" aria-label="个人资料与导航" data-pagefind-ignore>
+    <a href="/" class="stellar-identity" aria-label={`${themeConfig.site.author} 的首页`}>
+      <span class="stellar-emblem" aria-hidden="true"><span>e</span></span>
+      <span
+        ><span class="stellar-name">{themeConfig.site.author}<span>.</span></span><span class="stellar-personal"
+          >一个人的探索记录</span
+        ></span
+      >
+    </a>
+    <p class="stellar-signature">好奇心未尽，<br />故事还在继续。</p>
+    <nav class="stellar-nav" aria-label="主要导航">
+      {
+        links.map((item) => (
+          <a
+            href={item.href}
+            class:list={{ active: active(item.href) }}
+            aria-current={active(item.href) ? 'page' : undefined}
+          >
+            <>
+              <Icon name={icons[item.href]} size={17} />
+              <span>{item.href === '/' ? '我的空间' : item.label}</span>
+              <span class="stellar-nav-dot" aria-hidden="true" />
+            </>
+          </a>
+        ))
+      }
+    </nav>
+    <div class="stellar-sidebar-bottom">
+      <span class="stellar-side-rule"></span><p>机器人 · 机器视觉<br />代码 · 日常</p>
+      {
+        themeConfig.site.github && (
+          <a href={themeConfig.site.github} target="_blank" rel="noopener noreferrer">
+            <Icon name="github" size={15} />
+            GitHub
+            <Icon name="arrow" size={13} />
+          </a>
+        )
+      }
+      <a href="/rss.xml"><Icon name="rss" size={15} />RSS 订阅<Icon name="arrow" size={13} /></a>
+    </div>
+  </aside>
+  <div class="stellar-main">
+    <header class="stellar-toolbar" data-pagefind-ignore>
+      <span class="stellar-location"
+        ><span class="stellar-location-dot" aria-hidden="true"></span><a href="/">{themeConfig.site.title}</a><span
+          class="stellar-slash">/</span
+        ><span>{current}</span></span
+      >
+      <div class="stellar-actions">
+        <button class="stellar-motion" type="button" data-star-toggle aria-pressed="false" aria-label="暂停星空动态"
+          ><span class="motion-pause"><Icon name="pause" size={14} /></span><span class="motion-play"
+            ><Icon name="play" size={14} /></span
+          ><span class="motion-label">静止星空</span></button
+        >
+        <a href="/search/" class="stellar-action" aria-label="搜索文章" title="搜索文章"
+          ><Icon name="search" size={17} /></a
+        >
+        {themeConfig.general.themeToggle && <ThemeToggle />}
+      </div>
+    </header>
+    <slot />
+    {themeConfig.general.footer && <Footer />}
+  </div>
+</div>

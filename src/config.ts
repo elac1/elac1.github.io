@@ -15,6 +15,9 @@ export const themeConfig: ThemeConfig = {
 
   // GENERAL SETTINGS ////////////////////////////////////////////////////////////////////////////////////
   general: {
+    defaultTheme: 'dark',
+    starDensity: 150,
+    starBrightness: 0.75,
     contentWidth: '56rem', // 与 --layout-max 保持一致：Header / 列表页 / 文章容器
     centeredLayout: true,
     themeToggle: true,
@@ -42,7 +45,5 @@ export const themeConfig: ThemeConfig = {
 
   // FOOTER EXTRAS ///////////////////////////////////////////////////////////////////////////////////////
   techStack: ['ROS 2', 'Python', 'OpenCV', 'Gazebo', 'Docker'],
-  friendLinks: [
-    { name: 'GitHub', href: 'https://github.com/elac1' }
-  ]
+  friendLinks: [{ name: 'GitHub', href: 'https://github.com/elac1' }]
 }

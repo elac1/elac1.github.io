@@ -32,7 +32,6 @@ const items = toc.map((item) => ({
 <script
   is:inline
   define:vars={{
-    contentWidth: themeConfig.general.contentWidth,
     centeredLayout: themeConfig.general.centeredLayout
   }}
 >
@@ -43,7 +42,7 @@ const items = toc.map((item) => ({
 
     const jumpOffset = 96
     const tocWidth = 12 * 16
-    const gap = 4 * 16
+    const gap = 1.5 * 16
 
     const state = {
       container: null,
@@ -85,19 +84,20 @@ const items = toc.map((item) => ({
         return
       }
 
-      const pageWidth = window.innerWidth
-      const contentWidthValue = Math.max(parseFloat(contentWidth), 25)
-      const margin = (pageWidth - contentWidthValue * 16) / 2
-      const minSpace = tocWidth + gap
+      const prose = document.querySelector('.prose')
+      if (!prose) return
+      const left = prose.getBoundingClientRect().right + gap
 
-      if (margin >= minSpace) {
+      if (window.innerWidth >= 1280 && left + tocWidth <= window.innerWidth - 16) {
         state.container.style.display = 'block'
         state.container.classList.add('fixed-position')
-        state.container.style.right = `${margin - minSpace}px`
+        state.container.style.left = `${left}px`
+        state.container.style.right = 'auto'
       } else {
         state.container.style.display = 'none'
         state.container.classList.remove('fixed-position')
         state.container.style.right = ''
+        state.container.style.left = ''
       }
     }
 
@@ -112,7 +112,10 @@ const items = toc.map((item) => ({
           const rect = target.getBoundingClientRect()
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop
           const offset = rect.top + scrollTop - jumpOffset
-          window.scrollTo({ top: offset, behavior: 'smooth' })
+          window.scrollTo({
+            top: offset,
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+          })
           history.pushState(null, null, href)
         }
       }

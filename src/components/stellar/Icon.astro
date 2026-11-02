@@ -1,0 +1,35 @@
+---
+type Props = { name: string; size?: number; class?: string }
+const { name, size = 18, class: className } = Astro.props
+const paths: Record<string, string> = {
+  orbit: '<circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="11" ry="5" transform="rotate(-35 12 12)"/>',
+  book: '<path d="M4 3h14a2 2 0 0 1 2 2v16H6a3 3 0 0 1-3-3V6a3 3 0 0 1 1-3Z"/><path d="M3 17h17M7 7h8M7 11h6"/>',
+  blocks:
+    '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  code: '<path d="m8 7-5 5 5 5m8-10 5 5-5 5M14 4l-4 16"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
+  search: '<circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/>',
+  arrow: '<path d="M7 17 17 7M7 7h10v10"/>',
+  bot: '<rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M1 12v4m22-4v4M8 16h8"/><circle cx="8.5" cy="12" r=".6"/><circle cx="15.5" cy="12" r=".6"/>',
+  scan: '<path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3M8 10h.01M16 10h.01M9 16a5 5 0 0 0 6 0M12 9v4"/>',
+  github:
+    '<path d="M9 19c-4.3 1.3-4.3-2-6-2m12 5v-3.9a3.4 3.4 0 0 0-1-2.6c3.3-.4 6.8-1.6 6.8-7.3a5.7 5.7 0 0 0-1.5-4 5.3 5.3 0 0 0-.1-3.9s-1.2-.4-4 1.5a13.9 13.9 0 0 0-7.2 0C5.2 0 4 .4 4 .4a5.3 5.3 0 0 0-.1 3.9 5.7 5.7 0 0 0-1.5 4c0 5.7 3.5 6.9 6.8 7.3a3.4 3.4 0 0 0-1 2.6V22"/>',
+  rss: '<path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/>',
+  pause: '<path d="M8 5v14M16 5v14"/>',
+  play: '<path d="m8 5 11 7-11 7Z"/>'
+}
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={paths[name] || paths.code}
+/>

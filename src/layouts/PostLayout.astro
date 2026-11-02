@@ -4,9 +4,7 @@ import type { PostLayoutProps } from '@/types'
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import FootnoteScroll from '@/components/widgets/FootnoteScroll.astro'
 import BaseHead from '@/components/layout/BaseHead.astro'
-import Footer from '@/components/layout/Footer.astro'
 import TableOfContents from '@/components/ui/TableOfContents.astro'
-import GradientMask from '@/components/ui/GradientMask.astro'
 import ImageOptimizer from '@/components/ui/ImageOptimizer.astro'
 import ImageViewer from '@/components/ui/ImageViewer.astro'
 import GitHubCard from '@/components/ui/GitHubCard.astro'
@@ -15,7 +13,6 @@ import NeoDBCard from '@/components/ui/NeoDBCard.astro'
 import XPOST from '@/components/ui/XPOST.astro'
 import CopyCode from '@/components/ui/CopyCode.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import TabNav from '@/components/layout/TabNav.astro'
 import Comments from '@/components/widgets/Comments.astro'
 
 import { themeConfig } from '@/config'
@@ -39,10 +36,8 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     slot="head"
   />
   <div class="post-container">
-    <TabNav />
-    <main>
+    <main id="main-content">
       <div class="prose">
-        <GradientMask />
         {shouldRenderToc && <TableOfContents toc={toc} />}
         <div class="title">
           <h1 data-pagefind-meta="title">{title}</h1>
@@ -74,17 +69,8 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     {contentFeatures.hasNeoDBCard && <NeoDBCard />}
     {shouldRenderImageViewer && <ImageViewer />}
     {shouldRenderLinkCard && <LinkCard />}
-    {themeConfig.general.footer && <Footer />}
   </div>
 </BaseLayout>
-
-<style is:global>
-  /* 文章页与内页共用同一套外壳：满宽底 + 56rem 居中，吸顶栏宽度与首页一致 */
-  body:has(.post-container) {
-    max-width: none !important;
-    padding: 1.5rem !important;
-  }
-</style>
 
 <style>
   .post-container {
@@ -92,7 +78,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     flex-direction: column;
     flex: 1;
     width: 100%;
-    max-width: var(--layout-max);
+    max-width: none;
     margin: 0 auto;
     box-sizing: border-box;
   }

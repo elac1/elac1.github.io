@@ -1,290 +1,135 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import TabNav from '@/components/layout/TabNav.astro'
-import PostCard from '@/components/widgets/PostCard.astro'
+import StellarPost from '@/components/stellar/StellarPost.astro'
+import Icon from '@/components/stellar/Icon.astro'
 import { themeConfig } from '@/config'
-import { projects } from '@/data/projects'
 import { getPostStream } from '@/utils/draft'
-
 const stream = await getPostStream()
-
-// 最新文章只展示最近三周（21 天）内的内容
-const THREE_WEEKS = 21 * 24 * 60 * 60 * 1000
-const cutoff = new Date(Date.now() - THREE_WEEKS)
-const latestPosts = stream.filter((post) => post.data.pubDate >= cutoff).slice(0, 5)
-
-const homeProjects = projects.slice(0, 4)
+const cutoff = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000)
+const latest = stream.filter((post) => post.data.pubDate >= cutoff).slice(0, 5)
+const latestIds = new Set(latest.map((post) => post.id))
+const topics = [
+  { id: 'ros', name: 'ROS 2' },
+  { id: 'vision', name: '机器视觉' },
+  { id: 'simulation', name: '仿真' }
+]
 ---
 
-<IndexLayout title={themeConfig.site.title} description={themeConfig.site.description} nav={false}>
-  <div class="home-shell">
-    <!-- 左栏：头像 / 简介 / 站点链接 / 技术栈（与栏目条并排，位于栏目条左侧） -->
-    <aside class="profile">
-      <img class="profile-avatar" src="/images/avatar.png" alt={themeConfig.site.author} width="112" height="112" />
-      <h1 class="profile-name">{themeConfig.site.title}</h1>
-      {themeConfig.site.tagline && <p class="profile-bio">{themeConfig.site.tagline}</p>}
-
-      <div class="profile-links">
+<IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
+  <div class="stellar-home">
+    <section class="stellar-hero" aria-labelledby="home-title">
+      <div class="stellar-hero-copy">
+        <span class="stellar-eyebrow">探索，总有新的方向。</span>
+        <h1 id="home-title">
+          保持好奇，<br />继续<span class="stellar-word">探索</span><span class="stellar-period">。</span>
+        </h1>
+        <p>记录 ROS 2、机器人仿真与机器视觉实践，也收藏代码之外的日常。</p>
+        <a class="stellar-about-link" href="/about/">关于这个空间<Icon name="arrow" size={14} /></a>
+      </div>
+      <div class="stellar-mobile-topics" role="group" aria-label="按探索主题筛选文章">
         {
-          themeConfig.site.github && (
-            <a class="link-pill" href={themeConfig.site.github} target="_blank" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
-                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.53-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 2.87-.39c.97 0 1.96.13 2.87.39 2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.73.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
-              </svg>
-              GitHub
-            </a>
-          )
-        }
-        {
-          themeConfig.site.leetcode && (
-            <a class="link-pill" href={themeConfig.site.leetcode} target="_blank" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="m8 8-4 4 4 4" />
-                <path d="m16 8 4 4-4 4" />
-                <path d="M13.5 5 10.5 19" />
-              </svg>
-              LeetCode
-            </a>
-          )
+          topics.map((topic) => (
+            <button type="button" data-exploration-topic={topic.id} aria-pressed="false">
+              {topic.name}
+            </button>
+          ))
         }
       </div>
-
-      {
-        themeConfig.techStack && themeConfig.techStack.length > 0 && (
-          <div class="profile-tech">
-            <h2 class="side-title">技术栈</h2>
-            <ul class="tech-chips">
-              {themeConfig.techStack.map((tech) => (
-                <li class="tech-chip">{tech}</li>
-              ))}
-            </ul>
-          </div>
-        )
-      }
-    </aside>
-
-    <!-- 右栏：栏目条 + 最新文章 + 项目列表（与栏目条等宽对齐） -->
-    <div class="home-col">
-      <TabNav />
-
-      <section class="panel latest-panel">
-        <div class="panel-head">
-          <h2 class="section-title">最新文章</h2>
-          <a class="section-more" href="/archive/">查看全部 →</a>
+      <div class="stellar-star-map" role="group" aria-label="探索星图：选择主题浏览文章">
+        <div class="stellar-map-halo" aria-hidden="true"></div><div
+          class="stellar-map-ring stellar-map-ring-a"
+          aria-hidden="true"
+        >
+        </div><div class="stellar-map-ring stellar-map-ring-b" aria-hidden="true"></div><div
+          class="stellar-map-arc"
+          aria-hidden="true"
+        >
+        </div><div class="stellar-map-streak" aria-hidden="true"></div><div
+          class="stellar-map-streak stellar-map-streak-b"
+          aria-hidden="true"
+        >
         </div>
         {
-          latestPosts.length > 0 ? (
-            <div class="latest-list">
-              {latestPosts.map((post) => (
-                <PostCard post={post} variant="list" thumb />
-              ))}
-            </div>
-          ) : (
-            <p class="page-empty">
-              最近三周还没有新文章，去 <a href="/archive/">归档</a> 看看全部内容。
-            </p>
-          )
+          topics.map((topic) => (
+            <button
+              type="button"
+              class={`stellar-node stellar-node-${topic.id}`}
+              data-exploration-topic={topic.id}
+              aria-pressed="false"
+            >
+              <>
+                <span class="stellar-node-dot" aria-hidden="true" />
+                <span>{topic.name}</span>
+              </>
+            </button>
+          ))
         }
-      </section>
-
-      <section class="panel projects-panel">
-        <div class="panel-head">
-          <h2 class="section-title">项目列表</h2>
-          <a class="section-more" href="/projects/">查看全部 →</a>
+        <span class="stellar-map-caption">我的探索星图<span>点击节点，沿着主题阅读</span></span>
+      </div>
+    </section>
+    <a class="stellar-project-link" href="/projects/">
+      <span class="stellar-project-mark"><Icon name="bot" size={26} /></span>
+      <span class="stellar-project-copy"
+        ><span>项目与实验</span><h2>让想法，在现实与仿真之间落地。</h2><p>ROS 2 / Gazebo / OpenCV</p></span
+      >
+      <span class="stellar-project-arrow"><Icon name="arrow" size={17} /></span>
+    </a>
+    <section aria-labelledby="latest-title">
+      <div class="stellar-section-head">
+        <div>
+          <span class="stellar-section-kicker">沿途记录</span><h2 id="latest-title">
+            最近的文章<span class="stellar-filter-label" aria-live="polite"></span>
+          </h2>
+        </div><div>
+          <button class="stellar-reset" type="button" data-reset-topic hidden>显示最近文章</button><a
+            class="stellar-all-link"
+            href="/archive/">全部文章<Icon name="arrow" size={14} /></a>
         </div>
-        {
-          homeProjects.length > 0 ? (
-            <ul class="project-list">
-              {homeProjects.map((project) => (
-                <li>
-                  <a class="project-item" href={project.href}>
-                    <span class="project-name">{project.name}</span>
-                    <span class="project-desc">{project.description}</span>
-                    <span class="project-tech">
-                      {project.tech.map((tech) => (
-                        <span class="tech-pill">{tech}</span>
-                      ))}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p class="page-empty">项目还在整理中，后续会陆续放上来。</p>
-          )
-        }
-      </section>
-    </div>
+      </div>
+      <div class="stellar-entries">
+        {stream.map((post) => <StellarPost post={post} latest={latestIds.has(post.id)} />)}
+      </div>
+      <p class="stellar-filter-empty" data-empty-posts hidden={latest.length > 0}>
+        最近三周还没有新文章，可以去<a href="/archive/">归档</a>看看全部内容。
+      </p>
+    </section>
   </div>
 </IndexLayout>
-
-<style is:global>
-  /* 首页外壳比常规页面宽：左栏资料 + 右栏 56rem 内容区 */
-  body:has(.home-shell) .page-content main {
-    max-width: calc(var(--layout-max) + 16.5rem);
-  }
-
-  @media (max-width: 1024px) {
-    body:has(.home-shell) .page-content main {
-      max-width: var(--layout-max);
+<script>
+  function initExploration() {
+    const home = document.querySelector<HTMLElement>('.stellar-home')
+    if (!home || home.dataset.explorationBound) return
+    home.dataset.explorationBound = 'true'
+    const buttons = home.querySelectorAll<HTMLButtonElement>('[data-exploration-topic]')
+    const posts = home.querySelectorAll<HTMLElement>('.stellar-entry')
+    const reset = home.querySelector<HTMLButtonElement>('[data-reset-topic]')!
+    const label = home.querySelector<HTMLElement>('.stellar-filter-label')!
+    const empty = home.querySelector<HTMLElement>('[data-empty-posts]')!
+    const names: Record<string, string> = { ros: 'ROS 2', vision: '机器视觉', simulation: '仿真' }
+    let selected: string | null = null
+    function apply(topic: string | null) {
+      selected = topic
+      let count = 0
+      posts.forEach((post) => {
+        const visible = topic ? post.dataset.topics?.split(' ').includes(topic) : post.dataset.latest === 'true'
+        post.hidden = !visible
+        if (visible) count++
+      })
+      buttons.forEach((button) =>
+        button.setAttribute('aria-pressed', String(button.dataset.explorationTopic === topic))
+      )
+      label.textContent = topic ? `${names[topic]} · ${count} 篇` : ''
+      reset.hidden = !topic
+      empty.hidden = count > 0
+      if (topic) empty.textContent = '这个主题还没有文章。'
+      else empty.innerHTML = '最近三周还没有新文章，可以去<a href="/archive/">归档</a>看看全部内容。'
     }
+    buttons.forEach((button) =>
+      button.addEventListener('click', () =>
+        apply(selected === button.dataset.explorationTopic ? null : button.dataset.explorationTopic!)
+      )
+    )
+    reset.addEventListener('click', () => apply(null))
   }
-</style>
-
-<style>
-  .home-shell {
-    display: grid;
-    grid-template-columns: 14rem minmax(0, 1fr);
-    gap: 2.5rem;
-    align-items: start;
-  }
-
-  /* ========== 左栏：个人资料 ========== */
-  .profile {
-    position: sticky;
-    top: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .profile-avatar {
-    width: 7rem;
-    height: 7rem;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--sheet);
-    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.1);
-  }
-  .profile-name {
-    margin: 1rem 0 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-  }
-  .profile-bio {
-    margin: 0.5rem 0 0;
-    font-size: 0.8125rem;
-    line-height: 1.7;
-    color: var(--text-tertiary);
-  }
-  .profile-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-  .link-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    background: var(--sheet);
-    font-size: 0.78rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition:
-      color 0.15s ease-out,
-      border-color 0.15s ease-out;
-  }
-  .link-pill:hover {
-    color: var(--text-primary);
-    border-color: var(--text-tertiary);
-  }
-  .profile-tech {
-    margin-top: 1.5rem;
-  }
-  .side-title {
-    margin: 0 0 0.6rem;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-  }
-  .tech-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .tech-chip {
-    padding: 0.22rem 0.6rem;
-    border-radius: var(--radius-pill);
-    background: var(--surface-muted);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    font-size: 0.72rem;
-    line-height: 1.6;
-    white-space: nowrap;
-  }
-
-  /* ========== 右栏：栏目条 + 卡片面板 ========== */
-  .home-col {
-    min-width: 0;
-  }
-  .latest-list {
-    margin-top: 0.25rem;
-  }
-  .projects-panel {
-    margin-top: 1.5rem;
-    padding-bottom: 0.9rem;
-  }
-
-  /* ========== 响应式 ========== */
-  @media (max-width: 1024px) {
-    /* 单列时把栏目条提回最上面：home-col 展开，用 order 控制顺序 */
-    .home-shell {
-      display: flex;
-      flex-direction: column;
-    }
-    .home-col {
-      display: contents;
-    }
-    .profile {
-      order: 1;
-      position: static;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0 1rem;
-      margin-bottom: 1.75rem;
-    }
-    .latest-panel {
-      order: 2;
-    }
-    .projects-panel {
-      order: 3;
-    }
-    .profile-avatar {
-      width: 4.5rem;
-      height: 4.5rem;
-    }
-    .profile-name {
-      margin-top: 0;
-      font-size: 1.125rem;
-    }
-    .profile-bio {
-      flex-basis: 100%;
-    }
-    .profile-links {
-      margin-top: 1rem;
-    }
-    .profile-tech {
-      flex-basis: 100%;
-      margin-top: 1.25rem;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .project-item {
-      margin: 0 -0.6rem;
-      padding: 0.85rem 0.6rem;
-    }
-  }
-</style>
+  document.addEventListener('astro:page-load', initExploration)
+</script>

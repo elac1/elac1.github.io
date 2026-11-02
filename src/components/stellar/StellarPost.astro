@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { getPostSlug } from '@/utils/post'
+import { getExplorationTopics, getPrimaryTopic } from '@/utils/exploration'
+import FormattedDate from '@/components/widgets/FormattedDate.astro'
+import Icon from './Icon.astro'
+type Props = { post: CollectionEntry<'posts'>; latest: boolean }
+const { post, latest } = Astro.props
+const topics = getExplorationTopics(post)
+const subject = getPrimaryTopic(topics)
+const href = `/${getPostSlug(post)}/`
+---
+
+<article
+  class="stellar-entry"
+  data-topics={topics.join(' ')}
+  data-subject={subject}
+  data-latest={String(latest)}
+  hidden={!latest}
+>
+  <div class="stellar-entry-copy">
+    <span class="stellar-entry-category">{post.data.category || '学习笔记'}</span>
+    <h3><a href={href}>{post.data.title}</a></h3>
+    {post.data.description && <p>{post.data.description}</p>}
+    <div class="stellar-entry-meta">
+      <FormattedDate date={post.data.pubDate} context="list" /><span>{post.data.tags.slice(0, 3).join(' · ')}</span>
+    </div>
+  </div>
+  <a href={href} class="stellar-entry-thumb" tabindex="-1" aria-hidden="true">
+    {
+      post.data.cover ? (
+        <img src={post.data.cover} alt="" loading="lazy" width="112" height="90" />
+      ) : (
+        <Icon name={subject === 'vision' ? 'scan' : subject === 'ros' ? 'bot' : 'code'} size={28} />
+      )
+    }
+  </a>
+  <a href={href} class="stellar-entry-arrow" tabindex="-1" aria-hidden="true"><Icon name="arrow" size={15} /></a>
+</article>

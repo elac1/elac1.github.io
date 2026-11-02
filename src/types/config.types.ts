@@ -15,6 +15,9 @@ export interface SiteInfo {
 
 // General settings configuration type
 export interface GeneralSettings {
+  defaultTheme?: 'dark' | 'light' | 'system'
+  starDensity?: number
+  starBrightness?: number
   contentWidth: string
   centeredLayout: boolean
   themeToggle: boolean

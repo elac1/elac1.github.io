@@ -1,0 +1,1074 @@
+/* Shared shell and the exploration theme. Content pages keep their existing components. */
+:root {
+  --stellar-sidebar: #ecebf2;
+  --stellar-panel: #ffffff;
+  --stellar-blue: #476d8d;
+  --stellar-violet: #77608f;
+  --stellar-gold: #8b6a39;
+  --stellar-star: #80728e;
+  --stellar-orbit: #9588aa;
+  --stellar-cloud-violet: #a38cbe26;
+  --stellar-cloud-blue: #759eb61f;
+  --stellar-cloud-gold: #b9a17a14;
+  --stellar-cloud-clear: #f5f4f800;
+  --stellar-active: linear-gradient(100deg, #e2dcee, #e1e9ef);
+  --stellar-project: linear-gradient(110deg, #f0ebf6, #e8eff4 50%, #f2eee7);
+}
+html.dark {
+  --page-bg: #0d0f15;
+  --bg: #0d0f15;
+  --sheet: #161923;
+  --header-bg: #11151ddd;
+  --text-primary: #e7e7ec;
+  --text-secondary: #afb1c0;
+  --text-tertiary: #969bad;
+  --border: #2c2f40;
+  --border-strong: #51475f;
+  --accent: #bca9d9;
+  --tag-bg: #292337;
+  --tag-text: #c6b2e0;
+  --surface: #181b26;
+  --surface-border: #2c2f40;
+  --surface-muted: #ffffff08;
+  --surface-hover: #ffffff0c;
+  --code-bg: #ffffff09;
+  --selection: #bca9d938;
+  --astro-code-background: #10131b;
+  --stellar-sidebar: #11151d;
+  --stellar-panel: #1a1b25;
+  --stellar-blue: #9cbcd5;
+  --stellar-violet: #bca9d9;
+  --stellar-gold: #d4b98d;
+  --stellar-star: #d5dbe8;
+  --stellar-orbit: #8d91ad;
+  --stellar-cloud-violet: #63507f38;
+  --stellar-cloud-blue: #27465f2b;
+  --stellar-cloud-gold: #6b52351b;
+  --stellar-cloud-clear: #0d0f1500;
+  --stellar-active: linear-gradient(100deg, #353043, #253240);
+  --stellar-project: linear-gradient(110deg, #232333, #202b35 50%, #292a2a);
+}
+html.light {
+  --page-bg: #f5f4f8;
+  --bg: #f5f4f8;
+  --sheet: #ffffff;
+  --text-primary: #252333;
+  --text-secondary: #605d70;
+  --text-tertiary: #706c80;
+  --border: #dedbe6;
+  --accent: #77608f;
+  --tag-bg: #ece5f4;
+  --tag-text: #73588f;
+}
+body.stellar-site {
+  isolation: isolate;
+  width: 100%;
+  max-width: none !important;
+  margin: 0;
+  padding: 0 !important;
+  min-height: 100svh;
+  background: var(--page-bg);
+}
+.stellar-site *,
+.stellar-site *::before,
+.stellar-site *::after {
+  box-sizing: border-box;
+}
+.stellar-site [hidden] {
+  display: none !important;
+}
+.stellar-site .layout-wrapper {
+  width: 100%;
+  min-height: 100svh;
+}
+.stellar-sky {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+.stellar-shell {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  width: 100%;
+  max-width: 1500px;
+  min-height: 100svh;
+  margin: 0 auto;
+}
+.stellar-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem 1.75rem 1.75rem;
+  background: var(--stellar-sidebar);
+  border-inline: 1px solid var(--border);
+}
+html.dark .stellar-sidebar {
+  background: linear-gradient(175deg, #171823, #11151d 42%, #11131b);
+}
+.stellar-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.stellar-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--stellar-active);
+  color: var(--stellar-violet);
+  font:
+    italic 2rem Georgia,
+    serif;
+}
+.stellar-emblem::before {
+  content: '';
+  position: absolute;
+  width: 3.8rem;
+  height: 1.3rem;
+  border: 1px solid var(--stellar-gold);
+  border-radius: 50%;
+  transform: rotate(-32deg);
+  opacity: 0.65;
+}
+.stellar-emblem > span {
+  position: relative;
+}
+.stellar-name {
+  display: block;
+  font-size: 1.7rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+.stellar-name > span {
+  color: var(--stellar-gold);
+}
+.stellar-personal {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 0.3rem;
+}
+.stellar-signature {
+  margin: 1.8rem 0 2.2rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.95;
+}
+.stellar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.stellar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 0.75rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.stellar-nav a:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+.stellar-nav a.active {
+  background: var(--stellar-active);
+  color: var(--text-primary);
+}
+.stellar-nav svg {
+  flex-shrink: 0;
+}
+.stellar-nav-dot {
+  display: none;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--stellar-violet);
+  margin-left: auto;
+}
+.stellar-nav a.active .stellar-nav-dot {
+  display: block;
+}
+.stellar-sidebar-bottom {
+  margin-top: auto;
+  padding-top: 2rem;
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+.stellar-side-rule {
+  display: block;
+  width: 1.75rem;
+  height: 1px;
+  background: var(--stellar-blue);
+  opacity: 0.6;
+}
+.stellar-sidebar-bottom p {
+  margin: 1rem 0 1.25rem;
+  line-height: 2;
+}
+.stellar-sidebar-bottom a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0.45rem 0;
+}
+.stellar-sidebar-bottom a svg:last-child {
+  margin-left: auto;
+}
+.stellar-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0 clamp(1.5rem, 3.6vw, 3.5rem);
+}
+.stellar-toolbar {
+  min-height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+.stellar-location {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+.stellar-location a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.stellar-location-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--stellar-blue);
+}
+.stellar-slash {
+  opacity: 0.6;
+}
+.stellar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+.stellar-action,
+.stellar-motion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  min-height: 2rem;
+  padding: 0;
+  color: var(--text-tertiary);
+  background: none;
+  border: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+.stellar-action:hover,
+.stellar-motion:hover {
+  color: var(--text-primary);
+}
+.stellar-motion {
+  gap: 0.5rem;
+  font: inherit;
+  font-size: 0.75rem;
+}
+.stellar-motion > span {
+  display: inline-flex;
+  align-items: center;
+}
+.stellar-motion .motion-play,
+.stellar-motion[aria-pressed='true'] .motion-pause {
+  display: none;
+}
+.stellar-motion[aria-pressed='true'] .motion-play {
+  display: inline-flex;
+}
+.stellar-motion:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.stellar-site .theme-toggle {
+  min-width: 1.75rem;
+  min-height: 2rem;
+}
+.stellar-main > main {
+  width: 100%;
+  min-width: 0;
+  display: block;
+  flex: 1;
+}
+.stellar-skip {
+  position: fixed;
+  top: 0.5rem;
+  left: 1rem;
+  transform: translateY(-200%);
+  z-index: 200;
+  background: var(--sheet);
+  color: var(--text-primary);
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+.stellar-skip:focus {
+  transform: translateY(0);
+}
+.stellar-site .site-footer {
+  width: 100%;
+  margin: 3rem 0 0;
+  padding: 1.5rem 0 2rem;
+}
+.stellar-site .footer-inner {
+  max-width: none;
+}
+.stellar-site .panel {
+  background: var(--sheet);
+  box-shadow: none;
+  border-radius: 0.75rem;
+}
+.stellar-site .post-item.has-thumb .item-thumb {
+  order: 2;
+}
+.stellar-site .post-item .item-title {
+  font-weight: 500;
+}
+.stellar-site .post-item .item-excerpt {
+  color: var(--text-secondary);
+}
+.stellar-site .page-header {
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+.stellar-site .page-title {
+  font-size: 2rem;
+  font-weight: 500;
+}
+.stellar-site .prose {
+  max-width: 100%;
+  margin: 0 0 2rem;
+  box-shadow: none;
+  background: var(--sheet);
+  padding: 2.5rem 2rem;
+  border-radius: 0.75rem;
+}
+.stellar-site .prose .title h1 {
+  font-weight: 600;
+  font-size: 2rem;
+}
+.stellar-site .prose .title {
+  margin-bottom: 2.2rem;
+}
+.stellar-site .prose img {
+  max-width: 100%;
+}
+/* Home: the colors identify actual article topics. */
+.stellar-home .stellar-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  min-height: 21rem;
+  padding: 0.75rem 0 2rem;
+  gap: 1rem;
+}
+.stellar-main:has(.stellar-home) .stellar-toolbar {
+  margin-bottom: 0;
+}
+.stellar-eyebrow {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+.stellar-hero h1 {
+  font-size: clamp(2.1rem, 3.2vw, 3rem);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.04em;
+  margin: 1rem 0;
+}
+.stellar-hero h1 .stellar-word {
+  background: linear-gradient(105deg, var(--stellar-violet), var(--stellar-blue));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.stellar-period {
+  color: var(--stellar-gold);
+}
+.stellar-hero-copy > p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.95;
+  margin: 0;
+  max-width: 27rem;
+}
+.stellar-about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.8125rem;
+}
+.stellar-star-map {
+  position: relative;
+  min-width: 0;
+  height: 19rem;
+}
+.stellar-map-halo {
+  position: absolute;
+  left: 15%;
+  top: 12%;
+  width: 78%;
+  height: 76%;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 30% 28%, var(--stellar-cloud-violet), transparent 60%),
+    radial-gradient(ellipse at 65% 73%, var(--stellar-cloud-blue), transparent 66%);
+}
+.stellar-map-ring {
+  position: absolute;
+  left: 18%;
+  top: 25%;
+  width: 70%;
+  height: 45%;
+  border: 1px solid var(--stellar-violet);
+  opacity: 0.3;
+  border-radius: 50%;
+  transform: rotate(-34deg);
+}
+.stellar-map-ring-b {
+  top: 16%;
+  left: 24%;
+  width: 55%;
+  height: 59%;
+  border-color: var(--stellar-blue);
+  transform: rotate(39deg);
+}
+html[data-star-motion='playing'] .stellar-map-ring-a {
+  animation: orbit-a 32s ease-in-out infinite alternate;
+}
+html[data-star-motion='playing'] .stellar-map-ring-b {
+  animation: orbit-b 39s ease-in-out infinite alternate;
+}
+.stellar-map-arc {
+  position: absolute;
+  top: 18%;
+  left: 26%;
+  width: 51%;
+  height: 55%;
+  border: 1px solid var(--stellar-gold);
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  opacity: 0.25;
+  border-radius: 50%;
+  transform: rotate(-15deg);
+}
+.stellar-map-streak {
+  position: absolute;
+  height: 1px;
+  left: 29%;
+  top: 30%;
+  transform-origin: left;
+  width: 54%;
+  background: linear-gradient(90deg, var(--stellar-violet), transparent);
+  opacity: 0.4;
+  transform: rotate(42deg);
+}
+.stellar-map-streak-b {
+  width: 45%;
+  transform: rotate(98deg);
+  background: linear-gradient(90deg, var(--stellar-blue), var(--stellar-gold));
+  opacity: 0.25;
+}
+.stellar-node {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0.6rem;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    transform 0.2s;
+}
+.stellar-node:hover,
+.stellar-node[aria-pressed='true'] {
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+.stellar-node-ros {
+  --node-color: var(--stellar-blue);
+  left: 22%;
+  top: 20%;
+}
+.stellar-node-vision {
+  --node-color: var(--stellar-violet);
+  left: 52%;
+  top: 54%;
+}
+.stellar-node-simulation {
+  --node-color: var(--stellar-gold);
+  left: 16%;
+  top: 65%;
+}
+.stellar-node-dot {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--node-color);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--node-color) 35%, transparent);
+}
+.stellar-node-dot::after {
+  position: absolute;
+  content: '';
+  inset: -5px;
+  border: 1px solid var(--node-color);
+  opacity: 0.45;
+  border-radius: 50%;
+}
+.stellar-node[aria-pressed='true'] .stellar-node-dot::after {
+  opacity: 1;
+  inset: -7px;
+}
+.stellar-map-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  text-align: right;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+.stellar-map-caption span {
+  display: block;
+  color: var(--text-tertiary);
+  margin-top: 0.2rem;
+}
+.stellar-project-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--stellar-project);
+  border: 1px solid var(--border-strong);
+  border-radius: 0.75rem;
+  text-decoration: none;
+  overflow: hidden;
+  color: var(--text-primary);
+}
+.stellar-project-link::after {
+  content: '';
+  position: absolute;
+  right: 3rem;
+  top: -6.5rem;
+  width: 11rem;
+  height: 11rem;
+  border: 1px solid color-mix(in srgb, var(--stellar-gold) 25%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--stellar-gold) 5%, transparent);
+  pointer-events: none;
+}
+.stellar-project-mark {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--stellar-gold) 14%, transparent);
+  border-radius: 0.7rem;
+  color: var(--stellar-gold);
+}
+.stellar-project-copy {
+  flex: 1;
+  min-width: 0;
+}
+.stellar-project-copy > span {
+  color: var(--stellar-gold);
+  font-size: 0.75rem;
+}
+.stellar-project-copy h2 {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0.15rem 0;
+  line-height: 1.8;
+}
+.stellar-project-copy p {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+.stellar-project-arrow {
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--stellar-gold) 15%, transparent);
+  color: var(--stellar-gold);
+}
+.stellar-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem 0 1rem;
+}
+.stellar-section-kicker {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+.stellar-section-head > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.25rem 0.85rem;
+}
+.stellar-section-head h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0.2rem 0 0;
+}
+.stellar-filter-label {
+  font-size: 0.75rem;
+  color: var(--stellar-violet);
+  margin-left: 0.8rem;
+  font-weight: 400;
+}
+.stellar-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  text-decoration: none;
+  color: var(--text-secondary);
+}
+.stellar-reset {
+  font: inherit;
+  font-size: 0.75rem;
+  background: none;
+  border: 0;
+  color: var(--text-secondary);
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+.stellar-entries {
+  position: relative;
+  margin-left: 0.3rem;
+}
+.stellar-entries::before {
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 1.8rem;
+  bottom: 2rem;
+  width: 1px;
+  background: linear-gradient(var(--stellar-blue), var(--stellar-violet) 55%, var(--stellar-gold));
+  opacity: 0.45;
+}
+.stellar-entry {
+  --entry-color: var(--stellar-violet);
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.4rem 0 1.4rem 1.7rem;
+  border-bottom: 1px solid var(--border);
+}
+.stellar-entry[data-subject='ros'] {
+  --entry-color: var(--stellar-blue);
+}
+.stellar-entry[data-subject='simulation'] {
+  --entry-color: var(--stellar-gold);
+}
+.stellar-entry::before {
+  position: absolute;
+  content: '';
+  left: -3px;
+  top: 2rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--entry-color);
+  border: 2px solid var(--page-bg);
+  box-shadow: 0 0 0 1px var(--entry-color);
+}
+.stellar-entry-copy {
+  flex: 1;
+  min-width: 0;
+}
+.stellar-entry-category {
+  font-size: 0.75rem;
+  color: var(--entry-color);
+}
+.stellar-entry h3 {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.7;
+  margin: 0.25rem 0 0.4rem;
+}
+.stellar-entry h3 a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.stellar-entry h3 a:hover {
+  color: var(--entry-color);
+}
+.stellar-entry-copy > p {
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0 0 0.7rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.stellar-entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+.stellar-entry-meta .date {
+  opacity: 1;
+  color: inherit;
+}
+.stellar-entry-thumb {
+  width: 7rem;
+  height: 5.6rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--entry-color) 30%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--entry-color) 8%, var(--page-bg));
+  color: var(--entry-color);
+}
+.stellar-entry-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.stellar-entry-arrow {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+.stellar-mobile-topics {
+  display: none;
+}
+.stellar-filter-empty {
+  color: var(--text-secondary);
+  padding: 1.5rem 0;
+  font-size: 0.875rem;
+}
+@keyframes orbit-a {
+  from {
+    transform: rotate(-38deg);
+  }
+  to {
+    transform: rotate(-30deg);
+  }
+}
+@keyframes orbit-b {
+  from {
+    transform: rotate(34deg);
+  }
+  to {
+    transform: rotate(44deg);
+  }
+}
+@media (min-width: 1280px) {
+  .stellar-site .post-container .prose {
+    width: calc(100% - 14rem);
+    max-width: 53rem;
+  }
+}
+@media (max-width: 1199px) {
+  .stellar-shell {
+    grid-template-columns: 12.5rem minmax(0, 1fr);
+  }
+  .stellar-sidebar {
+    padding-inline: 1.3rem;
+  }
+  .stellar-hero h1 {
+    font-size: 2.2rem;
+  }
+  .stellar-home .stellar-hero {
+    min-height: 20rem;
+  }
+  .stellar-star-map {
+    height: 18rem;
+  }
+}
+@media (max-width: 900px) {
+  .stellar-shell {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+  .stellar-sidebar {
+    padding-inline: 1rem;
+  }
+  .stellar-personal {
+    font-size: 0.6875rem;
+  }
+  .stellar-name {
+    font-size: 1.5rem;
+  }
+  .stellar-emblem {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .stellar-emblem::before {
+    width: 3.1rem;
+  }
+  .stellar-main {
+    padding-inline: 1.5rem;
+  }
+  .stellar-home .stellar-hero {
+    display: block;
+    position: relative;
+    padding-top: 2rem;
+    min-height: 22rem;
+  }
+  .stellar-hero-copy {
+    position: relative;
+    z-index: 1;
+  }
+  .stellar-hero-copy > p {
+    max-width: 24rem;
+  }
+  .stellar-star-map {
+    position: absolute;
+    right: 0;
+    top: 1rem;
+    width: 13rem;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .stellar-star-map .stellar-node,
+  .stellar-map-caption {
+    display: none;
+  }
+  .stellar-mobile-topics {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    z-index: 1;
+  }
+  .stellar-mobile-topics button {
+    font: inherit;
+    font-size: 0.75rem;
+    border: 1px solid var(--border-strong);
+    background: var(--page-bg);
+    border-radius: 1.5rem;
+    padding: 0.4rem 0.75rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+  .stellar-mobile-topics button[aria-pressed='true'] {
+    border-color: var(--stellar-violet);
+    color: var(--text-primary);
+    background: var(--tag-bg);
+  }
+  .stellar-entry-thumb {
+    width: 5rem;
+    height: 5rem;
+  }
+  .stellar-entry-arrow {
+    display: none;
+  }
+  .motion-label {
+    display: none !important;
+  }
+}
+@media (max-width: 680px) {
+  .stellar-shell {
+    display: block;
+  }
+  .stellar-sidebar {
+    position: static;
+    height: auto;
+    padding: 1.2rem 1.3rem 0.7rem;
+    border-inline: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stellar-identity {
+    gap: 0.75rem;
+  }
+  .stellar-emblem {
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1.6rem;
+  }
+  .stellar-emblem::before {
+    width: 2.85rem;
+    height: 1rem;
+  }
+  .stellar-name {
+    font-size: 1.4rem;
+  }
+  .stellar-personal,
+  .stellar-signature,
+  .stellar-sidebar-bottom {
+    display: none;
+  }
+  .stellar-nav {
+    flex-direction: row;
+    gap: 0.3rem;
+    margin-top: 1rem;
+  }
+  .stellar-nav a {
+    flex: 1;
+    justify-content: center;
+    padding: 0.6rem 0.15rem;
+    min-height: 2.75rem;
+    font-size: 0.8125rem;
+    gap: 0;
+  }
+  .stellar-nav a:first-child {
+    flex: 1.35;
+  }
+  .stellar-nav svg,
+  .stellar-nav-dot {
+    display: none !important;
+  }
+  .stellar-main {
+    padding-inline: 1.3rem;
+  }
+  .stellar-toolbar {
+    min-height: 4rem;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+  .stellar-location {
+    font-size: 0.6875rem;
+    gap: 0.5rem;
+  }
+  .stellar-actions {
+    gap: 0.3rem;
+  }
+  .stellar-action,
+  .stellar-motion,
+  .stellar-site .theme-toggle {
+    min-width: 2rem;
+    min-height: 2.75rem;
+  }
+  .stellar-location-dot {
+    display: none;
+  }
+  .stellar-home .stellar-hero {
+    min-height: 22rem;
+  }
+  .stellar-hero h1 {
+    font-size: 2.1rem;
+  }
+  .stellar-hero-copy > p {
+    max-width: 19rem;
+    font-size: 0.8125rem;
+  }
+  .stellar-star-map {
+    width: 11.8rem;
+    top: 1.4rem;
+  }
+  .stellar-project-link {
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  .stellar-project-mark {
+    display: none;
+  }
+  .stellar-project-copy h2 {
+    font-size: 0.875rem;
+  }
+  .stellar-project-arrow {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+  }
+  .stellar-section-head {
+    padding-top: 1.5rem;
+  }
+  .stellar-section-head h2 {
+    font-size: 1.125rem;
+  }
+  .stellar-entry {
+    gap: 0.75rem;
+    padding-left: 1.3rem;
+  }
+  .stellar-entry h3 {
+    font-size: 1rem;
+  }
+  .stellar-entry-copy > p {
+    font-size: 0.8125rem;
+  }
+  .stellar-entry-thumb {
+    display: none;
+  }
+  .stellar-filter-label {
+    display: block;
+    margin: 0.3rem 0 0;
+  }
+  .stellar-filter-label:empty {
+    display: none;
+  }
+  .stellar-site .prose {
+    padding: 1.5rem 1.1rem 2rem;
+  }
+  .stellar-site .prose .title h1 {
+    font-size: 1.55rem;
+  }
+  .stellar-site .page-title {
+    font-size: 1.7rem;
+  }
+  .stellar-site .footer-inner {
+    justify-content: space-between;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stellar-map-ring {
+    animation: none !important;
+  }
+}

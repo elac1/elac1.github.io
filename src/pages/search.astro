@@ -12,25 +12,11 @@ import { themeConfig } from '@/config'
   <section class="panel search-panel">
     <div id="search"></div>
   </section>
-
-  <p class="search-note">
-    搜索基于构建产物生成，仅在构建后访问生效。本地预览运行 <code>npm run build && npm run preview</code> 后访问 /search 可用。
-  </p>
 </IndexLayout>
 
 <style>
   .search-panel {
     padding-bottom: 1.25rem;
-  }
-  .search-note {
-    margin-top: 1rem;
-    color: var(--text-tertiary);
-    font-size: 0.75rem;
-  }
-  .search-note code {
-    background: var(--code-bg);
-    padding: 0.1rem 0.3rem;
-    border-radius: 0.25rem;
   }
 </style>
 
@@ -81,35 +67,42 @@ import { themeConfig } from '@/config'
 </style>
 
 <script>
-  // 仅在构建产物存在 pagefind 资源时加载，避免 dev 模式报错
+  type SearchUI = { destroy(): void }
+  type SearchWindow = Window & {
+    PagefindUI?: new (options: { element: string; showSubResults: boolean; showImages: boolean }) => SearchUI
+  }
+  let searchUI: SearchUI | undefined
+
   async function initSearch() {
+    const container = document.getElementById('search')
+    if (!container || container.dataset.searchBound) return
+    container.dataset.searchBound = 'true'
     try {
-      const res = await fetch('/pagefind/pagefind-ui.css')
-      if (!res.ok) {
-        document.getElementById('search')!.innerHTML =
-          '<p style="color: var(--text-secondary); font-size: var(--font-size-s);">搜索索引尚未生成。运行 <code>npm run build && npm run preview</code> 后访问此页面。</p>'
-        return
+      if (!document.querySelector('link[href="/pagefind/pagefind-ui.css"]')) {
+        const cssLink = document.createElement('link')
+        cssLink.rel = 'stylesheet'
+        cssLink.href = '/pagefind/pagefind-ui.css'
+        document.head.appendChild(cssLink)
       }
+      // Pagefind 的构建产物通过 window 提供 UI 构造器。
+      const pagefindPath = '/pagefind/pagefind-ui.js'
+      await import(/* @vite-ignore */ pagefindPath)
+      if (!container.isConnected) return
+      const PagefindUI = (window as SearchWindow).PagefindUI
+      if (!PagefindUI) throw new Error('Search UI unavailable')
+      searchUI = new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false
+      })
     } catch {
-      return
+      if (container.isConnected) container.textContent = '搜索暂时不可用，请稍后重试。'
     }
-
-    const cssLink = document.createElement('link')
-    cssLink.rel = 'stylesheet'
-    cssLink.href = '/pagefind/pagefind-ui.css'
-    document.head.appendChild(cssLink)
-
-    // pagefind-ui.js 由 Pagefind 在 astro build 之后生成到 dist/pagefind/，
-    // 用变量 + @vite-ignore 让 Rollup 跳过构建期解析，改为浏览器运行时加载
-    const pagefindPath = '/pagefind/pagefind-ui.js'
-    const pagefindMod = (await import(/* @vite-ignore */ pagefindPath)) as { PagefindUI: any }
-    const PagefindUI = pagefindMod.PagefindUI
-    new PagefindUI({
-      element: '#search',
-      showSubResults: true,
-      showImages: false
-    })
   }
 
-  initSearch()
+  document.addEventListener('astro:page-load', initSearch)
+  document.addEventListener('astro:before-swap', () => {
+    searchUI?.destroy()
+    searchUI = undefined
+  })
 </script>

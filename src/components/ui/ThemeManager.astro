@@ -1,14 +1,23 @@
+---
+import { themeConfig } from '@/config'
+const defaultTheme = themeConfig.general.defaultTheme ?? 'system'
+---
+
 <!--
   This is a critical style block to prevent flashing on page load in dark mode.
   It is injected into the <head> of the document before the main stylesheets are loaded.
 -->
 <style is:inline>
   :root {
-    --bg: #ffffff;
+    --bg: #0d0f15;
   }
 
   html.dark {
-    --bg: #1a1a1a;
+    --bg: #0d0f15;
+  }
+
+  html.light {
+    --bg: #f5f4f8;
   }
 
   html {
@@ -21,7 +30,7 @@
   }
 </style>
 
-<script is:inline>
+<script is:inline define:vars={{ defaultTheme }}>
   // Global Theme Manager
   ;(function () {
     // Prevent duplicate initialization
@@ -67,11 +76,11 @@
       getEffectiveTheme() {
         const stored = this.getStoredTheme()
         // 用户未手动选择时，跟随系统偏好 (prefers-color-scheme)
-        return stored || this.getSystemTheme()
+        return stored || (defaultTheme === 'system' ? this.getSystemTheme() : defaultTheme)
       },
 
       isUsingSystemTheme() {
-        return this.getStoredTheme() === null
+        return defaultTheme === 'system' && this.getStoredTheme() === null
       },
 
       applyTheme(theme) {

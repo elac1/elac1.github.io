@@ -4,16 +4,15 @@ import { ClientRouter } from 'astro:transitions'
 import ThemeManager from '@/components/ui/ThemeManager.astro'
 import TransitionWrapper from '@/components/layout/TransitionWrapper.astro'
 import type { LayoutProps } from '@/types'
+import StellarShell from '@/components/stellar/StellarShell.astro'
+import '@/styles/global.css'
+import '@/styles/stellar.css'
 
 type Props = LayoutProps
 
 const { type = 'page' } = Astro.props
 const language = themeConfig.site.language || 'en-US'
-const contentWidth = themeConfig.general.contentWidth
 const fadeAnimation = themeConfig.general.fadeAnimation
-const widthValue = Math.min(parseFloat(contentWidth), 80)
-const shouldUseCustomWidth = widthValue > 25
-const finalWidth = shouldUseCustomWidth ? `${widthValue}rem` : '25rem'
 ---
 
 <html lang={language}>
@@ -22,21 +21,19 @@ const finalWidth = shouldUseCustomWidth ? `${widthValue}rem` : '25rem'
     {fadeAnimation && <ClientRouter />}
     <slot name="head" />
   </head>
-  <body
-    data-centered={themeConfig.general.centeredLayout}
-    style={`
-      max-width: ${finalWidth};
-      ${shouldUseCustomWidth ? `--content-width: ${widthValue}rem;` : ''}
-    `}
-  >
+  <body class="stellar-site" data-page-type={type} data-centered={themeConfig.general.centeredLayout}>
     {
       fadeAnimation ? (
         <TransitionWrapper type={type} class="layout-wrapper">
-          <slot />
+          <StellarShell>
+            <slot />
+          </StellarShell>
         </TransitionWrapper>
       ) : (
         <div class="layout-wrapper">
-          <slot />
+          <StellarShell>
+            <slot />
+          </StellarShell>
         </div>
       )
     }
