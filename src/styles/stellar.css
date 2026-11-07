@@ -95,22 +95,29 @@ body.stellar-site {
   display: grid;
   grid-template-columns: 14rem minmax(0, 1fr);
   width: 100%;
-  max-width: 1500px;
+  max-width: 1564px;
   min-height: 100svh;
   margin: 0 auto;
+  padding: 1.5rem clamp(0.75rem, 2vw, 2rem);
 }
 .stellar-sidebar {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: 1.5rem;
+  align-self: start;
+  height: calc(100svh - 3rem);
+  max-height: 48rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
   display: flex;
   flex-direction: column;
   padding: 2.5rem 1.75rem 1.75rem;
   background: var(--stellar-sidebar);
-  border-inline: 1px solid var(--border);
+  border-radius: 1rem;
+  box-shadow: 0 12px 36px #0000000a;
 }
 html.dark .stellar-sidebar {
   background: linear-gradient(175deg, #191919, #101010 42%, #0c0c0c);
+  box-shadow: 0 12px 36px #00000024;
 }
 .stellar-identity {
   display: flex;
@@ -242,6 +249,7 @@ html.dark .stellar-sidebar {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: calc(100svh - 3rem);
   padding: 0 clamp(1.5rem, 3.6vw, 3.5rem);
 }
 .stellar-toolbar {
@@ -941,13 +949,15 @@ html[data-star-motion='paused'] .stellar-map-ring {
 @media (max-width: 680px) {
   .stellar-shell {
     display: block;
+    padding: 0.75rem 0 0;
   }
   .stellar-sidebar {
     position: static;
     height: auto;
+    max-height: none;
+    overflow-y: visible;
+    margin-inline: 0.75rem;
     padding: 1.2rem 1.3rem 0.7rem;
-    border-inline: 0;
-    border-bottom: 1px solid var(--border);
   }
   .stellar-identity {
     gap: 0.75rem;
@@ -981,9 +991,10 @@ html[data-star-motion='paused'] .stellar-map-ring {
     min-height: 2.75rem;
     font-size: 0.8125rem;
     gap: 0;
+    white-space: nowrap;
   }
   .stellar-nav a:first-child {
-    flex: 1.35;
+    flex: 1.5;
   }
   .stellar-nav svg,
   .stellar-nav-dot {
