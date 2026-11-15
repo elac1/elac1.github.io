@@ -202,6 +202,16 @@ html.dark .prose {
   text-align: center;
 }
 
+.prose .post-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 1em;
+  border-radius: 0.75rem;
+  background: #0c0c0c;
+}
+
 .prose p > img {
   position: relative;
   margin-bottom: 2em;
