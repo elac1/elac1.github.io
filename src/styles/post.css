@@ -212,6 +212,22 @@ html.dark .prose {
   background: #0c0c0c;
 }
 
+.prose .post-more {
+  margin: 1.5em 0;
+  padding: 1em 0;
+  border-block: 1px solid var(--border);
+}
+
+.prose .post-more > summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.prose .post-more[open] > summary {
+  margin-bottom: 1.5em;
+}
+
 .prose p > img {
   position: relative;
   margin-bottom: 2em;
