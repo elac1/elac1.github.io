@@ -6,5 +6,11 @@ export type Project = {
 }
 
 // 项目页数据：直接修改这里即可增删项目
-// 目前暂无正式项目，先清空；后续按下面的结构往里加即可
-export const projects: Project[] = []
+export const projects: Project[] = [
+  {
+    name: 'ROS 2 城市巡检机器人',
+    description: '独立实现地面自主巡航、灾情图像识别、穿窗飞行、空中灯光提示与返航降落的连续仿真任务。',
+    tech: ['ROS 2', 'Gazebo', 'OpenCV', 'Python'],
+    href: '/ican-emergency-inspection/'
+  }
+]
