@@ -2,11 +2,11 @@ import { getCollection, type CollectionEntry } from 'astro:content'
 import { isDraftPost } from './post'
 
 /**
- * Get all posts, filtering out posts whose filenames start with _
+ * 文章列表：排除草稿与项目详情。
  */
 export async function getFilteredPosts() {
   const posts = await getCollection('posts')
-  return posts.filter((post: CollectionEntry<'posts'>) => !isDraftPost(post))
+  return posts.filter((post: CollectionEntry<'posts'>) => !isDraftPost(post) && post.data.kind === 'article')
 }
 
 /**

@@ -118,7 +118,10 @@ async function generateFeedInstance(context: APIContext) {
     }
   })
 
-  const posts = await getCollection('posts', (post: CollectionEntry<'posts'>) => !post.id.startsWith('_'))
+  const posts = await getCollection(
+    'posts',
+    (post: CollectionEntry<'posts'>) => !post.id.startsWith('_') && post.data.kind === 'article'
+  )
   const sortedPosts = posts.sort(
     (a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
   )

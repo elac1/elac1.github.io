@@ -9,6 +9,7 @@ const posts = defineCollection({
   schema: () =>
     z.object({
       title: z.string(),
+      kind: z.enum(['article', 'project']).default('article'),
       // Transform string to Date object
       pubDate: z.coerce.date(),
       cover: z.string().optional(),

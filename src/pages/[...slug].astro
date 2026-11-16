@@ -27,5 +27,29 @@ const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
 
 <PostLayout {...post.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures}>
   <Content />
-  <PostFooter post={post} slot="postFooter" />
+  {
+    post.data.kind === 'project' ? (
+      <div class="project-detail-footer" slot="postFooter">
+        <a href="/projects/">查看全部项目 ↗</a>
+      </div>
+    ) : (
+      <PostFooter post={post} slot="postFooter" />
+    )
+  }
 </PostLayout>
+
+<style>
+  .project-detail-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .project-detail-footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+  .project-detail-footer a:hover {
+    color: var(--text-primary);
+  }
+</style>

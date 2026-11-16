@@ -1,0 +1,25 @@
+---
+import type { Project } from '@/data/projects'
+import Icon from './Icon.astro'
+
+type Props = { project: Project }
+const { project } = Astro.props
+---
+
+<a class="home-project-card" href={project.href}>
+  <div class="home-project-cover">
+    {
+      project.cover ? (
+        <img src={project.cover} alt="" loading="lazy" decoding="async" width="640" height="480" />
+      ) : (
+        <Icon name="blocks" size={36} />
+      )
+    }
+  </div>
+  <div class="home-project-body">
+    <h3>{project.name}</h3>
+    <p>{project.description}</p>
+    <div class="home-project-tech">{project.tech.map((tech) => <span>{tech}</span>)}</div>
+    <span class="home-project-open">查看项目<Icon name="arrow" size={14} /></span>
+  </div>
+</a>

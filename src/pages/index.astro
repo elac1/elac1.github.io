@@ -1,8 +1,10 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
 import HomePostCard from '@/components/stellar/HomePostCard.astro'
+import HomeProjectCard from '@/components/stellar/HomeProjectCard.astro'
 import Icon from '@/components/stellar/Icon.astro'
 import { themeConfig } from '@/config'
+import { projects } from '@/data/projects'
 import { getPostStream } from '@/utils/draft'
 import '@/styles/home.css'
 
@@ -14,12 +16,6 @@ const latestIds = new Set(
     .filter((post) => post.data.pubDate.valueOf() >= cutoff && post.data.pubDate.valueOf() <= now)
     .map((post) => post.id)
 )
-const topics = [
-  { id: 'latest', name: '近一个月' },
-  { id: 'ros', name: 'ROS 2' },
-  { id: 'vision', name: '机器视觉' },
-  { id: 'simulation', name: '仿真' }
-]
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
@@ -33,27 +29,32 @@ const topics = [
       </div>
       <a class="home-text-link" href="/about/">关于这个空间<Icon name="arrow" size={14} /></a>
     </header>
-    <section aria-labelledby="home-posts-title">
+    <section class="home-section" aria-labelledby="home-posts-title">
       <div class="home-section-heading">
         <div>
-          <h2 id="home-posts-title" data-home-title>近一个月的文章</h2>
+          <h2 id="home-posts-title">最近文章</h2>
+          <span class="home-count">近 30 天</span>
           <span class="home-count" data-home-count aria-live="polite">{latestIds.size} 篇</span>
         </div>
         <a class="home-text-link" href="/archive/">全部 {stream.length} 篇<Icon name="arrow" size={14} /></a>
-      </div>
-      <div class="home-topics" role="group" aria-label="按主题筛选文章">
-        {
-          topics.map((topic) => (
-            <button type="button" data-home-topic={topic.id} aria-pressed={topic.id === 'latest' ? 'true' : 'false'}>
-              {topic.name}
-            </button>
-          ))
-        }
       </div>
       <div class="home-post-grid">
         {stream.map((post, index) => <HomePostCard post={post} latest={latestIds.has(post.id)} eager={index < 4} />)}
       </div>
       <p class="home-empty" data-home-empty hidden={latestIds.size > 0}>近一个月暂无文章，可以查看全部文章。</p>
+    </section>
+    <section class="home-section" aria-labelledby="home-projects-title">
+      <div class="home-section-heading">
+        <div>
+          <h2 id="home-projects-title">项目</h2>
+          <span class="home-count">{projects.length} 个</span>
+        </div>
+        <a class="home-text-link" href="/projects/">全部项目<Icon name="arrow" size={14} /></a>
+      </div>
+      <div class="home-project-grid">
+        {projects.map((project) => <HomeProjectCard project={project} />)}
+      </div>
+      {projects.length === 0 && <p class="home-empty">项目还在整理中。</p>}
     </section>
   </div>
 </IndexLayout>
@@ -63,39 +64,19 @@ const topics = [
     const home = document.querySelector<HTMLElement>('[data-home-library]')
     if (!home || home.dataset.bound) return
     home.dataset.bound = 'true'
-    const buttons = home.querySelectorAll<HTMLButtonElement>('[data-home-topic]')
     const posts = home.querySelectorAll<HTMLElement>('[data-home-post]')
-    const title = home.querySelector<HTMLElement>('[data-home-title]')!
     const count = home.querySelector<HTMLElement>('[data-home-count]')!
     const empty = home.querySelector<HTMLElement>('[data-home-empty]')!
     const now = Date.now()
     const cutoff = now - 30 * 24 * 60 * 60 * 1000
+    let visibleCount = 0
     posts.forEach((post) => {
       const published = Number(post.dataset.published)
-      post.dataset.latest = String(published >= cutoff && published <= now)
+      post.hidden = published < cutoff || published > now
+      if (!post.hidden) visibleCount++
     })
-    const names: Record<string, string> = {
-      latest: '近一个月的文章',
-      ros: 'ROS 2',
-      vision: '机器视觉',
-      simulation: '仿真'
-    }
-    function selectTopic(topic: string) {
-      let visibleCount = 0
-      posts.forEach((post) => {
-        const visible =
-          post.dataset.latest === 'true' && (topic === 'latest' || !!post.dataset.topics?.split(' ').includes(topic))
-        post.hidden = !visible
-        if (visible) visibleCount++
-      })
-      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item.dataset.homeTopic === topic)))
-      title.textContent = names[topic]
-      count.textContent = `${visibleCount} 篇`
-      empty.textContent = topic === 'latest' ? '近一个月暂无文章，可以查看全部文章。' : '近一个月这个主题暂无文章。'
-      empty.hidden = visibleCount > 0
-    }
-    buttons.forEach((button) => button.addEventListener('click', () => selectTopic(button.dataset.homeTopic!)))
-    selectTopic('latest')
+    count.textContent = `${visibleCount} 篇`
+    empty.hidden = visibleCount > 0
   }
   document.addEventListener('astro:page-load', initHomeLibrary)
 </script>

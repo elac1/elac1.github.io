@@ -1,24 +1,15 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 import { getPostSlug } from '@/utils/post'
-import { getExplorationTopics } from '@/utils/exploration'
 import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import Icon from './Icon.astro'
 
 type Props = { post: CollectionEntry<'posts'>; latest: boolean; eager?: boolean }
 const { post, latest, eager = false } = Astro.props
-const topics = getExplorationTopics(post)
 const href = `/${getPostSlug(post)}/`
 ---
 
-<article
-  class="home-card"
-  data-home-post
-  data-topics={topics.join(' ')}
-  data-latest={String(latest)}
-  data-published={post.data.pubDate.valueOf()}
-  hidden={!latest}
->
+<article class="home-card" data-home-post data-published={post.data.pubDate.valueOf()} hidden={!latest}>
   <a class="home-card-link" href={href} aria-labelledby={`post-${getPostSlug(post)}`}>
     <div class="home-card-cover">
       {

@@ -1,6 +1,7 @@
 ---
 import { themeConfig } from '@/config'
 import { navItems } from '@/data/nav'
+import { projects } from '@/data/projects'
 import ThemeToggle from '@/components/ui/ThemeToggle.astro'
 import Footer from '@/components/layout/Footer.astro'
 import Starfield from './Starfield.astro'
@@ -21,7 +22,8 @@ const routeNames: Record<string, string> = {
 const section = Object.keys(routeNames).find(
   (route) => route !== '/' && (path === route || path.startsWith(route + '/'))
 )
-const current = path === '/' ? '个人空间' : section ? routeNames[section] : '阅读'
+const isProject = projects.some((project) => project.href.replace(/\/$/, '') === path)
+const current = path === '/' ? '个人空间' : isProject ? '项目' : section ? routeNames[section] : '阅读'
 const icons: Record<string, string> = {
   '/': 'orbit',
   '/archive': 'book',
@@ -34,7 +36,10 @@ const links = [...navItems].sort((a, b) => order.indexOf(a.href) - order.indexOf
 const active = (href: string) =>
   href === '/'
     ? path === '/'
-    : path === href || path.startsWith(href + '/') || (href === '/archive' && current === '阅读')
+    : path === href ||
+      path.startsWith(href + '/') ||
+      (href === '/archive' && current === '阅读') ||
+      (href === '/projects' && isProject)
 ---
 
 <a class="stellar-skip" href="#main-content">跳到正文</a>

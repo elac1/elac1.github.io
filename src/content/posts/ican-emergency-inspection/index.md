@@ -1,5 +1,6 @@
 ---
 title: 'ROS 2 城市巡检机器人：自主巡航、视觉识别与飞行控制'
+kind: project
 pubDate: '2026-11-16'
 cover: '/images/covers/ican-emergency-inspection.webp'
 description: '独立实现一套地面与空中连续作业的仿真巡检系统，结合 ROS 2、Nav2、OpenCV、多尺度 LBP＋LDA 和状态机，完成自主巡航、灾情识别、穿窗飞行与返航降落。'
