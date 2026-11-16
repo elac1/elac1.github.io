@@ -11,7 +11,14 @@ const topics = getExplorationTopics(post)
 const href = `/${getPostSlug(post)}/`
 ---
 
-<article class="home-card" data-home-post data-topics={topics.join(' ')} data-latest={String(latest)} hidden={!latest}>
+<article
+  class="home-card"
+  data-home-post
+  data-topics={topics.join(' ')}
+  data-latest={String(latest)}
+  data-published={post.data.pubDate.valueOf()}
+  hidden={!latest}
+>
   <a class="home-card-link" href={href} aria-labelledby={`post-${getPostSlug(post)}`}>
     <div class="home-card-cover">
       {

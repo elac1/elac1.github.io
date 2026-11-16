@@ -1,13 +1,12 @@
 /* Shared shell and the exploration theme. Content pages keep their existing components. */
 :root {
-  --stellar-sidebar: #ecebf2;
   --stellar-panel: #ffffff;
   --stellar-blue: #476d8d;
   --stellar-violet: #77608f;
   --stellar-gold: #8b6a39;
   --stellar-star: #666666;
   --stellar-orbit: #888888;
-  --stellar-sky-gradient: linear-gradient(145deg, #f8f9fb, #eff1f5);
+  --stellar-sky-gradient: linear-gradient(145deg, #fafaf8, #f2f3f1);
   --stellar-cloud-bright: #ffffffb3;
   --stellar-cloud-soft: #5555551c;
   --stellar-cloud-deep: #22222218;
@@ -20,14 +19,14 @@ html.dark {
   --bg: #080808;
   --sheet: #161923;
   --header-bg: #11151ddd;
-  --text-primary: #e7e7ec;
-  --text-secondary: #afb1c0;
-  --text-tertiary: #969bad;
-  --border: #2c2f40;
-  --border-strong: #51475f;
-  --accent: #bca9d9;
-  --tag-bg: #292337;
-  --tag-text: #c6b2e0;
+  --text-primary: #e6e5e0;
+  --text-secondary: #adafab;
+  --text-tertiary: #949994;
+  --border: #303536;
+  --border-strong: #565b59;
+  --accent: #c4b49b;
+  --tag-bg: #2b2a26;
+  --tag-text: #c4b49b;
   --surface: #181b26;
   --surface-border: #2c2f40;
   --surface-muted: #ffffff08;
@@ -35,8 +34,7 @@ html.dark {
   --code-bg: #ffffff09;
   --selection: #bca9d938;
   --astro-code-background: #10131b;
-  --stellar-sidebar: #11151d;
-  --stellar-panel: #1a1b25;
+  --stellar-panel: #1a1d1f;
   --stellar-blue: #9cbcd5;
   --stellar-violet: #bca9d9;
   --stellar-gold: #d4b98d;
@@ -54,13 +52,14 @@ html.light {
   --page-bg: #f4f4f4;
   --bg: #f4f4f4;
   --sheet: #ffffff;
-  --text-primary: #252333;
-  --text-secondary: #605d70;
-  --text-tertiary: #706c80;
-  --border: #dedbe6;
-  --accent: #77608f;
-  --tag-bg: #ece5f4;
-  --tag-text: #73588f;
+  --text-primary: #292b2c;
+  --text-secondary: #62666a;
+  --text-tertiary: #71777a;
+  --border: #dedfdf;
+  --border-strong: #babcb9;
+  --accent: #746754;
+  --tag-bg: #eae8e2;
+  --tag-text: #625747;
 }
 body.stellar-site {
   isolation: isolate;
@@ -105,25 +104,17 @@ body.stellar-site {
   position: sticky;
   top: 1.5rem;
   align-self: start;
-  height: calc(100svh - 3rem);
-  max-height: 48rem;
+  max-height: calc(100svh - 3rem);
   overflow-y: auto;
   scrollbar-width: thin;
   display: flex;
   flex-direction: column;
-  padding: 2.5rem 1.75rem 1.75rem;
-  background: var(--stellar-sidebar);
-  border-radius: 1rem;
-  box-shadow: 0 12px 36px #0000000a;
-}
-html.dark .stellar-sidebar {
-  background: linear-gradient(175deg, #191919, #101010 42%, #0c0c0c);
-  box-shadow: 0 12px 36px #00000024;
+  padding: 2rem 1.5rem;
 }
 .stellar-identity {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.8rem;
   color: var(--text-primary);
   text-decoration: none;
 }
@@ -134,10 +125,9 @@ html.dark .stellar-sidebar {
   width: 3rem;
   height: 3rem;
   flex: 0 0 auto;
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 50%;
-  background: var(--stellar-active);
-  color: var(--stellar-violet);
+  color: var(--text-secondary);
   font:
     italic 2rem Georgia,
     serif;
@@ -158,6 +148,8 @@ html.dark .stellar-sidebar {
 .stellar-name {
   display: block;
   font-size: 1.7rem;
+  font-family: Besley, Georgia, serif;
+  font-style: italic;
   line-height: 1.3;
   font-weight: 600;
   letter-spacing: -0.04em;
@@ -171,68 +163,49 @@ html.dark .stellar-sidebar {
   color: var(--text-tertiary);
   margin-top: 0.3rem;
 }
-.stellar-signature {
-  margin: 1.8rem 0 2.2rem;
-  color: var(--text-secondary);
-  font-size: 0.8125rem;
-  line-height: 1.95;
-}
 .stellar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  margin-top: 3rem;
 }
 .stellar-nav a {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.8rem 0.75rem;
-  border-radius: 0.5rem;
+  position: relative;
+  min-height: 2.75rem;
+  padding: 0.65rem 0;
   text-decoration: none;
   font-size: 0.875rem;
   color: var(--text-secondary);
-  transition:
-    background 0.2s,
-    color 0.2s;
+  transition: color 0.2s;
 }
 .stellar-nav a:hover {
-  background: var(--surface-hover);
   color: var(--text-primary);
 }
 .stellar-nav a.active {
-  background: var(--stellar-active);
   color: var(--text-primary);
+  font-weight: 600;
 }
-.stellar-nav svg {
-  flex-shrink: 0;
-}
-.stellar-nav-dot {
-  display: none;
+.stellar-nav a.active::after {
+  content: '';
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--stellar-violet);
   margin-left: auto;
+  background: var(--stellar-gold);
 }
-.stellar-nav a.active .stellar-nav-dot {
-  display: block;
+.stellar-nav svg {
+  flex-shrink: 0;
+  opacity: 0.65;
 }
 .stellar-sidebar-bottom {
-  margin-top: auto;
-  padding-top: 2rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
   color: var(--text-tertiary);
   font-size: 0.75rem;
-}
-.stellar-side-rule {
-  display: block;
-  width: 1.75rem;
-  height: 1px;
-  background: var(--stellar-blue);
-  opacity: 0.6;
-}
-.stellar-sidebar-bottom p {
-  margin: 1rem 0 1.25rem;
-  line-height: 2;
 }
 .stellar-sidebar-bottom a {
   display: flex;
@@ -241,6 +214,16 @@ html.dark .stellar-sidebar {
   color: var(--text-secondary);
   text-decoration: none;
   padding: 0.45rem 0;
+  min-height: 2.75rem;
+}
+.stellar-sidebar-bottom a:hover {
+  color: var(--text-primary);
+}
+.stellar-identity:focus-visible,
+.stellar-nav a:focus-visible,
+.stellar-sidebar-bottom a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 .stellar-sidebar-bottom a svg:last-child {
   margin-left: auto;
@@ -993,6 +976,11 @@ html[data-star-motion='paused'] .stellar-map-ring {
     font-size: 0.8125rem;
     gap: 0;
     white-space: nowrap;
+  }
+  .stellar-nav a.active::after {
+    position: absolute;
+    bottom: 0;
+    left: calc(50% - 2px);
   }
   .stellar-nav a:first-child {
     flex: 1.5;

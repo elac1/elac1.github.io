@@ -4,17 +4,35 @@
 
 .home-intro {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: 1.75rem 0 2rem;
+  padding: 2.5rem 0 2.75rem;
 }
 
 .home-intro h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  margin: 0 0 0.5rem;
+  font-family: 'Songti SC', 'Noto Serif CJK SC', 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.65rem;
+}
+
+.home-intro-join {
+  display: inline-block;
+  margin-inline: 0.18em;
+  color: var(--text-secondary);
+  font-size: 0.7em;
+}
+
+.home-intro-period {
+  color: var(--stellar-gold);
+  letter-spacing: 0;
+}
+
+.home-intro > .home-text-link {
+  margin-bottom: -0.35rem;
 }
 
 .home-intro p {
@@ -206,11 +224,11 @@
 @media (max-width: 680px) {
   .home-intro {
     display: block;
-    padding: 0.75rem 0 1.5rem;
+    padding: 1.25rem 0 1.75rem;
   }
 
   .home-intro h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
   .home-intro .home-text-link {

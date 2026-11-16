@@ -49,7 +49,6 @@ const active = (href: string) =>
         ></span
       >
     </a>
-    <p class="stellar-signature">好奇心未尽，<br />故事还在继续。</p>
     <nav class="stellar-nav" aria-label="主要导航">
       {
         links.map((item) => (
@@ -61,14 +60,12 @@ const active = (href: string) =>
             <>
               <Icon name={icons[item.href]} size={17} />
               <span>{item.href === '/' ? '我的空间' : item.label}</span>
-              <span class="stellar-nav-dot" aria-hidden="true" />
             </>
           </a>
         ))
       }
     </nav>
     <div class="stellar-sidebar-bottom">
-      <span class="stellar-side-rule"></span><p>机器人 · 机器视觉<br />代码 · 日常</p>
       {
         themeConfig.site.github && (
           <a href={themeConfig.site.github} target="_blank" rel="noopener noreferrer">

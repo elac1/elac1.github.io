@@ -7,9 +7,15 @@ import { getPostStream } from '@/utils/draft'
 import '@/styles/home.css'
 
 const stream = await getPostStream()
-const latestIds = new Set(stream.slice(0, 8).map((post) => post.id))
+const now = Date.now()
+const cutoff = now - 30 * 24 * 60 * 60 * 1000
+const latestIds = new Set(
+  stream
+    .filter((post) => post.data.pubDate.valueOf() >= cutoff && post.data.pubDate.valueOf() <= now)
+    .map((post) => post.id)
+)
 const topics = [
-  { id: 'latest', name: '最新' },
+  { id: 'latest', name: '近一个月' },
   { id: 'ros', name: 'ROS 2' },
   { id: 'vision', name: '机器视觉' },
   { id: 'simulation', name: '仿真' }
@@ -20,15 +26,17 @@ const topics = [
   <div class="home-library" data-home-library>
     <header class="home-intro">
       <div>
-        <h1>学习与实践</h1>
+        <h1>
+          学习<span class="home-intro-join">与</span>实践<span class="home-intro-period" aria-hidden="true">.</span>
+        </h1>
         <p>记录机器人、机器视觉与开发中的问题和尝试。</p>
       </div>
-      <a class="home-text-link" href="/about/">关于我<Icon name="arrow" size={14} /></a>
+      <a class="home-text-link" href="/about/">关于这个空间<Icon name="arrow" size={14} /></a>
     </header>
     <section aria-labelledby="home-posts-title">
       <div class="home-section-heading">
         <div>
-          <h2 id="home-posts-title" data-home-title>最新文章</h2>
+          <h2 id="home-posts-title" data-home-title>近一个月的文章</h2>
           <span class="home-count" data-home-count aria-live="polite">{latestIds.size} 篇</span>
         </div>
         <a class="home-text-link" href="/archive/">全部 {stream.length} 篇<Icon name="arrow" size={14} /></a>
@@ -45,7 +53,7 @@ const topics = [
       <div class="home-post-grid">
         {stream.map((post, index) => <HomePostCard post={post} latest={latestIds.has(post.id)} eager={index < 4} />)}
       </div>
-      <p class="home-empty" data-home-empty hidden={stream.length > 0}>还没有文章，之后会陆续记录。</p>
+      <p class="home-empty" data-home-empty hidden={latestIds.size > 0}>近一个月暂无文章，可以查看全部文章。</p>
     </section>
   </div>
 </IndexLayout>
@@ -60,24 +68,34 @@ const topics = [
     const title = home.querySelector<HTMLElement>('[data-home-title]')!
     const count = home.querySelector<HTMLElement>('[data-home-count]')!
     const empty = home.querySelector<HTMLElement>('[data-home-empty]')!
-    const names: Record<string, string> = { latest: '最新文章', ros: 'ROS 2', vision: '机器视觉', simulation: '仿真' }
-    buttons.forEach((button) =>
-      button.addEventListener('click', () => {
-        const topic = button.dataset.homeTopic!
-        let visibleCount = 0
-        posts.forEach((post) => {
-          const visible =
-            topic === 'latest' ? post.dataset.latest === 'true' : post.dataset.topics?.split(' ').includes(topic)
-          post.hidden = !visible
-          if (visible) visibleCount++
-        })
-        buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)))
-        title.textContent = names[topic]
-        count.textContent = `${visibleCount} 篇`
-        empty.textContent = topic === 'latest' ? '还没有文章，之后会陆续记录。' : '这个主题还没有文章。'
-        empty.hidden = visibleCount > 0
+    const now = Date.now()
+    const cutoff = now - 30 * 24 * 60 * 60 * 1000
+    posts.forEach((post) => {
+      const published = Number(post.dataset.published)
+      post.dataset.latest = String(published >= cutoff && published <= now)
+    })
+    const names: Record<string, string> = {
+      latest: '近一个月的文章',
+      ros: 'ROS 2',
+      vision: '机器视觉',
+      simulation: '仿真'
+    }
+    function selectTopic(topic: string) {
+      let visibleCount = 0
+      posts.forEach((post) => {
+        const visible =
+          post.dataset.latest === 'true' && (topic === 'latest' || !!post.dataset.topics?.split(' ').includes(topic))
+        post.hidden = !visible
+        if (visible) visibleCount++
       })
-    )
+      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item.dataset.homeTopic === topic)))
+      title.textContent = names[topic]
+      count.textContent = `${visibleCount} 篇`
+      empty.textContent = topic === 'latest' ? '近一个月暂无文章，可以查看全部文章。' : '近一个月这个主题暂无文章。'
+      empty.hidden = visibleCount > 0
+    }
+    buttons.forEach((button) => button.addEventListener('click', () => selectTopic(button.dataset.homeTopic!)))
+    selectTopic('latest')
   }
   document.addEventListener('astro:page-load', initHomeLibrary)
 </script>
