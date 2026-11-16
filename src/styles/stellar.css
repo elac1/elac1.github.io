@@ -7,7 +7,7 @@
   --stellar-gold: #8b6a39;
   --stellar-star: #666666;
   --stellar-orbit: #888888;
-  --stellar-sky-gradient: linear-gradient(135deg, #ffffff 5%, #eeeeee 55%, #d8d8d8 100%);
+  --stellar-sky-gradient: linear-gradient(145deg, #f8f9fb, #eff1f5);
   --stellar-cloud-bright: #ffffffb3;
   --stellar-cloud-soft: #5555551c;
   --stellar-cloud-deep: #22222218;
@@ -42,7 +42,7 @@ html.dark {
   --stellar-gold: #d4b98d;
   --stellar-star: #eeeeee;
   --stellar-orbit: #aaaaaa;
-  --stellar-sky-gradient: linear-gradient(135deg, #030303 5%, #111111 55%, #242424 100%);
+  --stellar-sky-gradient: linear-gradient(145deg, #0d0e11, #17191e);
   --stellar-cloud-bright: #eeeeee30;
   --stellar-cloud-soft: #99999924;
   --stellar-cloud-deep: #55555520;
@@ -90,6 +90,7 @@ body.stellar-site {
   height: 100%;
   z-index: -1;
   pointer-events: none;
+  opacity: 0.3;
 }
 .stellar-shell {
   display: grid;

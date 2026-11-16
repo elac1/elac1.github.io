@@ -1,0 +1,246 @@
+.stellar-main:has(.home-library) .stellar-toolbar {
+  margin-bottom: 0;
+}
+
+.home-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.75rem 0 2rem;
+}
+
+.home-intro h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.5rem;
+}
+
+.home-intro p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.home-text-link {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  color: var(--text-secondary);
+}
+
+.home-text-link:hover {
+  color: var(--text-primary);
+}
+
+.home-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.home-section-heading > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.home-section-heading h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.home-count {
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+
+.home-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.home-topics button {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.home-topics button:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.home-topics button[aria-pressed='true'] {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+}
+
+.home-post-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.home-card {
+  min-width: 0;
+  background: var(--stellar-panel);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+
+.home-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+}
+
+.home-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: inherit;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.home-card-cover {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 0.7rem 0.7rem 0 0;
+  background: color-mix(in srgb, var(--stellar-panel) 92%, var(--stellar-blue));
+  color: var(--stellar-blue);
+}
+
+.home-card-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.home-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem;
+}
+
+.home-card h3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 4.8em;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.home-card time {
+  margin-top: auto;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-align: left;
+}
+
+.home-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.55rem;
+  min-height: 1.25rem;
+  color: var(--stellar-blue);
+  font-size: 0.6875rem;
+  line-height: 1.8;
+}
+
+.home-card-link:focus-visible,
+.home-topics button:focus-visible,
+.home-text-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.home-empty {
+  margin: 2rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 1279px) {
+  .home-post-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .home-post-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .home-intro {
+    display: block;
+    padding: 0.75rem 0 1.5rem;
+  }
+
+  .home-intro h1 {
+    font-size: 1.5rem;
+  }
+
+  .home-intro .home-text-link {
+    margin-top: 0.5rem;
+  }
+
+  .home-post-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-card h3 {
+    min-height: auto;
+    font-size: 1rem;
+  }
+
+  .home-card-body {
+    gap: 0.6rem;
+  }
+
+  .home-topics button {
+    padding-inline: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-card {
+    transition: none;
+  }
+
+  .home-card:hover {
+    transform: none;
+  }
+}

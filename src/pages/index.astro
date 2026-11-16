@@ -1,14 +1,15 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import StellarPost from '@/components/stellar/StellarPost.astro'
+import HomePostCard from '@/components/stellar/HomePostCard.astro'
 import Icon from '@/components/stellar/Icon.astro'
 import { themeConfig } from '@/config'
 import { getPostStream } from '@/utils/draft'
+import '@/styles/home.css'
+
 const stream = await getPostStream()
-const cutoff = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000)
-const latest = stream.filter((post) => post.data.pubDate >= cutoff).slice(0, 5)
-const latestIds = new Set(latest.map((post) => post.id))
+const latestIds = new Set(stream.slice(0, 8).map((post) => post.id))
 const topics = [
+  { id: 'latest', name: '最新' },
   { id: 'ros', name: 'ROS 2' },
   { id: 'vision', name: '机器视觉' },
   { id: 'simulation', name: '仿真' }
@@ -16,120 +17,67 @@ const topics = [
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
-  <div class="stellar-home">
-    <section class="stellar-hero" aria-labelledby="home-title">
-      <div class="stellar-hero-copy">
-        <span class="stellar-eyebrow">探索，总有新的方向。</span>
-        <h1 id="home-title">
-          保持好奇，<br />继续<span class="stellar-word">探索</span><span class="stellar-period">。</span>
-        </h1>
-        <p>记录 ROS 2、机器人仿真与机器视觉实践，也收藏代码之外的日常。</p>
-        <a class="stellar-about-link" href="/about/">关于这个空间<Icon name="arrow" size={14} /></a>
+  <div class="home-library" data-home-library>
+    <header class="home-intro">
+      <div>
+        <h1>学习与实践</h1>
+        <p>记录机器人、机器视觉与开发中的问题和尝试。</p>
       </div>
-      <div class="stellar-mobile-topics" role="group" aria-label="按探索主题筛选文章">
+      <a class="home-text-link" href="/about/">关于我<Icon name="arrow" size={14} /></a>
+    </header>
+    <section aria-labelledby="home-posts-title">
+      <div class="home-section-heading">
+        <div>
+          <h2 id="home-posts-title" data-home-title>最新文章</h2>
+          <span class="home-count" data-home-count aria-live="polite">{latestIds.size} 篇</span>
+        </div>
+        <a class="home-text-link" href="/archive/">全部 {stream.length} 篇<Icon name="arrow" size={14} /></a>
+      </div>
+      <div class="home-topics" role="group" aria-label="按主题筛选文章">
         {
           topics.map((topic) => (
-            <button type="button" data-exploration-topic={topic.id} aria-pressed="false">
+            <button type="button" data-home-topic={topic.id} aria-pressed={topic.id === 'latest' ? 'true' : 'false'}>
               {topic.name}
             </button>
           ))
         }
       </div>
-      <div class="stellar-star-map" role="group" aria-label="探索星图：选择主题浏览文章">
-        <div class="stellar-map-halo" aria-hidden="true"></div><div
-          class="stellar-map-ring stellar-map-ring-a"
-          aria-hidden="true"
-        >
-        </div><div class="stellar-map-ring stellar-map-ring-b" aria-hidden="true"></div><div
-          class="stellar-map-arc"
-          aria-hidden="true"
-        >
-        </div><div class="stellar-map-streak" aria-hidden="true"></div><div
-          class="stellar-map-streak stellar-map-streak-b"
-          aria-hidden="true"
-        >
-        </div>
-        {
-          topics.map((topic) => (
-            <button
-              type="button"
-              class={`stellar-node stellar-node-${topic.id}`}
-              data-exploration-topic={topic.id}
-              aria-pressed="false"
-            >
-              <>
-                <span class="stellar-node-dot" aria-hidden="true" />
-                <span>{topic.name}</span>
-              </>
-            </button>
-          ))
-        }
-        <span class="stellar-map-caption">我的探索星图<span>点击节点，沿着主题阅读</span></span>
+      <div class="home-post-grid">
+        {stream.map((post, index) => <HomePostCard post={post} latest={latestIds.has(post.id)} eager={index < 4} />)}
       </div>
-    </section>
-    <a class="stellar-project-link" href="/projects/">
-      <span class="stellar-project-mark"><Icon name="bot" size={26} /></span>
-      <span class="stellar-project-copy"
-        ><span>项目与实验</span><h2>让想法，在现实与仿真之间落地。</h2><p>ROS 2 / Gazebo / OpenCV</p></span
-      >
-      <span class="stellar-project-arrow"><Icon name="arrow" size={17} /></span>
-    </a>
-    <section aria-labelledby="latest-title">
-      <div class="stellar-section-head">
-        <div>
-          <span class="stellar-section-kicker">沿途记录</span><h2 id="latest-title">
-            最近的文章<span class="stellar-filter-label" aria-live="polite"></span>
-          </h2>
-        </div><div>
-          <button class="stellar-reset" type="button" data-reset-topic hidden>显示最近文章</button><a
-            class="stellar-all-link"
-            href="/archive/">全部文章<Icon name="arrow" size={14} /></a>
-        </div>
-      </div>
-      <div class="stellar-entries">
-        {stream.map((post) => <StellarPost post={post} latest={latestIds.has(post.id)} />)}
-      </div>
-      <p class="stellar-filter-empty" data-empty-posts hidden={latest.length > 0}>
-        最近三周还没有新文章，可以去<a href="/archive/">归档</a>看看全部内容。
-      </p>
+      <p class="home-empty" data-home-empty hidden={stream.length > 0}>还没有文章，之后会陆续记录。</p>
     </section>
   </div>
 </IndexLayout>
+
 <script>
-  function initExploration() {
-    const home = document.querySelector<HTMLElement>('.stellar-home')
-    if (!home || home.dataset.explorationBound) return
-    home.dataset.explorationBound = 'true'
-    const buttons = home.querySelectorAll<HTMLButtonElement>('[data-exploration-topic]')
-    const posts = home.querySelectorAll<HTMLElement>('.stellar-entry')
-    const reset = home.querySelector<HTMLButtonElement>('[data-reset-topic]')!
-    const label = home.querySelector<HTMLElement>('.stellar-filter-label')!
-    const empty = home.querySelector<HTMLElement>('[data-empty-posts]')!
-    const names: Record<string, string> = { ros: 'ROS 2', vision: '机器视觉', simulation: '仿真' }
-    let selected: string | null = null
-    function apply(topic: string | null) {
-      selected = topic
-      let count = 0
-      posts.forEach((post) => {
-        const visible = topic ? post.dataset.topics?.split(' ').includes(topic) : post.dataset.latest === 'true'
-        post.hidden = !visible
-        if (visible) count++
-      })
-      buttons.forEach((button) =>
-        button.setAttribute('aria-pressed', String(button.dataset.explorationTopic === topic))
-      )
-      label.textContent = topic ? `${names[topic]} · ${count} 篇` : ''
-      reset.hidden = !topic
-      empty.hidden = count > 0
-      if (topic) empty.textContent = '这个主题还没有文章。'
-      else empty.innerHTML = '最近三周还没有新文章，可以去<a href="/archive/">归档</a>看看全部内容。'
-    }
+  function initHomeLibrary() {
+    const home = document.querySelector<HTMLElement>('[data-home-library]')
+    if (!home || home.dataset.bound) return
+    home.dataset.bound = 'true'
+    const buttons = home.querySelectorAll<HTMLButtonElement>('[data-home-topic]')
+    const posts = home.querySelectorAll<HTMLElement>('[data-home-post]')
+    const title = home.querySelector<HTMLElement>('[data-home-title]')!
+    const count = home.querySelector<HTMLElement>('[data-home-count]')!
+    const empty = home.querySelector<HTMLElement>('[data-home-empty]')!
+    const names: Record<string, string> = { latest: '最新文章', ros: 'ROS 2', vision: '机器视觉', simulation: '仿真' }
     buttons.forEach((button) =>
-      button.addEventListener('click', () =>
-        apply(selected === button.dataset.explorationTopic ? null : button.dataset.explorationTopic!)
-      )
+      button.addEventListener('click', () => {
+        const topic = button.dataset.homeTopic!
+        let visibleCount = 0
+        posts.forEach((post) => {
+          const visible =
+            topic === 'latest' ? post.dataset.latest === 'true' : post.dataset.topics?.split(' ').includes(topic)
+          post.hidden = !visible
+          if (visible) visibleCount++
+        })
+        buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)))
+        title.textContent = names[topic]
+        count.textContent = `${visibleCount} 篇`
+        empty.textContent = topic === 'latest' ? '还没有文章，之后会陆续记录。' : '这个主题还没有文章。'
+        empty.hidden = visibleCount > 0
+      })
     )
-    reset.addEventListener('click', () => apply(null))
   }
-  document.addEventListener('astro:page-load', initExploration)
+  document.addEventListener('astro:page-load', initHomeLibrary)
 </script>
